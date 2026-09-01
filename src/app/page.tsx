@@ -6,6 +6,11 @@ import { NowPlaying } from "@/components/NowPlaying";
 import { MarkdownContent } from "@/components/MarkdownContent";
 import { PDFThumbnail } from "@/components/PDFThumbnail";
 import { ScrollReveal } from "@/components/ScrollReveal";
+import { TextScramble } from "@/components/TextScramble";
+import { Counter } from "@/components/Counter";
+import { MagneticButton } from "@/components/MagneticButton";
+import { CardTilt } from "@/components/CardTilt";
+import { CursorGlow } from "@/components/CursorGlow";
 import type { NowPlayingSong } from "@/lib/types";
 
 function pickTodaysSong(rows: NowPlayingSong[]): NowPlayingSong | null {
@@ -73,7 +78,7 @@ export default async function HomePage() {
 
         <div className="relative z-10">
           <h1 className="font-display text-5xl font-extrabold uppercase leading-[0.9] tracking-tight sm:text-7xl lg:text-8xl">
-            FAQIH
+            <TextScramble text="FAQIH" />
             <span className="block text-3xl sm:text-4xl lg:text-5xl font-semibold mt-3">
               <span className="marker">ARD</span>IAN <span className="marker">SYAH</span>
             </span>
@@ -84,19 +89,23 @@ export default async function HomePage() {
           </p>
 
           <div className="mt-8 flex flex-wrap gap-4">
-            <Link
-              href="/projects"
-              className="group inline-flex items-center gap-2 rounded-xl border-2 border-foreground bg-accent px-6 py-3 text-sm font-bold uppercase tracking-wide text-on-accent hard-shadow transition-all duration-150 hover:-translate-y-0.5 hover:hard-shadow-hover"
-            >
-              View Projects
-              <ArrowRight size={15} className="transition-transform group-hover:translate-x-0.5" />
-            </Link>
-            <Link
-              href="/contact"
-              className="inline-flex items-center gap-2 rounded-xl border-2 border-foreground bg-surface px-6 py-3 text-sm font-bold uppercase tracking-wide transition-all duration-150 hover:-translate-y-0.5"
-            >
-              Get in Touch
-            </Link>
+            <MagneticButton>
+              <Link
+                href="/projects"
+                className="group inline-flex items-center gap-2 rounded-xl border-2 border-foreground bg-accent px-6 py-3 text-sm font-bold uppercase tracking-wide text-on-accent hard-shadow transition-all duration-150 hover:-translate-y-0.5 hover:hard-shadow-hover"
+              >
+                View Projects
+                <ArrowRight size={15} className="transition-transform group-hover:translate-x-0.5" />
+              </Link>
+            </MagneticButton>
+            <MagneticButton>
+              <Link
+                href="/contact"
+                className="inline-flex items-center gap-2 rounded-xl border-2 border-foreground bg-surface px-6 py-3 text-sm font-bold uppercase tracking-wide transition-all duration-150 hover:-translate-y-0.5"
+              >
+                Get in Touch
+              </Link>
+            </MagneticButton>
           </div>
         </div>
         </div>
@@ -161,6 +170,28 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* STATS */}
+      <section className="flex flex-wrap justify-center gap-8 px-5 sm:px-8 mt-16">
+        {[
+          { value: projects?.length ?? 0, suffix: "+", label: "Projects" },
+          { value: achievements?.length ?? 0, suffix: "", label: "Achievements" },
+          { value: 12, suffix: "+", label: "Tech Used" },
+        ].map((stat) => (
+          <ScrollReveal key={stat.label}>
+            <div className="flex flex-col items-center gap-1 rounded-xl border-2 border-border bg-surface px-6 py-4 hard-shadow-sm">
+              <Counter
+                target={stat.value}
+                suffix={stat.suffix}
+                className="font-display text-3xl font-extrabold tracking-tight text-accent"
+              />
+              <span className="text-xs font-semibold uppercase tracking-wider text-muted">
+                {stat.label}
+              </span>
+            </div>
+          </ScrollReveal>
+        ))}
+      </section>
+
       {/* PROJECTS */}
       <section id="projects" className="flex flex-col gap-6 px-5 sm:px-8 mt-20">
         <ScrollReveal>
@@ -178,7 +209,9 @@ export default async function HomePage() {
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {projects?.map((p, i) => (
             <ScrollReveal key={p.id} delay={i * 80}>
-              <ProjectCard project={p} />
+              <CardTilt>
+                <ProjectCard project={p} />
+              </CardTilt>
             </ScrollReveal>
           ))}
         </div>

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { CursorGlow } from "@/components/CursorGlow";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -58,6 +59,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
       </head>
       <body className="noise min-h-full flex flex-col">
+        <CursorGlow />
         <div className="dot-grid pointer-events-none fixed inset-0 -z-10 opacity-40" />
         <div className="grid-bg pointer-events-none fixed inset-0 -z-10" />
         <Navbar />
