@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { CLASS_LEVELS } from "@/lib/utils";
-import { ClassCard, ProjectCard } from "@/components/cards";
+import { ClassCard } from "@/components/cards";
+import { ProjectFilter } from "@/components/ProjectFilter";
 import type { Project } from "@/lib/types";
 
 export const metadata: Metadata = {
@@ -86,11 +87,7 @@ export default async function ProjectsPage() {
               apps.
             </p>
           </div>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {personal.map((p) => (
-              <ProjectCard key={p.id} project={p} />
-            ))}
-          </div>
+          <ProjectFilter projects={personal} />
         </section>
       )}
 

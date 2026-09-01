@@ -52,6 +52,11 @@ export function ProjectCard({ project }: { project: Project }) {
               personal
             </span>
           )}
+          {project.language && (
+            <span className="rounded-full border-2 border-border bg-surface-2 px-2 py-0.5 text-[10px] font-semibold text-muted">
+              {project.language}
+            </span>
+          )}
         </div>
         <h3 className="mt-2 font-display font-bold uppercase leading-snug tracking-tight transition-colors group-hover:text-accent">
           {project.title}

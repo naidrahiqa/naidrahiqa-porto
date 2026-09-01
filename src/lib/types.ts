@@ -87,6 +87,7 @@ export interface Project {
   link: string | null;
   published: boolean;
   featured: boolean;
+  language: string;
   sort_order: number;
   created_at: string;
   updated_at: string;
