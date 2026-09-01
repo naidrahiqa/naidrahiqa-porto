@@ -25,6 +25,7 @@ export default async function HomePage() {
     { data: profile },
     { data: projects },
     { data: achievements },
+    { data: allAchievements },
     { data: aboutSections },
     { data: nowPlaying },
   ] = await Promise.all([
@@ -41,6 +42,9 @@ export default async function HomePage() {
       .select("*")
       .order("sort_order")
       .limit(4),
+    supabase
+      .from("achievements")
+      .select("id", { count: "exact", head: true }),
     supabase
       .from("about_sections")
       .select("*")
@@ -174,7 +178,7 @@ export default async function HomePage() {
       <section className="flex flex-wrap justify-center gap-8 px-5 sm:px-8 mt-16">
         {[
           { value: projects?.length ?? 0, suffix: "+", label: "Projects" },
-          { value: achievements?.length ?? 0, suffix: "", label: "Achievements" },
+          { value: allAchievements?.length ?? 0, suffix: "", label: "Achievements" },
           { value: 12, suffix: "+", label: "Tech Used" },
         ].map((stat) => (
           <ScrollReveal key={stat.label}>
