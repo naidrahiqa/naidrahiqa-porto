@@ -255,7 +255,7 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
                 >
                   {classLevels.map((c) => (
                     <option key={c} value={c}>
-                      {c === "" ? "— None —" : `Kelas ${c.toUpperCase()}`}
+                      {c === "" ? "- None -" : `Kelas ${c.toUpperCase()}`}
                     </option>
                   ))}
                 </Select>

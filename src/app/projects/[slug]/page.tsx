@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
-import { cn, formatDate, resolveImageUrl, slugify } from "@/lib/utils";
-import { MarkdownContent } from "@/components/MarkdownContent";
-import { VideoEmbed } from "@/components/VideoEmbed";
-import { ProjectGallery } from "@/components/ProjectGallery";
+import { cn, formatDate, slugify } from "@/lib/utils";
+import { ProjectLayout } from "@/components/ProjectLayout";
+import type { Project, ProjectMedia } from "@/lib/types";
 
 export async function generateMetadata({
   params,
@@ -60,10 +58,6 @@ export default async function ProjectDetailPage({
         ? project.subject
         : `Kelas ${project.class_level}`
       : "Projects";
-
-  const cover = project.cover_image ? resolveImageUrl(project.cover_image) : null;
-  const hasVideo = project.video_url && project.video_type !== "none";
-  const hasMedia = (media ?? []).length > 0;
 
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-8 pt-12 sm:pt-16">
@@ -124,43 +118,11 @@ export default async function ProjectDetailPage({
         </div>
       </header>
 
-      {/* Cover image */}
-      {cover && (
-        <div className="relative overflow-hidden rounded-2xl border-2 border-foreground bg-surface hard-shadow-sm">
-          <Image
-            src={cover}
-            alt={project.title}
-            width={1200}
-            height={675}
-            className="w-full object-cover"
-            priority
-          />
-        </div>
-      )}
-
-      {/* Video */}
-      {hasVideo && (
-        <VideoEmbed
-          url={project.video_url}
-          type={project.video_type}
-          title={project.title}
-        />
-      )}
-
-      {/* Content (markdown) */}
-      {project.content && (
-        <MarkdownContent content={project.content} />
-      )}
-
-      {/* Gallery */}
-      {hasMedia && (
-        <section className="flex flex-col gap-4">
-          <h2 className="font-display text-lg font-bold uppercase tracking-tight">
-            Gallery
-          </h2>
-          <ProjectGallery media={media ?? []} />
-        </section>
-      )}
+      {/* Layout content */}
+      <ProjectLayout
+        project={project as Project}
+        media={(media ?? []) as ProjectMedia[]}
+      />
     </div>
   );
 }

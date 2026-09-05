@@ -123,7 +123,7 @@ export function MediaGallery({
 
       {items.length === 0 && (
         <p className="rounded-lg border border-dashed border-border p-4 text-center text-xs text-muted">
-          No media yet — add photos or videos to showcase
+          No media yet - add photos or videos to showcase
         </p>
       )}
 
@@ -248,7 +248,7 @@ export function MediaGallery({
                 id={`media-caption-${index}`}
                 value={item.caption}
                 onChange={(e) => update(index, { caption: e.target.value })}
-                placeholder="Optional — shown below the media"
+                placeholder="Optional - shown below the media"
               />
             </div>
 

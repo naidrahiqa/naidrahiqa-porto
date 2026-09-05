@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, ExternalLink } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import { cn } from "@/lib/utils";
 import { ProjectCard, AchievementBadge } from "@/components/cards";
 import { NowPlaying } from "@/components/NowPlaying";
 import { MarkdownContent } from "@/components/MarkdownContent";
@@ -10,7 +11,6 @@ import { TextScramble } from "@/components/TextScramble";
 import { Counter } from "@/components/Counter";
 import { MagneticButton } from "@/components/MagneticButton";
 import { CardTilt } from "@/components/CardTilt";
-import { CursorGlow } from "@/components/CursorGlow";
 import type { NowPlayingSong } from "@/lib/types";
 
 function pickTodaysSong(rows: NowPlayingSong[]): NowPlayingSong | null {
@@ -59,62 +59,52 @@ export default async function HomePage() {
   return (
     <div className="flex flex-col pt-14 sm:pt-20">
       {/* HERO */}
-      <section className="relative flex flex-col gap-10 overflow-hidden px-5 sm:px-8 lg:grid lg:grid-cols-2 lg:items-center lg:gap-12">
+      <section className="relative flex min-h-[100dvh] flex-col justify-center gap-10 overflow-hidden px-5 sm:px-8 lg:grid lg:grid-cols-2 lg:items-center lg:gap-12">
         <div className="orb orb-accent -top-40 -left-40 h-80 w-80" />
         <div className="orb orb-pink top-20 -right-20 h-60 w-60" />
 
         <div className="relative z-10 flex flex-col gap-8">
-          {/* Sticker chips — rotated, chunky */}
-          <div className="flex flex-wrap items-center gap-3">
-          <span className="font-display rounded-full border-2 border-accent bg-accent px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-on-accent hard-shadow-sm -rotate-3">
-            TKJ Student
+          <span className="font-display w-fit rounded-full border-2 border-accent bg-accent px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-on-accent hard-shadow-sm">
+            TKJ Student · Kernel Dev · IoT · CTF
           </span>
-          <span className="font-display rounded-full border-2 border-border bg-surface px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-foreground hard-shadow-sm rotate-2">
-            Kernel Dev
-          </span>
-          <span className="font-display rounded-full border-2 border-accent-2 bg-accent-2/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-accent-2 hard-shadow-sm -rotate-2">
-            IoT
-          </span>
-          <span className="font-display rounded-full border-2 border-border bg-surface px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-foreground hard-shadow-sm rotate-1">
-            CTF
-          </span>
-        </div>
 
-        <div className="relative z-10">
-          <h1 className="font-display text-5xl font-extrabold uppercase leading-[0.9] tracking-tight sm:text-7xl lg:text-8xl">
-            <TextScramble text="FAQIH" />
-            <span className="block text-3xl sm:text-4xl lg:text-5xl font-semibold mt-3">
-              <span className="marker">ARD</span>IAN <span className="marker">SYAH</span>
-            </span>
-          </h1>
+          <div className="relative z-10">
+            <h1 className="font-display text-5xl font-extrabold uppercase leading-[0.9] tracking-tight sm:text-7xl lg:text-8xl">
+              <TextScramble text="FAQIH" />
+              <span className="block text-3xl sm:text-4xl lg:text-5xl font-semibold mt-3">
+                <span className="marker">ARD</span>IAN <span className="marker">SYAH</span>
+              </span>
+            </h1>
 
-          <p className="mt-6 max-w-lg text-base leading-relaxed text-muted">
-            {profile?.hero_description}
-          </p>
+            <p className="mt-6 max-w-lg text-base leading-relaxed text-muted">
+              {profile?.hero_description}
+            </p>
 
-          <div className="mt-8 flex flex-wrap gap-4">
-            <MagneticButton>
-              <Link
-                href="/projects"
-                className="group inline-flex items-center gap-2 rounded-xl border-2 border-foreground bg-accent px-6 py-3 text-sm font-bold uppercase tracking-wide text-on-accent hard-shadow transition-all duration-150 hover:-translate-y-0.5 hover:hard-shadow-hover"
-              >
-                View Projects
-                <ArrowRight size={15} className="transition-transform group-hover:translate-x-0.5" />
-              </Link>
-            </MagneticButton>
-            <MagneticButton>
-              <Link
-                href="/contact"
-                className="inline-flex items-center gap-2 rounded-xl border-2 border-foreground bg-surface px-6 py-3 text-sm font-bold uppercase tracking-wide transition-all duration-150 hover:-translate-y-0.5"
-              >
-                Get in Touch
-              </Link>
-            </MagneticButton>
+            <div className="mt-8 flex flex-wrap gap-4">
+              <MagneticButton>
+                <Link
+                  href="/projects"
+                  className="group inline-flex items-center gap-2 rounded-xl border-2 border-foreground bg-accent px-6 py-3 text-sm font-bold uppercase tracking-wide text-on-accent hard-shadow transition-all duration-150 hover:-translate-y-0.5 hover:hard-shadow-hover"
+                >
+                  View Projects
+                  <ArrowRight size={15} className="transition-transform group-hover:translate-x-0.5" />
+                </Link>
+              </MagneticButton>
+              <MagneticButton>
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center gap-2 rounded-xl border-2 border-foreground bg-surface px-6 py-3 text-sm font-bold uppercase tracking-wide transition-all duration-150 hover:-translate-y-0.5"
+                >
+                  Get in Touch
+                </Link>
+              </MagneticButton>
+            </div>
           </div>
         </div>
-        </div>
 
-        <NowPlaying song={todaysSong} />
+        <div className="flex justify-center lg:justify-end">
+          <NowPlaying song={todaysSong} />
+        </div>
       </section>
 
       {/* ABOUT */}
@@ -125,7 +115,7 @@ export default async function HomePage() {
           <span className="sticker top-8 left-0 text-xs rotate-45" style={{animationDelay:"2s"}}>✦</span>
 
           <ScrollReveal>
-            <SectionHeader index="01" title="About" />
+            <SectionHeader title="About" />
           </ScrollReveal>
           <div className="flex flex-col gap-8 max-w-2xl">
             {aboutSections.map((s, i) => (
@@ -145,17 +135,17 @@ export default async function HomePage() {
       {/* TECH STACK */}
       <section className="flex flex-col gap-6 px-5 sm:px-8 mt-20">
         <ScrollReveal>
-          <SectionHeader index="01.5" title="Tech Stack" />
+          <SectionHeader title="Tech Stack" />
         </ScrollReveal>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {[
-            { name: "C", desc: "Kernel dev" },
+            { name: "C", desc: "Kernel dev", accent: true },
             { name: "Shell", desc: "Linux modules" },
             { name: "Python", desc: "Tools & scripts" },
-            { name: "TypeScript", desc: "Web apps" },
+            { name: "TypeScript", desc: "Web apps", accent: true },
             { name: "Go", desc: "Desktop apps" },
             { name: "Kotlin", desc: "Android" },
-            { name: "Next.js", desc: "React framework" },
+            { name: "Next.js", desc: "React framework", accent: true },
             { name: "Supabase", desc: "Backend" },
             { name: "Tailwind CSS", desc: "Styling" },
             { name: "Git", desc: "Version control" },
@@ -163,7 +153,14 @@ export default async function HomePage() {
             { name: "Hyprland", desc: "WM rice" },
           ].map((tech, i) => (
             <ScrollReveal key={tech.name} delay={i * 50}>
-              <div className="rounded-xl border-2 border-border bg-surface p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-accent/40 hover:hard-shadow-sm">
+              <div
+                className={cn(
+                  "rounded-xl border-2 border-border bg-surface p-4 transition-all duration-200 hover:-translate-y-0.5 hover:hard-shadow-sm",
+                  tech.accent
+                    ? "border-accent/30 hover:border-accent/60"
+                    : "hover:border-accent-2/40"
+                )}
+              >
                 <p className="font-display text-sm font-bold uppercase tracking-tight text-foreground">
                   {tech.name}
                 </p>
@@ -175,32 +172,50 @@ export default async function HomePage() {
       </section>
 
       {/* STATS */}
-      <section className="flex flex-wrap justify-center gap-8 px-5 sm:px-8 mt-16">
-        {[
-          { value: projects?.length ?? 0, suffix: "+", label: "Projects" },
-          { value: totalAchievements ?? 0, suffix: "", label: "Achievements" },
-          { value: 12, suffix: "+", label: "Tech Used" },
-        ].map((stat) => (
-          <ScrollReveal key={stat.label}>
-            <div className="flex flex-col items-center gap-1 rounded-xl border-2 border-border bg-surface px-6 py-4 hard-shadow-sm">
+      <section className="px-5 sm:px-8 mt-16">
+        <ScrollReveal>
+          <div className="grid gap-4 sm:grid-cols-3">
+            <div className="flex flex-col items-start gap-1 rounded-xl border-2 border-border bg-surface px-6 py-5 hard-shadow-sm sm:col-span-2">
               <Counter
-                target={stat.value}
-                suffix={stat.suffix}
-                className="font-display text-3xl font-extrabold tracking-tight text-accent"
+                target={projects?.length ?? 0}
+                suffix="+"
+                className="font-display text-5xl font-extrabold tracking-tight text-accent"
               />
-              <span className="text-xs font-semibold uppercase tracking-wider text-muted">
-                {stat.label}
+              <span className="text-sm font-semibold uppercase tracking-wider text-muted">
+                Projects Shipped
               </span>
             </div>
-          </ScrollReveal>
-        ))}
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col items-start gap-1 rounded-xl border-2 border-border bg-surface px-5 py-4 hard-shadow-sm">
+                <Counter
+                  target={totalAchievements ?? 0}
+                  suffix=""
+                  className="font-display text-2xl font-extrabold tracking-tight text-accent-2"
+                />
+                <span className="text-xs font-semibold uppercase tracking-wider text-muted">
+                  Achievements
+                </span>
+              </div>
+              <div className="flex flex-col items-start gap-1 rounded-xl border-2 border-border bg-surface px-5 py-4 hard-shadow-sm">
+                <Counter
+                  target={12}
+                  suffix="+"
+                  className="font-display text-2xl font-extrabold tracking-tight text-accent-2"
+                />
+                <span className="text-xs font-semibold uppercase tracking-wider text-muted">
+                  Tech Used
+                </span>
+              </div>
+            </div>
+          </div>
+        </ScrollReveal>
       </section>
 
       {/* PROJECTS */}
       <section id="projects" className="flex flex-col gap-6 px-5 sm:px-8 mt-20">
         <ScrollReveal>
           <div className="flex items-end justify-between gap-4">
-            <SectionHeader index="02" title="Projects" />
+            <SectionHeader title="Projects" />
             <Link
               href="/projects"
               className="group text-xs font-semibold uppercase tracking-wide text-accent transition-colors hover:text-foreground"
@@ -225,7 +240,7 @@ export default async function HomePage() {
       <section id="achievements" className="flex flex-col gap-6 px-5 sm:px-8 mt-24">
         <ScrollReveal>
           <div className="flex items-end justify-between gap-4">
-            <SectionHeader index="03" title="Achievements" />
+            <SectionHeader title="Achievements" />
             <Link
               href="/achievements"
               className="group text-xs font-semibold uppercase tracking-wide text-accent transition-colors hover:text-foreground"
@@ -317,18 +332,13 @@ export default async function HomePage() {
   );
 }
 
-function SectionHeader({ index, title }: { index: string; title: string }) {
+function SectionHeader({ title }: { title: string }) {
   return (
     <div>
-      <div className="flex items-center gap-2">
-        <span className="font-display inline-flex items-center justify-center rounded-md border-2 border-foreground bg-accent px-2 py-0.5 text-xs font-extrabold text-on-accent -rotate-3 hard-shadow-sm">
-          {index}
-        </span>
-        <div className="h-0.5 flex-1 bg-foreground/15" />
-      </div>
-      <h2 className="mt-3 font-display text-3xl font-extrabold uppercase tracking-tight sm:text-4xl">
+      <h2 className="font-display text-3xl font-extrabold uppercase tracking-tight sm:text-4xl">
         <span className="marker">{title}</span>
       </h2>
+      <div className="mt-3 h-0.5 w-12 bg-foreground/15" />
     </div>
   );
 }

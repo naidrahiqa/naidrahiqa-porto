@@ -64,7 +64,7 @@ export default function ProfileEditorPage() {
   if (!profile) {
     return (
       <p className="rounded-xl border border-border bg-surface p-8 text-center text-sm text-muted">
-        Profile not found — run the seed migration first
+        Profile not found - run the seed migration first
       </p>
     );
   }
@@ -108,7 +108,7 @@ export default function ProfileEditorPage() {
             }
           />
           <p className="mt-0.5 text-[10px] text-muted">
-            Shown as "Naidrahiqa" in the UI — your casual/brand name
+            Shown as "Naidrahiqa" in the UI - your casual/brand name
           </p>
         </div>
         <div>

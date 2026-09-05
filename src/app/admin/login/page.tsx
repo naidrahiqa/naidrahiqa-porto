@@ -90,7 +90,7 @@ export default function AdminLoginPage() {
 
         <p className="mt-6 flex items-center justify-center gap-1.5 text-center text-[11px] text-muted">
           <Lock size={11} />
-          Access restricted — admins only
+          Access restricted - admins only
         </p>
       </div>
     </div>

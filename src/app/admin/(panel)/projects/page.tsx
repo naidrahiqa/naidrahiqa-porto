@@ -37,7 +37,7 @@ export default async function AdminProjectsPage({
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Projects</h1>
           <p className="mt-1 text-sm text-muted">
-            Drag to reorder — the top items appear first on your site.{" "}
+            Drag to reorder - the top items appear first on your site.{" "}
             {projects?.length ?? 0} total
           </p>
         </div>

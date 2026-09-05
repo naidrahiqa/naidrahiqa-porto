@@ -16,7 +16,7 @@ export default async function AdminAchievementsPage() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Achievements</h1>
           <p className="mt-1 text-sm text-muted">
-            Drag the handle to reorder — the top items appear first on your site.
+            Drag the handle to reorder - the top items appear first on your site.
           </p>
         </div>
         <Link

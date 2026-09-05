@@ -7,7 +7,7 @@ import type { Project } from "@/lib/types";
 
 export const metadata: Metadata = {
   title: "Projects",
-  description: "Projects — Naidrahiqa",
+  description: "Projects - Naidrahiqa",
 };
 
 export default async function ProjectsPage() {
@@ -45,7 +45,7 @@ export default async function ProjectsPage() {
           My <span className="gradient-text">Work</span>
         </h1>
         <p className="mt-4 text-muted">
-          School work organized by class and subject, plus personal builds —
+          School work organized by class and subject, plus personal builds -
           kernels, IoT, Android modding, and more.
         </p>
       </header>
@@ -83,7 +83,7 @@ export default async function ProjectsPage() {
               From GitHub
             </h2>
             <p className="mt-2 text-sm text-muted">
-              {personal.length} projects — kernels, modules, tools, and web
+              {personal.length} projects - kernels, modules, tools, and web
               apps.
             </p>
           </div>

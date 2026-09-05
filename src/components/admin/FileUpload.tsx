@@ -52,7 +52,7 @@ const MIME_ALLOWED = new Set([
 
 function validateFile(file: File): string | null {
   if (file.size > MAX_FILE_SIZE) {
-    return `File too large (max 10MB) — ${(file.size / 1024 / 1024).toFixed(1)}MB`;
+    return `File too large (max 10MB) - ${(file.size / 1024 / 1024).toFixed(1)}MB`;
   }
   if (!MIME_ALLOWED.has(file.type)) {
     return `Unsupported file type: ${file.type || "unknown"}`;

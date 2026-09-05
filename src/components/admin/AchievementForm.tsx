@@ -81,7 +81,7 @@ export function AchievementForm({
             required
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="2nd Place — LKS Kabupaten Jepara 2026"
+            placeholder="2nd Place - LKS Kabupaten Jepara 2026"
           />
         </div>
 
@@ -117,7 +117,7 @@ export function AchievementForm({
             id="event"
             value={event}
             onChange={(e) => setEvent(e.target.value)}
-            placeholder="Lomba Kompetensi Siswa (LKS) — IT Network System Administration"
+            placeholder="Lomba Kompetensi Siswa (LKS) - IT Network System Administration"
           />
         </div>
 

@@ -13,7 +13,7 @@ export async function generateStaticParams() {
 
 export const metadata: Metadata = {
   title: "School Projects",
-  description: "School projects per class — Naidrahiqa",
+  description: "School projects per class - Naidrahiqa",
 };
 
 export default async function SchoolClassPage({

@@ -6,7 +6,7 @@ import { MarkdownContent } from "@/components/MarkdownContent";
 
 export const metadata: Metadata = {
   title: "About",
-  description: "About Faqih Ardian Syah — Naidrahiqa",
+  description: "About Faqih Ardian Syah - Naidrahiqa",
 };
 
 export default async function AboutPage() {

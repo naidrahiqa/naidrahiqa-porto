@@ -168,3 +168,31 @@ Run in order in Supabase SQL Editor. Never modify a migration after it's been ap
 - **Tailwind classes**: use `cn()` utility for conditional classes
 - **Types**: all in `src/lib/types.ts`, exported as interfaces
 - **Errors**: use `dbError()` from `src/lib/api.ts` for API errors, `toast()` for UI errors
+
+## Design Skills (taste-skill)
+
+Anti-slop frontend framework installed via `npx skills add Leonxlnx/taste-skill`.
+
+**Load these skills when working on public-facing UI (homepage, about, contact, project detail):**
+
+| Skill | Use When |
+|-------|----------|
+| `design-taste-frontend` | Landing pages, portfolios, redesigns. Primary anti-slop skill. |
+| `high-end-visual-design` | Premium/polished UI surfaces |
+| `minimalist-ui` | Editorial product UI |
+| `redesign-existing-projects` | Improving existing codebases (audit-first) |
+| `image-to-code` | Image-first pipeline for website implementation |
+
+**Core rules from taste-skill:**
+- **Brief inference first**: read page kind, vibe, audience before coding
+- **Three dials**: `DESIGN_VARIANCE`, `MOTION_INTENSITY`, `VISUAL_DENSITY` (set per page)
+- **Anti-default**: no AI-purple gradients, no centered hero over dark mesh, no three equal cards, no Inter as default font
+- **Em-dash ban**: `—` and `–` completely forbidden, use hyphen `-` only
+- **Typography**: prefer Geist/Satoshi/Cabinet Grotesk over Inter. Serif only for editorial/luxury briefs.
+- **Color**: max 1 accent, no generic AI purple glow. Neutral bases (Zinc/Slate/Stone) with high-contrast accents.
+- **Layout**: grid over flex-math, `min-h-[100dvh]` not `h-screen`, no 3-column equal feature cards
+- **Motion**: use `motion/react` not `framer-motion`. GSAP for scroll-hijack only. Never `window.addEventListener('scroll')`.
+- **Icons**: prefer Phosphor/HugeIcons/Radix/Tabler. lucide-react only if explicitly asked.
+- **Pre-Flight Check**: run the full checklist (Section 14) before shipping any public page.
+
+Full skill file: `.agents/skills/design-taste-frontend/SKILL.md`

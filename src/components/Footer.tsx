@@ -28,7 +28,7 @@ export default async function Footer() {
               href={c.url}
               target="_blank"
               rel="noopener noreferrer"
-              title={`${c.platform} — ${c.handle}`}
+              title={`${c.platform} - ${c.handle}`}
               className="flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-surface/50 text-muted backdrop-blur-sm transition-all duration-200 hover:text-accent hover:border-border-hover hover:-translate-y-0.5"
             >
               <SocialIcon platform={c.platform} size={17} />

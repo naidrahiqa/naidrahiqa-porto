@@ -4,7 +4,7 @@ import { AchievementFilter } from "@/components/AchievementFilter";
 
 export const metadata: Metadata = {
   title: "Achievements",
-  description: "Achievements — Naidrahiqa",
+  description: "Achievements - Naidrahiqa",
 };
 
 export default async function AchievementsPage() {

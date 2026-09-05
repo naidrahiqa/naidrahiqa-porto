@@ -123,10 +123,10 @@ export default function NowPlayingAdminPage() {
       <header>
         <h1 className="text-2xl font-bold tracking-tight">Now Playing</h1>
         <p className="mt-2 text-sm text-muted">
-          Lagu yang tampil di card home — rotasi otomatis tiap hari. Urutan
-          diambil dari kolom sort (1, 2, 3…). Tiap lagu bisa pakai link bebas
+          Lagu yang tampil di card home - rotasi otomatis tiap hari. Urutan
+          diambil dari kolom sort (1, 2, 3...). Tiap lagu bisa pakai link bebas
           (Spotify / YouTube / url apa aja). Untuk cover, upload ke Supabase
-          (paling reliable) atau paste URL — URL dari situs yang blokir
+          (paling reliable) atau paste URL - URL dari situs yang blokir
           hotlink (mis. kpopping) tidak akan tampil.
         </p>
       </header>
@@ -157,7 +157,7 @@ export default function NowPlayingAdminPage() {
               </div>
               <div className="min-w-0 flex-1">
                 <p className="truncate font-display text-lg font-bold">{s.title || "Untitled"}</p>
-                <p className="truncate text-sm text-muted">{s.artist || "—"}</p>
+                <p className="truncate text-sm text-muted">{s.artist || "-"}</p>
                 {s.link && (
                   <a
                     href={s.link}

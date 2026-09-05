@@ -4,7 +4,7 @@ import { SocialLink } from "@/components/SocialIcon";
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: "Contact — Naidrahiqa",
+  description: "Contact - Naidrahiqa",
 };
 
 export default async function ContactPage() {
@@ -25,7 +25,7 @@ export default async function ContactPage() {
           Let&apos;s <span className="gradient-text">connect</span>
         </h1>
         <p className="mt-3 max-w-xl text-sm text-muted">
-          Reach out — collaborations, questions, or just to talk about kernels,
+          Reach out - collaborations, questions, or just to talk about kernels,
           IoT, or security.
         </p>
       </header>

@@ -24,10 +24,10 @@ const plusJakarta = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   title: {
     default: "Naidrahiqa",
-    template: "%s — Naidrahiqa",
+    template: "%s - Naidrahiqa",
   },
   description:
-    "Faqih Ardian Syah — TKJ Student | Kernel Developer | IoT Builder | CyberSecurity Enthusiast",
+    "Faqih Ardian Syah - TKJ Student | Kernel Developer | IoT Builder | CyberSecurity Enthusiast",
   keywords: [
     "Faqih Ardian Syah",
     "Naidrahiqa",
