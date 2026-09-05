@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, ExternalLink } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
@@ -12,6 +13,19 @@ import { Counter } from "@/components/Counter";
 import { MagneticButton } from "@/components/MagneticButton";
 import { CardTilt } from "@/components/CardTilt";
 import type { NowPlayingSong } from "@/lib/types";
+
+export const metadata: Metadata = {
+  title: "Naidrahiqa",
+  description:
+    "Faqih Ardian Syah - TKJ Student, Kernel Developer, IoT Builder, and CyberSecurity Enthusiast. Portfolio and school project showcase.",
+  openGraph: {
+    title: "Naidrahiqa - Faqih Ardian Syah",
+    description:
+      "TKJ Student, Kernel Developer, IoT Builder, and CyberSecurity Enthusiast.",
+    type: "website",
+    siteName: "Naidrahiqa",
+  },
+};
 
 function pickTodaysSong(rows: NowPlayingSong[]): NowPlayingSong | null {
   if (rows.length === 0) return null;

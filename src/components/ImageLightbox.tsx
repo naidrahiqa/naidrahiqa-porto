@@ -13,13 +13,39 @@ interface LightboxProps {
 
 export function ImageLightbox({ src, alt, href, onClose }: LightboxProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
 
   const close = useCallback(() => onClose(), [onClose]);
 
   useEffect(() => {
+    closeButtonRef.current?.focus();
+  }, []);
+
+  useEffect(() => {
+    const overlay = overlayRef.current;
+    if (!overlay) return;
+
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") close();
+      if (e.key === "Escape") {
+        close();
+        return;
+      }
+      if (e.key === "Tab") {
+        const focusable = overlay.querySelectorAll<HTMLElement>(
+          'button, a, [tabindex]:not([tabindex="-1"])'
+        );
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
     };
+
     document.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
     return () => {
@@ -31,15 +57,19 @@ export function ImageLightbox({ src, alt, href, onClose }: LightboxProps) {
   return (
     <div
       ref={overlayRef}
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Image preview: ${alt}`}
       onClick={(e) => {
         if (e.target === overlayRef.current) close();
       }}
       className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
     >
       <button
+        ref={closeButtonRef}
         onClick={close}
         className="absolute right-4 top-4 z-10 rounded-full bg-white/10 p-2 text-white transition-colors hover:bg-white/20"
-        aria-label="Close"
+        aria-label="Close lightbox"
       >
         <X size={20} />
       </button>

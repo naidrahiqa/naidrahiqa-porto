@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
@@ -5,6 +6,29 @@ import { createClient } from "@/lib/supabase/server";
 import { CLASS_LEVELS, slugify } from "@/lib/utils";
 import { ProjectCard } from "@/components/cards";
 import type { Project } from "@/lib/types";
+
+export async function generateMetadata({
+  params,
+}: PageProps<"/projects/school/[class]/[subject]">): Promise<Metadata> {
+  const { class: cls, subject } = await params;
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("projects")
+    .select("subject")
+    .eq("published", true)
+    .eq("category", "school")
+    .eq("class_level", cls)
+    .order("sort_order", { ascending: true })
+    .limit(1);
+
+  const displayName =
+    subject === "lainnya" ? "Lainnya" : (data?.[0]?.subject || subject);
+
+  return {
+    title: `${displayName} - Kelas ${cls?.toUpperCase()}`,
+    description: `Proyek ${displayName} kelas ${cls?.toUpperCase()} - Naidrahiqa`,
+  };
+}
 
 export default async function SchoolSubjectPage({
   params,

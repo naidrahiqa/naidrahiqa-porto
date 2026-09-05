@@ -109,6 +109,7 @@ function GalleryImage({
       <button
         type="button"
         onClick={() => onOpenLightbox(src, img.caption || "project photo", href)}
+        aria-label={`Open fullscreen: ${img.caption || "project photo"}`}
         className="block w-full text-left"
       >
         <div className="relative aspect-video overflow-hidden bg-surface-2">

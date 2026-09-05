@@ -37,6 +37,24 @@ export const metadata: Metadata = {
     "CTF",
     "TKJ",
   ],
+  openGraph: {
+    title: "Naidrahiqa - Faqih Ardian Syah",
+    description:
+      "TKJ Student, Kernel Developer, IoT Builder, and CyberSecurity Enthusiast. Portfolio and school project showcase.",
+    type: "website",
+    siteName: "Naidrahiqa",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Naidrahiqa - Faqih Ardian Syah",
+    description:
+      "TKJ Student, Kernel Developer, IoT Builder, and CyberSecurity Enthusiast.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 const themeInit = `
