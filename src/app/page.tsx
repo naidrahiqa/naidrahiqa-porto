@@ -62,11 +62,11 @@ export default async function HomePage() {
   return (
     <div className="flex flex-col pt-14 sm:pt-20">
       {/* HERO */}
-      <section className="relative flex min-h-[100dvh] flex-col justify-center gap-10 overflow-hidden">
+      <section className="relative flex min-h-[100dvh] flex-col justify-center gap-10 overflow-hidden lg:grid lg:grid-cols-2 lg:items-center lg:gap-12">
         <div className="orb orb-accent -top-40 -left-40 h-80 w-80" />
         <div className="orb orb-pink top-20 -right-20 h-60 w-60" />
 
-        <div className="relative z-10 flex flex-col gap-8 max-w-2xl">
+        <div className="relative z-10 flex flex-col gap-8">
           <SkillTags />
 
           <div className="relative z-10">
@@ -100,6 +100,42 @@ export default async function HomePage() {
                 </Link>
               </MagneticButton>
             </div>
+          </div>
+        </div>
+
+        <div className="hidden lg:flex lg:justify-end">
+          <div className="relative w-full max-w-md">
+            <div className="glass glow-accent rounded-3xl p-6 hard-shadow">
+              <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-accent mb-4">
+                <span className="flex h-3.5 items-end gap-0.5">
+                  <span className="eq-bar block h-3.5 w-1 rounded-full bg-gradient-to-t from-accent to-accent-2" style={{ animationDelay: "0ms" }} />
+                  <span className="eq-bar block h-3.5 w-1 rounded-full bg-gradient-to-t from-accent to-accent-2" style={{ animationDelay: "180ms" }} />
+                  <span className="eq-bar block h-3.5 w-1 rounded-full bg-gradient-to-t from-accent to-accent-2" style={{ animationDelay: "360ms" }} />
+                  <span className="eq-bar block h-3.5 w-1 rounded-full bg-gradient-to-t from-accent to-accent-2" style={{ animationDelay: "120ms" }} />
+                </span>
+                Currently
+              </div>
+
+              <div className="space-y-3">
+                {[
+                  { label: "Exploring", value: "Linux Kernel Internals", icon: "⚡" },
+                  { label: "Building", value: "IoT Sensor Network", icon: "📡" },
+                  { label: "Learning", value: "Exploit Development", icon: "🔓" },
+                  { label: "Reading", value: "Linux Device Drivers", icon: "📖" },
+                ].map((item) => (
+                  <div key={item.label} className="flex items-center gap-3 rounded-xl border border-glass-border bg-surface-2/50 px-3 py-2.5">
+                    <span className="text-lg">{item.icon}</span>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-muted">{item.label}</p>
+                      <p className="truncate text-sm font-semibold text-foreground">{item.value}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-accent-fill/30 blur-2xl" />
+            <div className="pointer-events-none absolute -bottom-8 -left-8 h-28 w-28 rounded-full bg-accent-2-fill/30 blur-2xl" />
           </div>
         </div>
       </section>

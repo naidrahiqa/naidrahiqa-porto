@@ -3,64 +3,80 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
-const SKILLS = ["Networking", "Kernel Dev", "IoT", "CTF"];
-
-const SCATTER = [
-  { x: 8, y: 5, r: -12, drift: 6 },
-  { x: 55, y: 0, r: 8, drift: -4 },
-  { x: 28, y: 18, r: -6, drift: 5 },
-  { x: 68, y: 14, r: 14, drift: -6 },
+const SKILLS = [
+  { name: "Networking", color: "border-accent bg-accent text-on-accent" },
+  { name: "Kernel Dev", color: "border-accent-2 bg-accent-2 text-on-accent" },
+  { name: "IoT", color: "border-gold bg-gold text-on-accent" },
+  { name: "CTF", color: "border-danger bg-danger text-on-accent" },
 ];
+
+function rand(seed: number) {
+  const x = Math.sin(seed * 9301 + 49297) * 233280;
+  return x - Math.floor(x);
+}
 
 export function SkillTags() {
   const [scattered, setScattered] = useState(true);
 
+  const positions = SKILLS.map((_, i) => ({
+    x: rand(i * 7 + 1) * 55 + 5,
+    y: rand(i * 13 + 3) * 30 + 5,
+    r: rand(i * 19 + 5) * 50 - 25,
+    delay: rand(i * 31 + 7) * 0.4,
+  }));
+
   return (
-    <div className="relative h-24 w-full sm:h-20">
+    <div className="relative w-full">
       {scattered ? (
-        <div className="relative h-full w-full">
+        <div className="relative h-32 sm:h-28">
           {SKILLS.map((skill, i) => {
-            const s = SCATTER[i];
+            const p = positions[i];
             return (
               <button
-                key={skill}
+                key={skill.name}
                 onClick={() => setScattered(false)}
                 className={cn(
-                  "absolute font-display rounded-full border-2 border-accent bg-accent px-3 py-1",
-                  "text-[10px] font-bold uppercase tracking-widest text-on-accent",
-                  "hard-shadow-sm cursor-pointer",
+                  "absolute rounded-2xl border-2 px-4 py-2.5",
+                  "font-display text-xs font-bold uppercase tracking-wider",
+                  "hard-shadow-sm cursor-pointer z-10",
                   "transition-all duration-300 ease-out",
-                  "hover:scale-110 hover:brightness-110 hover:z-10",
-                  "active:scale-95"
+                  "hover:scale-110 hover:brightness-110 hover:z-20 hover:rotate-0",
+                  "active:scale-95",
+                  skill.color
                 )}
                 style={{
-                  left: `${s.x}%`,
-                  top: `${s.y}%`,
-                  "--r": `${s.r}deg`,
-                  transform: `rotate(${s.r}deg)`,
-                  animation: `skill-float ${3 + i * 0.4}s ease-in-out infinite`,
-                  animationDelay: `${i * 0.25}s`,
-                } as React.CSSProperties}
+                  left: `${p.x}%`,
+                  top: `${p.y}%`,
+                  transform: `rotate(${p.r}deg)`,
+                  animation: `skill-float ${2.5 + i * 0.3}s ease-in-out infinite`,
+                  animationDelay: `${p.delay}s`,
+                }}
               >
-                {skill}
+                {skill.name}
               </button>
             );
           })}
         </div>
       ) : (
-        <button
-          onClick={() => setScattered(true)}
-          className={cn(
-            "font-display w-fit cursor-pointer rounded-full border-2 border-accent bg-accent",
-            "px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-on-accent",
-            "hard-shadow-sm",
-            "transition-all duration-400 ease-[cubic-bezier(0.34,1.56,0.64,1)]",
-            "hover:scale-105 hover:brightness-110",
-            "active:scale-95"
-          )}
-        >
-          Networking · Kernel Dev · IoT · CTF
-        </button>
+        <div className="flex flex-wrap gap-2">
+          {SKILLS.map((skill) => (
+            <button
+              key={skill.name}
+              onClick={() => setScattered(true)}
+              className={cn(
+                "rounded-2xl border-2 px-4 py-2.5",
+                "font-display text-xs font-bold uppercase tracking-wider",
+                "hard-shadow-sm cursor-pointer",
+                "transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]",
+                "hover:scale-105 hover:brightness-110",
+                "active:scale-95",
+                skill.color
+              )}
+            >
+              {skill.name}
+            </button>
+          ))}
+        </div>
       )}
     </div>
   );
