@@ -244,6 +244,16 @@ body {
   outline-offset: 2px;
 }
 
+/* ── Page transitions ────────────────────────────── */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.page-enter {
+  animation: fade-in 0.3s ease-out;
+}
+
 /* ── Soft shadow system (replaces hard neo-brutalism) ── */
 .hard-shadow {
   box-shadow: 0 10px 26px -10px var(--shadow-color);

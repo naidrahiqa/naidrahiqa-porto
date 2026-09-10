@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { CursorGlow } from "@/components/CursorGlow";
+import { ScrollProgress } from "@/components/ScrollProgress";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -78,10 +79,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body className="noise min-h-full flex flex-col">
         <CursorGlow />
+        <ScrollProgress />
         <div className="motif-bg pointer-events-none fixed inset-0 -z-10 opacity-40" />
         <div className="grid-bg pointer-events-none fixed inset-0 -z-10" />
         <Navbar />
-        <main className="flex-1 w-full max-w-5xl mx-auto px-5 sm:px-8 pb-20">
+        <main className="flex-1 w-full max-w-5xl mx-auto px-5 sm:px-8 pb-20 page-enter">
           {children}
         </main>
         <Footer />

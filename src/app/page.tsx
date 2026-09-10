@@ -12,6 +12,7 @@ import { Counter } from "@/components/Counter";
 import { MagneticButton } from "@/components/MagneticButton";
 import { CardTilt } from "@/components/CardTilt";
 import { SkillTags } from "@/components/SkillTags";
+import { TechIcon } from "@/components/TechIcon";
 
 export const metadata: Metadata = {
   title: "Naidrahiqa",
@@ -188,16 +189,19 @@ export default async function HomePage() {
             <ScrollReveal key={tech.name} delay={i * 50}>
               <div
                 className={cn(
-                  "rounded-xl border-2 border-border bg-surface p-4 transition-all duration-200 hover:-translate-y-0.5 hover:hard-shadow-sm",
+                  "flex items-center gap-3 rounded-xl border-2 border-border bg-surface p-4 transition-all duration-200 hover:-translate-y-0.5 hover:hard-shadow-sm",
                   tech.accent
                     ? "border-accent/30 hover:border-accent/60"
                     : "hover:border-accent-2/40"
                 )}
               >
-                <p className="font-display text-sm font-bold uppercase tracking-tight text-foreground">
-                  {tech.name}
-                </p>
-                <p className="mt-0.5 text-[11px] text-muted">{tech.desc}</p>
+                <TechIcon name={tech.name} size={22} />
+                <div className="min-w-0">
+                  <p className="font-display text-sm font-bold uppercase tracking-tight text-foreground">
+                    {tech.name}
+                  </p>
+                  <p className="mt-0.5 text-[11px] text-muted">{tech.desc}</p>
+                </div>
               </div>
             </ScrollReveal>
           ))}
