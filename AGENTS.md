@@ -68,6 +68,7 @@ src/
 │   │       ├── contacts/page.tsx    # Contacts editor
 │   │       └── profile/page.tsx     # Profile editor
 │   └── api/admin/          # Admin API routes (RLS-protected)
+│   └── api/contact/        # Contact form email API (Resend)
 ├── components/
 │   ├── admin/              # Admin UI components
 │   │   ├── ui.tsx          # Button, Card, Input, Label, Select, TextArea, StatusPill
@@ -85,6 +86,8 @@ src/
 │   ├── ProjectGallery.tsx  # Gallery with lightbox, video embed, LinkCards
 │   ├── ImageLightbox.tsx   # Full-size image modal
 │   ├── BrandIcon.tsx       # Social media icons
+│   ├── SkillTags.tsx       # Interactive scattered skill tags (hero)
+│   ├── ContactForm.tsx     # Contact form with Resend email
 │   └── ScrollReveal.tsx    # Scroll animation wrapper
 ├── lib/
 │   ├── types.ts            # All TypeScript interfaces
@@ -147,6 +150,15 @@ npm run build    # Production build (verify after changes)
 npm run lint     # ESLint
 ```
 
+## Email (Resend)
+
+- API route: `src/app/api/contact/route.ts`
+- Sends to: `faqihardiansyah89@gmail.com` (reply-to: user's email)
+- Env var: `RESEND_API_KEY` (set in Vercel dashboard)
+- Free tier: 100 emails/day
+- Contact form: `src/components/ContactForm.tsx`
+- Contact page: `src/app/contact/page.tsx` (form + social links)
+
 ## Migrations
 
 Run in order in Supabase SQL Editor. Never modify a migration after it's been applied — create a new one.
@@ -196,3 +208,21 @@ Anti-slop frontend framework installed via `npx skills add Leonxlnx/taste-skill`
 - **Pre-Flight Check**: run the full checklist (Section 14) before shipping any public page.
 
 Full skill file: `.agents/skills/design-taste-frontend/SKILL.md`
+
+## Changes Log
+
+### 2026-09-10
+- Removed NowPlaying music player from homepage + admin sidebar
+- Added SkillTags: interactive scattered skill cards (Networking, Kernel Dev, IoT, CTF) with per-card colors, chaotic float animation, click to collect
+- Added hero right panel: "Currently" glass card (Linux Kernel, IoT, Exploit Dev, Reading) - desktop only
+- Added diagonal motif background pattern
+- Added contact form with Resend email integration (`/api/contact`)
+- Fixed contacts delete in admin panel (was using RPC that didn't support deletes)
+- Fixed redundant padding (sections had px-5 that stacked with layout px-5)
+- Badge text: "TKJ Student" changed to "Networking"
+- Added `resend` package dependency
+
+### Environment Variables (add to Vercel)
+```
+RESEND_API_KEY=re_xxxxxxxxxxxxxxxx  # From resend.com
+```
