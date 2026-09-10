@@ -4,7 +4,6 @@ import { ArrowRight, ExternalLink } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
 import { ProjectCard, AchievementBadge } from "@/components/cards";
-import { NowPlaying } from "@/components/NowPlaying";
 import { MarkdownContent } from "@/components/MarkdownContent";
 import { PDFThumbnail } from "@/components/PDFThumbnail";
 import { ScrollReveal } from "@/components/ScrollReveal";
@@ -12,12 +11,12 @@ import { TextScramble } from "@/components/TextScramble";
 import { Counter } from "@/components/Counter";
 import { MagneticButton } from "@/components/MagneticButton";
 import { CardTilt } from "@/components/CardTilt";
-import type { NowPlayingSong } from "@/lib/types";
+import { SkillTags } from "@/components/SkillTags";
 
 export const metadata: Metadata = {
   title: "Naidrahiqa",
   description:
-    "Faqih Ardian Syah - TKJ Student, Kernel Developer, IoT Builder, and CyberSecurity Enthusiast. Portfolio and school project showcase.",
+    "Faqih Ardian Syah - Networking Student, Kernel Developer, IoT Builder, and CyberSecurity Enthusiast. Portfolio and school project showcase.",
   openGraph: {
     title: "Naidrahiqa - Faqih Ardian Syah",
     description:
@@ -26,11 +25,6 @@ export const metadata: Metadata = {
     siteName: "Naidrahiqa",
   },
 };
-
-function pickTodaysSong(rows: NowPlayingSong[]): NowPlayingSong | null {
-  if (rows.length === 0) return null;
-  return rows[Math.floor(Date.now() / 86400000) % rows.length];
-}
 
 export default async function HomePage() {
   const supabase = await createClient();
@@ -41,7 +35,6 @@ export default async function HomePage() {
     { data: achievements },
     { count: totalAchievements },
     { data: aboutSections },
-    { data: nowPlaying },
   ] = await Promise.all([
     supabase.from("profiles").select("*").eq("id", 1).single(),
     supabase
@@ -64,23 +57,17 @@ export default async function HomePage() {
       .select("*")
       .order("sort_order")
       .limit(3),
-    supabase.from("now_playing").select("*").order("sort_order"),
   ]);
-
-  const nowPlayingRows = (Array.isArray(nowPlaying) ? nowPlaying : []) as NowPlayingSong[];
-  const todaysSong = pickTodaysSong(nowPlayingRows);
 
   return (
     <div className="flex flex-col pt-14 sm:pt-20">
       {/* HERO */}
-      <section className="relative flex min-h-[100dvh] flex-col justify-center gap-10 overflow-hidden px-5 sm:px-8 lg:grid lg:grid-cols-2 lg:items-center lg:gap-12">
+      <section className="relative flex min-h-[100dvh] flex-col justify-center gap-10 overflow-hidden">
         <div className="orb orb-accent -top-40 -left-40 h-80 w-80" />
         <div className="orb orb-pink top-20 -right-20 h-60 w-60" />
 
-        <div className="relative z-10 flex flex-col gap-8">
-          <span className="font-display w-fit rounded-full border-2 border-accent bg-accent px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-on-accent hard-shadow-sm">
-            TKJ Student · Kernel Dev · IoT · CTF
-          </span>
+        <div className="relative z-10 flex flex-col gap-8 max-w-2xl">
+          <SkillTags />
 
           <div className="relative z-10">
             <h1 className="font-display text-5xl font-extrabold uppercase leading-[0.9] tracking-tight sm:text-7xl lg:text-8xl">
@@ -115,15 +102,11 @@ export default async function HomePage() {
             </div>
           </div>
         </div>
-
-        <div className="flex justify-center lg:justify-end">
-          <NowPlaying song={todaysSong} />
-        </div>
       </section>
 
       {/* ABOUT */}
       {aboutSections && aboutSections.length > 0 && (
-        <section id="about" className="relative flex flex-col gap-10 px-5 sm:px-8 mt-20">
+        <section id="about" className="relative flex flex-col gap-10 mt-16">
           <span className="sticker top-0 right-10 text-lg rotate-12">✦</span>
           <span className="sticker top-20 right-0 text-xs -rotate-6" style={{animationDelay:"1s"}}>◆</span>
           <span className="sticker top-8 left-0 text-xs rotate-45" style={{animationDelay:"2s"}}>✦</span>
@@ -147,7 +130,7 @@ export default async function HomePage() {
       )}
 
       {/* TECH STACK */}
-      <section className="flex flex-col gap-6 px-5 sm:px-8 mt-20">
+      <section className="flex flex-col gap-6 mt-16">
         <ScrollReveal>
           <SectionHeader title="Tech Stack" />
         </ScrollReveal>
@@ -186,7 +169,7 @@ export default async function HomePage() {
       </section>
 
       {/* STATS */}
-      <section className="px-5 sm:px-8 mt-16">
+      <section className="mt-16">
         <ScrollReveal>
           <div className="grid gap-4 sm:grid-cols-3">
             <div className="flex flex-col items-start gap-1 rounded-xl border-2 border-border bg-surface px-6 py-5 hard-shadow-sm sm:col-span-2">
@@ -226,7 +209,7 @@ export default async function HomePage() {
       </section>
 
       {/* PROJECTS */}
-      <section id="projects" className="flex flex-col gap-6 px-5 sm:px-8 mt-20">
+      <section id="projects" className="flex flex-col gap-6 mt-16">
         <ScrollReveal>
           <div className="flex items-end justify-between gap-4">
             <SectionHeader title="Projects" />
@@ -251,7 +234,7 @@ export default async function HomePage() {
       </section>
 
       {/* ACHIEVEMENTS */}
-      <section id="achievements" className="flex flex-col gap-6 px-5 sm:px-8 mt-24">
+      <section id="achievements" className="flex flex-col gap-6 mt-16">
         <ScrollReveal>
           <div className="flex items-end justify-between gap-4">
             <SectionHeader title="Achievements" />

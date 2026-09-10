@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { SocialLink } from "@/components/SocialIcon";
+import { ContactForm } from "@/components/ContactForm";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -30,15 +31,24 @@ export default async function ContactPage() {
         </p>
       </header>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        {contacts?.map((c) => (
-          <SocialLink
-            key={c.id}
-            platform={c.platform}
-            handle={c.handle}
-            url={c.url}
-          />
-        ))}
+      <div className="grid gap-8 lg:grid-cols-2">
+        <ContactForm />
+
+        <div className="flex flex-col gap-4">
+          <p className="text-xs font-semibold uppercase tracking-widest text-muted">
+            Or find me on
+          </p>
+          <div className="flex flex-col gap-3">
+            {contacts?.map((c) => (
+              <SocialLink
+                key={c.id}
+                platform={c.platform}
+                handle={c.handle}
+                url={c.url}
+              />
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

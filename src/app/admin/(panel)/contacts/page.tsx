@@ -17,6 +17,7 @@ const platforms = ["email", "github", "instagram", "linkedin", "telegram", "what
 export default function ContactsEditorPage() {
   const { toast } = useToast();
   const [contacts, setContacts] = useState<Contact[]>([]);
+  const [deleted, setDeleted] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -52,6 +53,9 @@ export default function ContactsEditorPage() {
   }
 
   function removeContact(id: string) {
+    if (!id.startsWith("new-")) {
+      setDeleted((prev) => [...prev, id]);
+    }
     setContacts((prev) => prev.filter((c) => c.id !== id));
   }
 
@@ -62,20 +66,22 @@ export default function ContactsEditorPage() {
       const res = await fetch("/api/admin/contacts", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(
-          contacts.map((c) => ({
+        body: JSON.stringify({
+          items: contacts.map((c) => ({
             id: c.id,
             platform: c.platform,
             handle: c.handle,
             url: c.url,
             sort_order: c.sort_order,
-          }))
-        ),
+          })),
+          deleted,
+        }),
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         throw new Error(data.error ?? "Save failed");
       }
+      setDeleted([]);
       toast("success", "Contacts saved");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Save failed");

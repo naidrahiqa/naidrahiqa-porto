@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     template: "%s - Naidrahiqa",
   },
   description:
-    "Faqih Ardian Syah - TKJ Student | Kernel Developer | IoT Builder | CyberSecurity Enthusiast",
+    "Faqih Ardian Syah - Networking Student | Kernel Developer | IoT Builder | CyberSecurity Enthusiast",
   keywords: [
     "Faqih Ardian Syah",
     "Naidrahiqa",
@@ -78,7 +78,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body className="noise min-h-full flex flex-col">
         <CursorGlow />
-        <div className="dot-grid pointer-events-none fixed inset-0 -z-10 opacity-40" />
+        <div className="motif-bg pointer-events-none fixed inset-0 -z-10 opacity-40" />
         <div className="grid-bg pointer-events-none fixed inset-0 -z-10" />
         <Navbar />
         <main className="flex-1 w-full max-w-5xl mx-auto px-5 sm:px-8 pb-20">
