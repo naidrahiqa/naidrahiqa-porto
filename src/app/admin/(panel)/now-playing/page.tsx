@@ -98,24 +98,8 @@ export default function NowPlayingAdminPage() {
     }
   }
 
-  async function remove(id: string) {
-    try {
-      const res = await fetch(`/api/admin/now_playing/${id}`, {
-        method: "DELETE",
-      });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error ?? "Delete failed");
-      }
-      await load();
-      toast("success", "Deleted");
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Delete failed");
-    }
-  }
-
   if (loading) {
-    return <p className="text-sm text-muted">Loading…</p>;
+    return <p className="text-sm text-muted">Loading...</p>;
   }
 
   return (

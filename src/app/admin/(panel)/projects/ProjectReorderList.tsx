@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import {
   DndContext,
@@ -143,13 +143,15 @@ function SortableRow({ item, index }: { item: Project; index: number }) {
 }
 
 export function ProjectReorderList({ items }: { items: Project[] }) {
+  const [prevItems, setPrevItems] = useState(items);
   const [ordered, setOrdered] = useState<Project[]>(items);
   const [saving, setSaving] = useState(false);
   const { toast } = useToast();
 
-  useEffect(() => {
+  if (items !== prevItems) {
+    setPrevItems(items);
     setOrdered(items);
-  }, [items]);
+  }
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),

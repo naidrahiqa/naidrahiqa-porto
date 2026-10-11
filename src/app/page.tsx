@@ -32,7 +32,8 @@ export default async function HomePage() {
 
   const [
     { data: profile },
-    { data: projects },
+    { data: featuredProjects },
+    { count: totalProjects },
     { data: achievements },
     { count: totalAchievements },
     { data: aboutSections },
@@ -45,6 +46,10 @@ export default async function HomePage() {
       .eq("featured", true)
       .order("sort_order", { ascending: true })
       .limit(6),
+    supabase
+      .from("projects")
+      .select("id", { count: "exact", head: true })
+      .eq("published", true),
     supabase
       .from("achievements")
       .select("*")
@@ -59,6 +64,17 @@ export default async function HomePage() {
       .order("sort_order")
       .limit(3),
   ]);
+
+  let displayProjects = featuredProjects ?? [];
+  if (displayProjects.length === 0) {
+    const { data: fallbackProjects } = await supabase
+      .from("projects")
+      .select("*")
+      .eq("published", true)
+      .order("sort_order", { ascending: true })
+      .limit(6);
+    displayProjects = fallbackProjects ?? [];
+  }
 
   return (
     <div className="flex flex-col pt-14 sm:pt-20">
@@ -214,7 +230,7 @@ export default async function HomePage() {
           <div className="grid gap-4 sm:grid-cols-3">
             <div className="flex flex-col items-start gap-1 rounded-xl border-2 border-border bg-surface px-6 py-5 hard-shadow-sm sm:col-span-2">
               <Counter
-                target={projects?.length ?? 0}
+                target={totalProjects ?? displayProjects.length}
                 suffix="+"
                 className="font-display text-5xl font-extrabold tracking-tight text-accent"
               />
@@ -263,7 +279,7 @@ export default async function HomePage() {
           </div>
         </ScrollReveal>
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {projects?.map((p, i) => (
+          {displayProjects.map((p, i) => (
             <ScrollReveal key={p.id} delay={i * 80}>
               <CardTilt>
                 <ProjectCard project={p} />

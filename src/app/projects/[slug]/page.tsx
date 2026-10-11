@@ -56,7 +56,7 @@ export default async function ProjectDetailPage({
     project.category === "school" && project.class_level
       ? project.subject
         ? project.subject
-        : `Kelas ${project.class_level}`
+        : `Kelas ${project.class_level.toUpperCase()}`
       : "Projects";
 
   return (

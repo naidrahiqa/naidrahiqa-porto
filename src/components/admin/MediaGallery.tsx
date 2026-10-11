@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { ArrowDown, ArrowUp, ImagePlus, Plus, Trash2, Play, FileText } from "lucide-react";
+import { ArrowDown, ArrowUp, ImagePlus, Plus, Trash2, Play } from "lucide-react";
 import type { ProjectMediaType } from "@/lib/types";
 import { cn, resolveImageUrl, detectVideoType } from "@/lib/utils";
 import { Input, Label, Select } from "@/components/admin/ui";

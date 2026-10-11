@@ -170,3 +170,10 @@ UPDATE public.projects
 SET subject = 'ENGLISH'
 WHERE category = 'school' AND subject = 'English';
 
+-- ---------- 6. Performance Indexes untuk Filter & Sort ----------
+CREATE INDEX IF NOT EXISTS idx_projects_category ON public.projects (category);
+CREATE INDEX IF NOT EXISTS idx_projects_class_level ON public.projects (class_level) WHERE category = 'school';
+CREATE INDEX IF NOT EXISTS idx_projects_subject ON public.projects (subject) WHERE category = 'school';
+CREATE INDEX IF NOT EXISTS idx_projects_published_sort ON public.projects (published, sort_order);
+
+

@@ -48,7 +48,7 @@ export function PDFThumbnail({ url, className = "" }: PDFThumbnailProps) {
           canvas,
           canvasContext: ctx,
           viewport,
-        } as any);
+        } as unknown as Parameters<typeof page.render>[0]);
         await renderTask.promise;
         if (!cancelled) setLoading(false);
       } catch {

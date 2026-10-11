@@ -17,12 +17,16 @@ export async function generateMetadata({
     .select("subject")
     .eq("published", true)
     .eq("category", "school")
-    .eq("class_level", cls)
-    .order("sort_order", { ascending: true })
-    .limit(1);
+    .eq("class_level", cls);
+
+  const matched = data?.find(
+    (p) => (p.subject ? slugify(p.subject) : "lainnya") === subject
+  );
 
   const displayName =
-    subject === "lainnya" ? "Lainnya" : (data?.[0]?.subject || subject);
+    subject === "lainnya"
+      ? "Lainnya"
+      : (matched?.subject || subject.toUpperCase());
 
   return {
     title: `${displayName} - Kelas ${cls?.toUpperCase()}`,

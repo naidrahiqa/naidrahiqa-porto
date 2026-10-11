@@ -95,7 +95,7 @@ export default function ProfileEditorPage() {
             }
           />
           <p className="mt-0.5 text-[10px] text-muted">
-            Displayed in the hero section and page title (e.g. "FAQIH ARDIAN SYAH")
+            Displayed in the hero section and page title (e.g. &quot;FAQIH ARDIAN SYAH&quot;)
           </p>
         </div>
         <div>
@@ -108,7 +108,7 @@ export default function ProfileEditorPage() {
             }
           />
           <p className="mt-0.5 text-[10px] text-muted">
-            Shown as "Naidrahiqa" in the UI - your casual/brand name
+            Shown as &quot;Naidrahiqa&quot; in the UI - your casual/brand name
           </p>
         </div>
         <div>

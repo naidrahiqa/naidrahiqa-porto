@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { UploadCloud, X, Link as LinkIcon, Check, FileVideo, Image } from "lucide-react";
+import { UploadCloud, X, Link as LinkIcon, Check, FileVideo, Image as ImageIcon } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 function convertGoogleDriveUrl(url: string): string {
@@ -13,14 +13,6 @@ function convertGoogleDriveUrl(url: string): string {
   if (match3 && (url.includes("drive.google.com") || url.includes("docs.google.com")))
     return `https://lh3.googleusercontent.com/d/${match3[1]}=s0`;
   return url;
-}
-
-function getGoogleDriveFileId(url: string): string | null {
-  const match = url.match(/drive\.google\.com\/file\/d\/([^/]+)\//);
-  if (match) return match[1];
-  const match2 = url.match(/[?&]id=([^&]+)/);
-  if (match2 && url.includes("drive.google.com")) return match2[1];
-  return null;
 }
 
 function isGoogleDriveUrl(url: string): boolean {
@@ -196,7 +188,7 @@ export function FileUpload({
               {value.includes("drive.google.com") ? (
                 <><FileVideo size={12} /> Google Drive file</>
               ) : (
-                <><Image size={12} /> {value.split("/").pop()}</>
+                <><ImageIcon size={12} /> {value.split("/").pop()}</>
               )}
             </span>
           )}

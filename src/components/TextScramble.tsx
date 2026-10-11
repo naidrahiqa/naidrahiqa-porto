@@ -12,7 +12,6 @@ export function TextScramble({ text, className }: { text: string; className?: st
     if (!el) return;
 
     let frame = 0;
-    const totalFrames = text.length * 3;
     const queue: { from: string; to: string; start: number; end: number }[] = [];
 
     for (let i = 0; i < text.length; i++) {
