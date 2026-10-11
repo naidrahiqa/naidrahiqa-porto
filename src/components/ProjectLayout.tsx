@@ -13,13 +13,13 @@ import type { Project, ProjectMedia } from "@/lib/types";
 function MasonryGallery({ media }: { media: ProjectMedia[] }) {
   const images = media.filter((m) => m.media_type === "image");
   const videos = media.filter((m) => m.media_type !== "image");
-  if (images.length === 0 && videos.length === 0) return null;
-
   const [lightbox, setLightbox] = useState<{
     src: string;
     alt: string;
     href?: string;
   } | null>(null);
+
+  if (images.length === 0 && videos.length === 0) return null;
 
   return (
     <div className="flex flex-col gap-8">

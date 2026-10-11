@@ -24,6 +24,7 @@ export const projectFields = [
   "link",
   "published",
   "featured",
+  "language",
   "sort_order",
 ] as const;
 

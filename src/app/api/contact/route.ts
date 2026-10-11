@@ -1,9 +1,13 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
+  if (!process.env.RESEND_API_KEY) {
+    return NextResponse.json({ error: "Email service is not configured" }, { status: 503 });
+  }
+
+  const resend = new Resend(process.env.RESEND_API_KEY);
   const body = await request.json().catch(() => ({}));
   const { name, email, message } = body;
 

@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { CLASS_LEVELS, slugify } from "@/lib/utils";
-import { SubjectRow } from "@/components/cards";
+import { SchoolSubjectFilter } from "@/components/SchoolSubjectFilter";
 import type { Project } from "@/lib/types";
 
 export async function generateStaticParams() {
@@ -57,6 +57,11 @@ export default async function SchoolClassPage({
     groups.push({ name: "Lainnya", items: unfiled });
   }
 
+  const subjectGroupList = groups.map((g) => ({
+    name: g.name,
+    itemCount: g.items.length,
+  }));
+
   return (
     <div className="flex flex-col gap-10 pt-12 sm:pt-16">
       <Link
@@ -79,17 +84,7 @@ export default async function SchoolClassPage({
         </p>
       </header>
 
-      <div className="flex flex-col gap-3">
-        {groups.map((g) => (
-          <SubjectRow
-            key={slugify(g.name)}
-            cls={cls}
-            subject={g.name}
-            slug={slugify(g.name)}
-            itemCount={g.items.length}
-          />
-        ))}
-      </div>
+      <SchoolSubjectFilter currentClass={cls} groups={subjectGroupList} />
     </div>
   );
 }

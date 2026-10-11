@@ -2,7 +2,7 @@
 
 import type { ProjectLayout } from "@/lib/types";
 
-const LAYOUTS: {
+export const LAYOUTS: {
   value: ProjectLayout;
   label: string;
   hint: string;
