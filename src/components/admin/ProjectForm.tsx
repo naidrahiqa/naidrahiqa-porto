@@ -26,6 +26,7 @@ import {
   Minus,
   HelpCircle,
   Check,
+  Plus,
   BookOpen,
   FolderGit2,
   Layers,
@@ -250,6 +251,7 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
   const [existingSubjects, setExistingSubjects] = useState<string[]>([]);
   const [subjectTab, setSubjectTab] = useState<"all" | "produktif" | "umum">("all");
   const [subjectSearch, setSubjectSearch] = useState("");
+  const [newSubjectInput, setNewSubjectInput] = useState("");
 
   const [showTemplateModal, setShowTemplateModal] = useState(false);
   const [showMarkdownCheat, setShowMarkdownCheat] = useState(false);
@@ -267,11 +269,14 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
               set.add(p.subject.trim());
             }
           }
+          if (initial?.subject && initial.subject.trim()) {
+            set.add(initial.subject.trim());
+          }
           setExistingSubjects(Array.from(set).sort());
         }
       })
       .catch(() => {});
-  }, []);
+  }, [initial?.subject]);
 
   useEffect(() => {
     function handleBeforeUnload(e: BeforeUnloadEvent) {
@@ -286,6 +291,28 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
   const markDirty = useCallback(() => {
     isDirty.current = true;
   }, []);
+
+  const handleSelectOrAddSubject = useCallback(
+    (subjectName: string) => {
+      const clean = subjectName.trim().toUpperCase();
+      if (!clean) return;
+      setExistingSubjects((prev) =>
+        prev.includes(clean) ? prev : [...prev, clean].sort()
+      );
+      setSubject(clean);
+      markDirty();
+    },
+    [markDirty]
+  );
+
+  const handleAddNewCustomSubject = useCallback(() => {
+    const candidate = newSubjectInput.trim();
+    if (!candidate) return;
+    const formatted = candidate.toUpperCase();
+    handleSelectOrAddSubject(formatted);
+    setNewSubjectInput("");
+    toast("success", `Mapel "${formatted}" dipilih! Simpan proyek untuk menyimpannya ke database.`);
+  }, [newSubjectInput, handleSelectOrAddSubject, toast]);
 
   useEffect(() => {
     if (!initial) return;
@@ -1122,6 +1149,20 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
                       placeholder="e.g. ADMINISTRASI SISTEM JARINGAN"
                       className="font-semibold text-foreground"
                     />
+                    {subject.trim() && (
+                      <div className="mt-1 flex items-center gap-1.5 text-[11px]">
+                        <span className="text-muted">Status:</span>
+                        {existingSubjects.includes(subject.trim().toUpperCase()) ? (
+                          <span className="inline-flex items-center gap-1 font-medium text-accent">
+                            <Check size={12} /> Mapel sudah ada di daftar database
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 font-bold text-success">
+                            ✨ Mapel baru (otomatis tersimpan ke DB saat proyek disimpan)
+                          </span>
+                        )}
+                      </div>
+                    )}
                     <datalist id="subject-datalist">
                       {existingSubjects.map((s) => (
                         <option key={s} value={s} />
@@ -1134,18 +1175,22 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
                 </div>
 
                 {/* SECTION 1: Mapel Yang Sudah Pernah Digunakan di Database */}
-                {existingSubjects.length > 0 && (
-                  <div className="rounded-xl border border-accent/40 bg-accent/5 p-3.5">
-                    <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-                      <span className="flex items-center gap-1.5 text-xs font-bold text-accent">
-                        <span>📌</span>
-                        Mapel di Database Kamu ({existingSubjects.length})
-                      </span>
-                      <span className="text-[11px] text-muted">
-                        Format yang sudah tersimpan - klik untuk memilih persis
-                      </span>
-                    </div>
+                <div className="rounded-xl border border-accent/40 bg-accent/5 p-3.5">
+                  <div className="flex flex-wrap items-center justify-between gap-2 mb-1.5">
+                    <span className="flex items-center gap-1.5 text-xs font-bold text-accent">
+                      <span>📌</span>
+                      Mapel di Database Kamu ({existingSubjects.length})
+                    </span>
+                    <span className="text-[11px] text-muted">
+                      Klik pill untuk memilih persis
+                    </span>
+                  </div>
 
+                  <p className="mb-2.5 text-[11px] leading-relaxed text-muted">
+                    Portofolio kamu bebas dan dinamis. Kamu tidak dibatasi daftar ini. Cukup ketik mapel baru apa saja di bawah atau di input atas, mapel akan otomatis tersimpan permanen di database saat proyek disimpan.
+                  </p>
+
+                  {existingSubjects.length > 0 ? (
                     <div className="flex flex-wrap gap-1.5">
                       {existingSubjects.map((s) => {
                         const isSelected = subject === s;
@@ -1169,8 +1214,48 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
                         );
                       })}
                     </div>
+                  ) : (
+                    <p className="text-xs text-muted italic">Belum ada mapel tersimpan di database.</p>
+                  )}
+
+                  {/* FORM TAMBAH MAPEL BARU */}
+                  <div className="mt-3.5 pt-3 border-t border-accent/20">
+                    <div className="mb-1.5 flex items-center justify-between gap-2">
+                      <span className="flex items-center gap-1 text-[11px] font-bold text-accent">
+                        <Plus size={13} />
+                        Ketik / Tambah Mapel Baru:
+                      </span>
+                      <span className="text-[10px] text-muted">
+                        Langsung aktif & otomatis terdaftar
+                      </span>
+                    </div>
+
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={newSubjectInput}
+                        onChange={(e) => setNewSubjectInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            handleAddNewCustomSubject();
+                          }
+                        }}
+                        placeholder="Contoh: PEMROGRAMAN WEB, BASIS DATA, DLL..."
+                        className="flex-1 rounded-lg border border-border/80 bg-surface px-3 py-1.5 text-xs text-foreground placeholder:text-muted/60 outline-none focus:border-accent"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleAddNewCustomSubject}
+                        disabled={!newSubjectInput.trim()}
+                        className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-3.5 py-1.5 text-xs font-bold text-on-accent transition-all hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed"
+                      >
+                        <Plus size={13} />
+                        Tambah & Pilih
+                      </button>
+                    </div>
                   </div>
-                )}
+                </div>
 
                 {/* SECTION 2: Katalog Lengkap Mapel SMK TKJ & Umum */}
                 <div className="rounded-xl border border-border bg-surface-2/30 p-3.5">
@@ -1245,8 +1330,8 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
                             key={item.name}
                             type="button"
                             onClick={() => {
-                              setSubject(item.name);
-                              markDirty();
+                              handleSelectOrAddSubject(item.name);
+                              toast("success", `Mapel "${item.name}" dipilih!`);
                             }}
                             className={`inline-flex items-center gap-1 rounded-md border px-2 py-1 text-[11px] font-medium transition-all ${
                               isSelected
@@ -1254,6 +1339,7 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
                                 : "border-border/60 bg-surface text-muted hover:text-foreground hover:border-accent/40"
                             }`}
                           >
+                            {isSelected && <Check size={11} />}
                             {item.name}
                             <span className="text-[9px] opacity-60 font-mono">({item.hint})</span>
                           </button>

@@ -127,6 +127,38 @@ INSERT INTO public.projects (
   language = EXCLUDED.language,
   updated_at = now();
 
+-- Xiaomi MT6768 Common Kernel (k4.19)
+INSERT INTO public.projects (
+  title,
+  slug,
+  category,
+  layout,
+  description,
+  content,
+  link,
+  language,
+  published,
+  featured,
+  sort_order
+) VALUES (
+  'Xiaomi MT6768 Common Kernel (k4.19)',
+  'android-kernel-xiaomi-mt6768-k419',
+  'personal',
+  'text-first',
+  'MediaTek MT6768 common 4.19 kernel source tree for Xiaomi devices (Helio G80/G85)',
+  E'## Overview\nMediaTek MT6768 common 4.19 kernel source tree untuk perangkat Xiaomi (Helio G80/G85 platform).\n\n## Platform Specs\n- **SoC**: MediaTek MT6768 (Helio G80 / G85)\n- **Kernel Version**: Linux 4.19 LTS\n- **Architecture**: ARM64 (aarch64)\n\n[Lihat di GitHub](https://github.com/naidrahiqa/android_kernel_xiaomi_mt6768-k419)',
+  'https://github.com/naidrahiqa/android_kernel_xiaomi_mt6768-k419',
+  'C',
+  true,
+  false,
+  27
+) ON CONFLICT (slug) DO UPDATE SET
+  title = EXCLUDED.title,
+  link = EXCLUDED.link,
+  description = EXCLUDED.description,
+  language = EXCLUDED.language,
+  updated_at = now();
+
 -- ---------- 4. Update Current Focus di About ----------
 UPDATE public.about_sections
 SET content = E'- Developing custom kernel for Redmi 10 2022 (selene) & CI toolkit\n- Building tools for Linux & Android users (FetchVid, MTK Unbrick)\n- CachyOS Hyprland rice setup (Material You + SDDM sync)\n- Hardware recovery & security research (RK R75 SWD flash, Zygisk spoofing)',
