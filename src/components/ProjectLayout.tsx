@@ -8,6 +8,10 @@ import { MarkdownContent } from "@/components/MarkdownContent";
 import { VideoEmbed } from "@/components/VideoEmbed";
 import { ProjectGallery } from "@/components/ProjectGallery";
 import { ImageLightbox } from "@/components/ImageLightbox";
+import {
+  isStructuredSchoolProject,
+  SchoolProjectView,
+} from "@/components/SchoolProjectView";
 import type { Project, ProjectMedia } from "@/lib/types";
 
 function MasonryGallery({ media }: { media: ProjectMedia[] }) {
@@ -102,7 +106,10 @@ export function ProjectLayout({
 }) {
   const cover = resolveImageUrl(project.cover_image);
   const coverHref = getSourceHref(project.cover_image ?? "");
-  const markdown = project.content ? (
+  const structuredData = isStructuredSchoolProject(project.content);
+  const contentElement = structuredData ? (
+    <SchoolProjectView data={structuredData} />
+  ) : project.content ? (
     <MarkdownContent content={project.content} />
   ) : null;
   const video = project.video_url && project.video_type !== "none" ? (
@@ -117,6 +124,16 @@ export function ProjectLayout({
 
   const unembeddedMedia = media.filter((m) => {
     if (!project.content) return true;
+    if (structuredData) {
+      const isUsedInPoints = structuredData.points.some((p) =>
+        p.images?.some(
+          (img) =>
+            img.url === m.url ||
+            (m.url && img.url && resolveImageUrl(img.url) === resolveImageUrl(m.url))
+        )
+      );
+      if (isUsedInPoints) return false;
+    }
     const directUrl = m.url;
     const resolvedUrl = resolveImageUrl(m.url);
     const driveMatch = m.url.match(/([a-zA-Z0-9_-]{25,})/);
@@ -132,7 +149,7 @@ export function ProjectLayout({
     case "text-first":
       return (
         <div className="flex flex-col gap-8">
-          {markdown}
+          {contentElement}
           <ProjectGallery media={unembeddedMedia} />
           {video}
         </div>
@@ -141,7 +158,7 @@ export function ProjectLayout({
       return (
         <div className="flex flex-col gap-8">
           <ProjectGallery media={unembeddedMedia} />
-          {markdown}
+          {contentElement}
           {video}
         </div>
       );
@@ -177,13 +194,13 @@ export function ProjectLayout({
           )}
           <ProjectGallery media={unembeddedMedia} />
           {video}
-          {markdown}
+          {contentElement}
         </div>
       );
     case "masonry":
       return (
         <div className="flex flex-col gap-8">
-          {markdown}
+          {contentElement}
           <MasonryGallery media={unembeddedMedia} />
           {video}
         </div>
@@ -194,7 +211,7 @@ export function ProjectLayout({
         <div className="flex flex-col gap-8">
           {video}
           <ProjectGallery media={unembeddedMedia} />
-          {markdown}
+          {contentElement}
         </div>
       );
   }

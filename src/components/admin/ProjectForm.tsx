@@ -30,9 +30,20 @@ import {
   BookOpen,
   FolderGit2,
   Layers,
+  Trash2,
+  ArrowUp,
+  ArrowDown,
+  ImagePlus,
+  X,
 } from "lucide-react";
 import { slugify, resolveImageUrl } from "@/lib/utils";
 import type { Project, ProjectMedia, ProjectLayout } from "@/lib/types";
+import {
+  isStructuredSchoolProject,
+  type SchoolPoint,
+  type SchoolPointImage,
+} from "@/components/SchoolProjectView";
+import { SchoolPointsEditor } from "@/components/admin/SchoolPointsEditor";
 import {
   Button,
   Input,
@@ -212,6 +223,9 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
   const { toast } = useToast();
   const isEdit = Boolean(initial);
   const isDirty = useRef(false);
+  const markDirty = useCallback(() => {
+    isDirty.current = true;
+  }, []);
 
   const [activeTab, setActiveTab] = useState<"story" | "details" | "media">("story");
   const [editorMode, setEditorMode] = useState<"write" | "split" | "preview">("write");
@@ -257,7 +271,237 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
   const [showMarkdownCheat, setShowMarkdownCheat] = useState(false);
   const [showMediaTray, setShowMediaTray] = useState(true);
 
+  const [contentFormat, setContentFormat] = useState<"points" | "markdown">(() => {
+    if (initial?.content && isStructuredSchoolProject(initial.content)) return "points";
+    if (initial?.category === "school") return "points";
+    return "markdown";
+  });
+
+  const [schoolIntro, setSchoolIntro] = useState(() => {
+    const parsed = isStructuredSchoolProject(initial?.content);
+    return parsed?.intro || "";
+  });
+
+  const [schoolPoints, setSchoolPoints] = useState<SchoolPoint[]>(() => {
+    const parsed = isStructuredSchoolProject(initial?.content);
+    return parsed?.points || [];
+  });
+
+  const [schoolConclusion, setSchoolConclusion] = useState(() => {
+    const parsed = isStructuredSchoolProject(initial?.content);
+    return parsed?.conclusion || "";
+  });
+
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const syncPointsToContent = useCallback(
+    (intro: string, pts: SchoolPoint[], conc: string) => {
+      markDirty();
+      const payload = JSON.stringify(
+        {
+          type: "school_project",
+          intro,
+          points: pts,
+          conclusion: conc,
+        },
+        null,
+        2
+      );
+      setContent(payload);
+    },
+    [markDirty]
+  );
+
+  const addSchoolPoint = () => {
+    const nextIdx = schoolPoints.length + 1;
+    const newPoint: SchoolPoint = {
+      id: `point-${Date.now()}`,
+      title: `Poin #${nextIdx}`,
+      text: "",
+      images: [],
+    };
+    const nextPts = [...schoolPoints, newPoint];
+    setSchoolPoints(nextPts);
+    syncPointsToContent(schoolIntro, nextPts, schoolConclusion);
+    toast("success", `Poin #${nextIdx} ditambahkan!`);
+  };
+
+  const updateSchoolPoint = (index: number, patch: Partial<SchoolPoint>) => {
+    const nextPts = schoolPoints.map((pt, i) => (i === index ? { ...pt, ...patch } : pt));
+    setSchoolPoints(nextPts);
+    syncPointsToContent(schoolIntro, nextPts, schoolConclusion);
+  };
+
+  const removeSchoolPoint = (index: number) => {
+    const nextPts = schoolPoints.filter((_, i) => i !== index);
+    setSchoolPoints(nextPts);
+    syncPointsToContent(schoolIntro, nextPts, schoolConclusion);
+    toast("success", "Poin dihapus.");
+  };
+
+  const moveSchoolPoint = (index: number, direction: -1 | 1) => {
+    const target = index + direction;
+    if (target < 0 || target >= schoolPoints.length) return;
+    const nextPts = [...schoolPoints];
+    [nextPts[index], nextPts[target]] = [nextPts[target], nextPts[index]];
+    setSchoolPoints(nextPts);
+    syncPointsToContent(schoolIntro, nextPts, schoolConclusion);
+  };
+
+  const attachImageToPoint = (pointIndex: number, img: SchoolPointImage) => {
+    const point = schoolPoints[pointIndex];
+    if (!point) return;
+    const nextImages = [...(point.images || []), img];
+    updateSchoolPoint(pointIndex, { images: nextImages });
+    toast("success", `Foto ditambahkan ke ${point.title || `Poin #${pointIndex + 1}`}`);
+  };
+
+  const removeImageFromPoint = (pointIndex: number, imgIndex: number) => {
+    const point = schoolPoints[pointIndex];
+    if (!point) return;
+    const nextImages = point.images.filter((_, i) => i !== imgIndex);
+    updateSchoolPoint(pointIndex, { images: nextImages });
+  };
+
+  const updatePointImageCaption = (pointIndex: number, imgIndex: number, caption: string) => {
+    const point = schoolPoints[pointIndex];
+    if (!point) return;
+    const nextImages = point.images.map((img, i) => (i === imgIndex ? { ...img, caption } : img));
+    updateSchoolPoint(pointIndex, { images: nextImages });
+  };
+
+  const generatePancasilaTemplate = () => {
+    const intro =
+      "Pancasila bukan sekadar dasar falsafah negara yang dihafal bunyinya, melainkan pedoman moral dan etika bertindak yang harus diwujudkan dalam kehidupan nyata. Sebagai siswa kejuruan di SMK Negeri 3 Jepara, penerapan nilai-nilai Pancasila menjadi fondasi penting dalam membentuk karakter kedisiplinan, solidaritas, kepedulian sosial, serta integritas moral.\n\nMelalui tugas proyek mata pelajaran Pendidikan Pancasila ini, kami mendokumentasikan aksi konkret penerapan kelima sila Pancasila yang berlangsung di lingkungan sekolah dan ruang kelas kami sehari-hari.";
+
+    const pts: SchoolPoint[] = [
+      {
+        id: "sila-1",
+        title: "Sila Pertama: Ketuhanan Yang Maha Esa",
+        text: "* **Simbol**: Bintang emas berlatar perisai hitam.\n* **Makna Nilai**: Mengakui keberadaan Tuhan Yang Maha Esa, menjunjung tinggi toleransi antarumat beragama, dan menjalankan perintah agama dengan ikhlas.\n* **Aksi Nyata di Sekolah**: Melaksanakan ibadah sholat berjamaah tepat waktu di mushola sekolah bersama teman-teman dan menjaga ketenangan saat ibadah berlangsung.",
+        images: [
+          {
+            url: media[0]?.url || "https://lh3.googleusercontent.com/d/1BzzjvkPjHUi-abyuZTOSGV5bLsouRj5P=s0",
+            caption: "Simbol Sila ke-1: Bintang (Ketuhanan Yang Maha Esa)",
+          },
+          {
+            url: media[1]?.url || "https://lh3.googleusercontent.com/d/1_0GQozFV4Xs5FzfgyKYXJbl9427WOi0e=s0",
+            caption: "Penerapan Sila ke-1: Sholat berjamaah di mushola sekolah",
+          },
+        ],
+      },
+      {
+        id: "sila-2",
+        title: "Sila Kedua: Kemanusiaan yang Adil dan Beradab",
+        text: "* **Simbol**: Rantai emas dengan gelang lingkaran dan persegi.\n* **Makna Nilai**: Mengakui persamaan harkat dan martabat setiap individu tanpa diskriminasi, serta menumbuhkan empati dan tolong-menolong.\n* **Aksi Nyata di Sekolah**: Menumbuhkan rasa peduli dengan saling berbagi bekal makanan kepada teman sekelas dan memperlakukan sesama dengan santun.",
+        images: [
+          {
+            url: media[2]?.url || "https://lh3.googleusercontent.com/d/18ZTkSHRKRB_HXGNUAr81KgT7_-YIWztN=s0",
+            caption: "Simbol Sila ke-2: Rantai (Kemanusiaan yang Adil dan Beradab)",
+          },
+          {
+            url: media[3]?.url || "https://lh3.googleusercontent.com/d/1yVOcV1uuGRBMOX3DBGpYsSn47noLvWyr=s0",
+            caption: "Penerapan Sila ke-2: Berbagi makanan dengan teman sekelas",
+          },
+        ],
+      },
+      {
+        id: "sila-3",
+        title: "Sila Ketiga: Persatuan Indonesia",
+        text: "* **Simbol**: Pohon Beringin.\n* **Makna Nilai**: Menempatkan kesatuan dan keselamatan bersama di atas kepentingan pribadi, serta cinta tanah air dan produk buatan dalam negeri.\n* **Aksi Nyata di Sekolah**: Mendukung produk lokal dan kantin sekolah dengan berbelanja secara tertib serta membaur tanpa membeda-bedakan pertemanan.",
+        images: [
+          {
+            url: media[4]?.url || "https://lh3.googleusercontent.com/d/1fwDxo5rz5efIyejXIoZcn_UNpndCGF8o=s0",
+            caption: "Simbol Sila ke-3: Pohon Beringin (Persatuan Indonesia)",
+          },
+          {
+            url: media[5]?.url || "https://lh3.googleusercontent.com/d/1SYtW89NFwM6hwgZhfGPGApH6acnUppPf=s0",
+            caption: "Penerapan Sila ke-3: Mendukung produk lokal di kantin sekolah",
+          },
+        ],
+      },
+      {
+        id: "sila-4",
+        title: "Sila Keempat: Kerakyatan yang Dipimpin oleh Hikmat Kebijaksanaan dalam Permusyawaratan/Perwakilan",
+        text: "* **Simbol**: Kepala Banteng.\n* **Makna Nilai**: Mengutamakan musyawarah mufakat dalam mengambil keputusan bersama dan menghormati setiap perbedaan pandangan.\n* **Aksi Nyata di Sekolah**: Berdiskusi aktif dalam kerja kelompok di kelas, saling bertukar argumen secara demokratis, dan menerima hasil mufakat.",
+        images: [
+          {
+            url: media[6]?.url || "https://lh3.googleusercontent.com/d/1ASfipttavPp9SgactCdfWi-D-ca2KUAZ=s0",
+            caption: "Simbol Sila ke-4: Kepala Banteng (Permusyawaratan/Perwakilan)",
+          },
+          {
+            url: media[7]?.url || "https://lh3.googleusercontent.com/d/1lx2bW4Rc5bzxEe3kiK9Hs7YY7qvD_mes=s0",
+            caption: "Penerapan Sila ke-4: Diskusi dan musyawarah tugas kelompok di kelas",
+          },
+        ],
+      },
+      {
+        id: "sila-5",
+        title: "Sila Kelima: Keadilan Sosial bagi Seluruh Rakyat Indonesia",
+        text: "* **Simbol**: Padi dan Kapas.\n* **Makna Nilai**: Mengembangkan perbuatan luhur yang mencerminkan sikap kekeluargaan, bersikap adil, dan menjaga keseimbangan hak dan kewajiban.\n* **Aksi Nyata di Sekolah**: Menjalankan pembagian tugas piket kebersihan kelas secara adil serta mendistribusikan konsumsi kelas secara merata dan tertib.",
+        images: [
+          {
+            url: media[8]?.url || "https://lh3.googleusercontent.com/d/1E1W3W0SYs95oXRLTGrO4LTrruxDeJTQK=s0",
+            caption: "Simbol Sila ke-5: Padi dan Kapas (Keadilan Sosial)",
+          },
+          {
+            url: media[9]?.url || "https://lh3.googleusercontent.com/d/17BeH00qmGdqIDDoDR9991rKANoxHBV3I=s0",
+            caption: "Penerapan Sila ke-5: Pembagian tugas dan konsumsi bersama secara adil",
+          },
+        ],
+      },
+    ];
+
+    const conc =
+      "Praktik pengamalan Pancasila tidak harus menunggu momen kenegaraan yang besar. Dari hal-hal sederhana di sekolah - mulai dari menjaga sholat berjamaah, berbagi makanan, mendukung kantin, bermusyawarah di bangku kelas, hingga berbagi tugas secara merata - nilai luhur Pancasila telah hidup dan terjaga dalam kebiasaan kita sehari-hari.";
+
+    setSchoolIntro(intro);
+    setSchoolPoints(pts);
+    setSchoolConclusion(conc);
+    syncPointsToContent(intro, pts, conc);
+    toast("success", "Berhasil menyusun 5 Sila beserta 10 foto media!");
+  };
+
+  const handleSwitchContentFormat = (newFormat: "points" | "markdown") => {
+    if (newFormat === contentFormat) return;
+    if (newFormat === "markdown") {
+      if (schoolPoints.length > 0) {
+        let md = "";
+        if (schoolIntro.trim()) {
+          md += `## Latar Belakang\n\n${schoolIntro.trim()}\n\n---\n\n`;
+        }
+        md += `## Pembahasan & Dokumentasi\n\n`;
+        schoolPoints.forEach((pt, idx) => {
+          md += `### ${pt.title || `Poin #${idx + 1}`}\n\n`;
+          if (pt.text.trim()) {
+            md += `${pt.text.trim()}\n\n`;
+          }
+          if (pt.images && pt.images.length > 0) {
+            pt.images.forEach((img) => {
+              md += `![${img.caption || pt.title || "foto"}](${img.url})\n`;
+            });
+            md += "\n";
+          }
+          md += "---\n\n";
+        });
+        if (schoolConclusion.trim()) {
+          md += `## Kesimpulan & Refleksi\n\n${schoolConclusion.trim()}\n`;
+        }
+        setContent(md);
+      }
+      setContentFormat("markdown");
+      toast("success", "Beralih ke Mode Markdown Bebas.");
+    } else {
+      const parsed = isStructuredSchoolProject(content);
+      if (parsed) {
+        setSchoolIntro(parsed.intro || "");
+        setSchoolPoints(parsed.points || []);
+        setSchoolConclusion(parsed.conclusion || "");
+      }
+      setContentFormat("points");
+      toast("success", "Beralih ke Mode Poin & Foto.");
+    }
+  };
 
   useEffect(() => {
     fetch("/api/admin/projects")
@@ -287,10 +531,6 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
     }
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, []);
-
-  const markDirty = useCallback(() => {
-    isDirty.current = true;
   }, []);
 
   const handleSelectOrAddSubject = useCallback(
@@ -687,8 +927,59 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
             </div>
           </div>
 
-          {/* MARKDOWN STORY STUDIO */}
-          <div className="rounded-2xl border-2 border-foreground bg-surface hard-shadow overflow-hidden">
+          {/* FORMAT SWITCHER: POIN SEKOLAH vs MARKDOWN BEBAS */}
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-1 rounded-xl border-2 border-foreground bg-surface p-1 hard-shadow-sm">
+              <button
+                type="button"
+                onClick={() => handleSwitchContentFormat("points")}
+                className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-bold transition-all ${
+                  contentFormat === "points"
+                    ? "bg-accent text-on-accent hard-shadow-sm"
+                    : "text-muted hover:text-foreground"
+                }`}
+              >
+                <BookOpen size={13} />
+                Mode Poin & Foto (Tugas Sekolah)
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSwitchContentFormat("markdown")}
+                className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-bold transition-all ${
+                  contentFormat === "markdown"
+                    ? "bg-accent text-on-accent hard-shadow-sm"
+                    : "text-muted hover:text-foreground"
+                }`}
+              >
+                <FileCode size={13} />
+                Mode Markdown Bebas
+              </button>
+            </div>
+
+            {contentFormat === "points" && (
+              <span className="font-mono text-[11px] text-muted">
+                {schoolPoints.length} Poin tersusun
+              </span>
+            )}
+          </div>
+
+          {contentFormat === "points" ? (
+            <SchoolPointsEditor
+              intro={schoolIntro}
+              points={schoolPoints}
+              conclusion={schoolConclusion}
+              media={media}
+              onChange={(newIntro, newPts, newConc) => {
+                setSchoolIntro(newIntro);
+                setSchoolPoints(newPts);
+                setSchoolConclusion(newConc);
+                syncPointsToContent(newIntro, newPts, newConc);
+              }}
+              onGeneratePancasila={generatePancasilaTemplate}
+            />
+          ) : (
+            /* MARKDOWN STORY STUDIO */
+            <div className="rounded-2xl border-2 border-foreground bg-surface hard-shadow overflow-hidden">
             {/* STUDIO HEADER */}
             <div className="flex flex-wrap items-center justify-between gap-3 border-b-2 border-foreground bg-surface-2/80 p-3">
               <div className="flex items-center gap-2">
@@ -1072,6 +1363,7 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
               </div>
             </div>
           </div>
+          )}
         </div>
       )}
 
