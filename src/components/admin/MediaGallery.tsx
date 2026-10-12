@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { ArrowDown, ArrowUp, ImagePlus, Plus, Trash2, Play } from "lucide-react";
+import { ArrowDown, ArrowUp, ImagePlus, Plus, Trash2, Play, Copy, Check, PenSquare } from "lucide-react";
 import type { ProjectMediaType } from "@/lib/types";
 import { cn, resolveImageUrl, detectVideoType } from "@/lib/utils";
 import { Input, Label, Select } from "@/components/admin/ui";
@@ -76,11 +76,14 @@ function VideoPreview({ url, type }: { url: string; type: string }) {
 export function MediaGallery({
   items,
   onChange,
+  onInsertToStory,
 }: {
   items: MediaDraft[];
   onChange: (items: MediaDraft[]) => void;
+  onInsertToStory?: (item: MediaDraft, index: number) => void;
 }) {
   const [error, setError] = useState<string | null>(null);
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
   function update(index: number, patch: Partial<MediaDraft>) {
     setError(null);
@@ -133,7 +136,7 @@ export function MediaGallery({
             key={index}
             className="rounded-xl border border-border bg-surface-2 p-4"
           >
-            <div className="mb-3 flex items-center justify-between gap-2">
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <p className="text-[11px] font-medium text-muted">
                   #{index + 1}
@@ -143,7 +146,35 @@ export function MediaGallery({
                   <Play size={12} className="text-muted" />
                 )}
               </div>
-              <div className="flex gap-1">
+              <div className="flex flex-wrap items-center gap-1.5">
+                {onInsertToStory && item.url && (
+                  <button
+                    type="button"
+                    onClick={() => onInsertToStory(item, index)}
+                    className="inline-flex items-center gap-1 rounded-md border border-accent/40 bg-accent/10 px-2 py-1 text-[11px] font-semibold text-accent transition-colors hover:bg-accent hover:text-on-accent"
+                    title="Insert directly into Story & Content at cursor"
+                  >
+                    <PenSquare size={12} />
+                    <span>Insert to Story</span>
+                  </button>
+                )}
+                {item.url && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const tag = `![${item.caption || `photo-${index + 1}`}](${item.url})`;
+                      navigator.clipboard.writeText(tag);
+                      setCopiedIndex(index);
+                      setTimeout(() => setCopiedIndex(null), 2000);
+                    }}
+                    className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-[11px] text-muted transition-colors hover:border-accent hover:text-accent"
+                    title="Copy markdown tag ![caption](url)"
+                  >
+                    {copiedIndex === index ? <Check size={12} className="text-accent" /> : <Copy size={12} />}
+                    <span>{copiedIndex === index ? "Copied!" : "Copy Tag"}</span>
+                  </button>
+                )}
+                <div className="mx-1 h-3.5 w-px bg-border" />
                 <button
                   type="button"
                   onClick={() => move(index, -1)}

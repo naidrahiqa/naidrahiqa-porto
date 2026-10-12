@@ -115,19 +115,32 @@ export function ProjectLayout({
 
   const [coverLightbox, setCoverLightbox] = useState(false);
 
+  const unembeddedMedia = media.filter((m) => {
+    if (!project.content) return true;
+    const directUrl = m.url;
+    const resolvedUrl = resolveImageUrl(m.url);
+    const driveMatch = m.url.match(/([a-zA-Z0-9_-]{25,})/);
+    const driveId = driveMatch ? driveMatch[1] : null;
+
+    if (directUrl && project.content.includes(directUrl)) return false;
+    if (resolvedUrl && project.content.includes(resolvedUrl)) return false;
+    if (driveId && project.content.includes(driveId)) return false;
+    return true;
+  });
+
   switch (project.layout) {
     case "text-first":
       return (
         <div className="flex flex-col gap-8">
           {markdown}
-          <ProjectGallery media={media} />
+          <ProjectGallery media={unembeddedMedia} />
           {video}
         </div>
       );
     case "gallery-first":
       return (
         <div className="flex flex-col gap-8">
-          <ProjectGallery media={media} />
+          <ProjectGallery media={unembeddedMedia} />
           {markdown}
           {video}
         </div>
@@ -162,7 +175,7 @@ export function ProjectLayout({
               onClose={() => setCoverLightbox(false)}
             />
           )}
-          <ProjectGallery media={media} />
+          <ProjectGallery media={unembeddedMedia} />
           {video}
           {markdown}
         </div>
@@ -171,7 +184,7 @@ export function ProjectLayout({
       return (
         <div className="flex flex-col gap-8">
           {markdown}
-          <MasonryGallery media={media} />
+          <MasonryGallery media={unembeddedMedia} />
           {video}
         </div>
       );
@@ -180,7 +193,7 @@ export function ProjectLayout({
       return (
         <div className="flex flex-col gap-8">
           {video}
-          <ProjectGallery media={media} />
+          <ProjectGallery media={unembeddedMedia} />
           {markdown}
         </div>
       );

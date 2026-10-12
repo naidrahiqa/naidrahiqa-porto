@@ -31,7 +31,7 @@ import {
   FolderGit2,
   Layers,
 } from "lucide-react";
-import { slugify } from "@/lib/utils";
+import { slugify, resolveImageUrl } from "@/lib/utils";
 import type { Project, ProjectMedia, ProjectLayout } from "@/lib/types";
 import {
   Button,
@@ -255,6 +255,7 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
 
   const [showTemplateModal, setShowTemplateModal] = useState(false);
   const [showMarkdownCheat, setShowMarkdownCheat] = useState(false);
+  const [showMediaTray, setShowMediaTray] = useState(true);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -869,6 +870,21 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
                 >
                   <ImageIcon size={14} />
                 </button>
+                {media.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setShowMediaTray(!showMediaTray)}
+                    className={`inline-flex items-center gap-1 rounded px-2 py-1 text-[11px] font-semibold transition-colors ${
+                      showMediaTray
+                        ? "bg-accent text-on-accent"
+                        : "bg-surface-2 text-foreground hover:bg-surface-2/80"
+                    }`}
+                    title="Toggle Project Media Tray"
+                  >
+                    <ImageIcon size={12} />
+                    <span>Photos ({media.length})</span>
+                  </button>
+                )}
                 <button
                   type="button"
                   onClick={() => insertMarkdown("\n---\n\n", "", "")}
@@ -911,6 +927,68 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
                     <p className="font-mono text-[11px] text-accent">[title](https://url)</p>
                     <p className="font-mono text-[11px] text-accent">![caption](img_url)</p>
                   </div>
+                </div>
+              </div>
+            )}
+
+            {/* PROJECT MEDIA QUICK-INSERT TRAY */}
+            {media.length > 0 && showMediaTray && (
+              <div className="border-b border-border bg-surface-2/60 p-3">
+                <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold text-foreground">
+                      Foto & Media Proyek ({media.length})
+                    </span>
+                    <span className="text-[11px] text-muted">
+                      Klik foto untuk menyisipkan langsung di kursor teks
+                    </span>
+                  </div>
+                  <span className="font-mono text-[11px] text-muted">
+                    Tips: 2 gambar berurutan otomatis jadi grid 2-kolom
+                  </span>
+                </div>
+                <div className="flex items-center gap-2.5 overflow-x-auto pb-1 scrollbar-thin">
+                  {media.map((item, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => {
+                        const caption = item.caption || `Foto #${idx + 1}`;
+                        insertMarkdown(`![${caption}](${item.url})\n\n`);
+                        toast("success", `Disisipkan Media #${idx + 1} ke teks!`);
+                      }}
+                      className="group relative flex flex-shrink-0 items-center gap-2 rounded-xl border border-border bg-surface p-1.5 text-left transition-all hover:border-accent hover:shadow-sm"
+                      title={`Klik untuk menyisipkan #${idx + 1}: ${item.caption || item.url}`}
+                    >
+                      <div className="relative h-12 w-16 overflow-hidden rounded-lg border border-border/60 bg-surface-2">
+                        {item.url ? (
+                          <img
+                            src={resolveImageUrl(item.url)}
+                            alt={item.caption || `Media ${idx + 1}`}
+                            className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                            onError={(e) => {
+                              (e.target as HTMLElement).style.display = "none";
+                            }}
+                          />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center font-mono text-[10px] text-muted">
+                            #{idx + 1}
+                          </div>
+                        )}
+                        <span className="absolute bottom-0 right-0 rounded-tl bg-background/90 px-1 font-mono text-[9px] text-foreground">
+                          #{idx + 1}
+                        </span>
+                      </div>
+                      <div className="max-w-[130px] pr-1.5">
+                        <p className="truncate text-xs font-semibold text-foreground">
+                          {item.caption || `Foto #${idx + 1}`}
+                        </p>
+                        <p className="font-medium text-[11px] text-accent group-hover:underline">
+                          + Sisipkan
+                        </p>
+                      </div>
+                    </button>
+                  ))}
                 </div>
               </div>
             )}
@@ -1516,6 +1594,12 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
               onChange={(v) => {
                 setMedia(v);
                 markDirty();
+              }}
+              onInsertToStory={(item, index) => {
+                const caption = item.caption || `Foto #${index + 1}`;
+                insertMarkdown(`![${caption}](${item.url})\n\n`);
+                setActiveTab("story");
+                toast("success", `Disisipkan Media #${index + 1} ke cerita!`);
               }}
             />
           </div>
