@@ -378,7 +378,7 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
       {
         id: "sila-1",
         title: "Sila Pertama: Ketuhanan Yang Maha Esa",
-        text: "* **Simbol**: Bintang emas berlatar perisai hitam.\n* **Makna Nilai**: Mengakui keberadaan Tuhan Yang Maha Esa, menjunjung tinggi toleransi antarumat beragama, dan menjalankan perintah agama dengan ikhlas.\n* **Aksi Nyata di Sekolah**: Melaksanakan ibadah sholat berjamaah tepat waktu di mushola sekolah bersama teman-teman dan menjaga ketenangan saat ibadah berlangsung.",
+        text: "* **Simbol**: Bintang emas berlatar perisai hitam.\n* **Makna Nilai**: Mengakui keberadaan Tuhan Yang Maha Esa, menjunjung tinggi toleransi antarumat beragama, dan menjalankan perintah agama dengan ikhlas dan penuh kedisiplinan.\n* **Aksi Nyata di Sekolah**: Mendengarkan khutbah sholat Jumat dengan khusyuk, tenang, dan tertib di mushola sekolah bersama teman-teman, menjaga adab dengan tidak berbicara saat khatib menyampaikan khutbah sebagai wujud ketaatan beribadah kepada Tuhan Yang Maha Esa.",
         images: [
           {
             url: media[0]?.url || "https://lh3.googleusercontent.com/d/1BzzjvkPjHUi-abyuZTOSGV5bLsouRj5P=s0",
@@ -386,7 +386,7 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
           },
           {
             url: media[1]?.url || "https://lh3.googleusercontent.com/d/1_0GQozFV4Xs5FzfgyKYXJbl9427WOi0e=s0",
-            caption: "Penerapan Sila ke-1: Sholat berjamaah di mushola sekolah",
+            caption: "Penerapan Sila ke-1: Mendengarkan khutbah sholat Jumat dengan khusyuk di mushola sekolah",
           },
         ],
       },
@@ -438,7 +438,7 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
       {
         id: "sila-5",
         title: "Sila Kelima: Keadilan Sosial bagi Seluruh Rakyat Indonesia",
-        text: "* **Simbol**: Padi dan Kapas.\n* **Makna Nilai**: Mengembangkan perbuatan luhur yang mencerminkan sikap kekeluargaan, bersikap adil, dan menjaga keseimbangan hak dan kewajiban.\n* **Aksi Nyata di Sekolah**: Menjalankan pembagian tugas piket kebersihan kelas secara adil serta mendistribusikan konsumsi kelas secara merata dan tertib.",
+        text: "* **Simbol**: Padi dan Kapas.\n* **Makna Nilai**: Mengembangkan sikap adil terhadap sesama, menjaga keseimbangan antara hak dan kewajiban, serta menghormati hak orang lain demi mewujudkan kesejahteraan dan keadilan sosial yang merata.\n* **Aksi Nyata di Sekolah**: Pembagian dan pendistribusian makanan Program Makan Bergizi Gratis (MBG) secara tertib dan merata kepada seluruh siswa di kelas menggunakan wadah omprengan stainless steel, memastikan setiap teman memperoleh hak porsi makanan sehat dan bergizi yang sama tanpa ada yang terlewatkan.",
         images: [
           {
             url: media[8]?.url || "https://lh3.googleusercontent.com/d/1E1W3W0SYs95oXRLTGrO4LTrruxDeJTQK=s0",
@@ -446,14 +446,14 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
           },
           {
             url: media[9]?.url || "https://lh3.googleusercontent.com/d/17BeH00qmGdqIDDoDR9991rKANoxHBV3I=s0",
-            caption: "Penerapan Sila ke-5: Pembagian tugas dan konsumsi bersama secara adil",
+            caption: "Penerapan Sila ke-5: Pembagian makanan Program Makan Bergizi Gratis (MBG) secara adil dan merata di kelas",
           },
         ],
       },
     ];
 
     const conc =
-      "Praktik pengamalan Pancasila tidak harus menunggu momen kenegaraan yang besar. Dari hal-hal sederhana di sekolah - mulai dari menjaga sholat berjamaah, berbagi makanan, mendukung kantin, bermusyawarah di bangku kelas, hingga berbagi tugas secara merata - nilai luhur Pancasila telah hidup dan terjaga dalam kebiasaan kita sehari-hari.";
+      "Praktik pengamalan Pancasila tidak harus menunggu momen kenegaraan yang besar. Dari hal-hal sederhana di sekolah - mulai dari menjaga sholat berjamaah di mushola, kepedulian berbagi bekal, mendukung produk lokal di kantin, bermusyawarah di bangku kelas, hingga pembagian porsi Makan Bergizi Gratis (MBG) secara adil dan merata - nilai luhur Pancasila telah hidup dan terjaga dalam kebiasaan kita sehari-hari.";
 
     setSchoolIntro(intro);
     setSchoolPoints(pts);
