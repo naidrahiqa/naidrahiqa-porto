@@ -18,16 +18,16 @@ export default async function ContactPage() {
 
   return (
     <div className="flex flex-col gap-10 pt-12 sm:pt-16">
-      <header>
-        <p className="text-xs uppercase tracking-widest text-accent">
-          Contact
-        </p>
-        <h1 className="mt-2 font-display text-3xl font-bold uppercase tracking-tight sm:text-4xl">
-          Let&apos;s <span className="gradient-text">connect</span>
+      <header className="max-w-2xl">
+        <div className="inline-flex items-center gap-1.5 rounded-full border border-accent/30 bg-accent-fill px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-accent mb-3 dark:bg-accent/20">
+          <span>✉</span>
+          <span>TRANSMISSION // DIRECT INBOX</span>
+        </div>
+        <h1 className="font-display text-4xl font-extrabold uppercase tracking-tight sm:text-5xl text-foreground">
+          Let&apos;s <span className="marker">connect</span>
         </h1>
-        <p className="mt-3 max-w-xl text-sm text-muted">
-          Reach out - collaborations, questions, or just to talk about kernels,
-          IoT, or security.
+        <p className="mt-3 text-sm sm:text-base leading-relaxed text-muted">
+          Reach out for collaborations, questions, or just to talk about Linux kernels, IoT telemetry, and CTF challenges.
         </p>
       </header>
 

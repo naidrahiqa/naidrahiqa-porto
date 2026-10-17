@@ -5,50 +5,62 @@
 
 :root {
   color-scheme: light;
-  --background: #faf9fc;
-  --surface: #f0edf5;
-  --surface-2: #f5f2f9;
-  --border: rgba(88, 75, 102, 0.12);
-  --border-hover: rgba(88, 75, 102, 0.25);
-  --foreground: #3d3450;
-  --muted: #7a6e8c;
-  --accent: #b06a9b;
-  --accent-hover: #d48cb8;
-  --accent-fill: #f5dce9;
-  --accent-2: #4a9e8f;
-  --accent-2-fill: #c8ece4;
-  --on-accent: #3d3450;
-  --danger: #d4606e;
-  --gold: #b8943e;
-  --glow: rgba(245, 220, 233, 0.35);
-  --glow-strong: rgba(200, 236, 228, 0.25);
-  --glass-bg: rgba(255, 255, 255, 0.65);
-  --glass-border: rgba(245, 220, 233, 0.5);
-  --shadow-color: rgba(61, 52, 80, 0.08);
+  --background: #fbfbf9;
+  --surface: #ffffff;
+  --surface-2: #f4f4f5;
+  --border: rgba(0, 0, 0, 0.08);
+  --border-hover: rgba(0, 0, 0, 0.16);
+  --foreground: #18181b;
+  --muted: #71717a;
+  --accent: #f43f5e;
+  --accent-hover: #e11d48;
+  --accent-fill: #fff1f2;
+  --accent-2: #10b981;
+  --accent-2-fill: #ecfdf5;
+  --accent-3: #8b5cf6;
+  --accent-3-fill: #f5f3ff;
+  --accent-yellow: #f59e0b;
+  --accent-yellow-fill: #fef3c7;
+  --accent-sky: #0284c7;
+  --accent-sky-fill: #f0f9ff;
+  --on-accent: #ffffff;
+  --danger: #ef4444;
+  --gold: #f59e0b;
+  --glow: rgba(0, 0, 0, 0.04);
+  --glow-strong: rgba(0, 0, 0, 0.08);
+  --glass-bg: rgba(255, 255, 255, 0.9);
+  --glass-border: rgba(0, 0, 0, 0.07);
+  --shadow-color: rgba(0, 0, 0, 0.04);
 }
 
 .dark {
   color-scheme: dark;
-  --background: #1a1726;
-  --surface: #231f32;
-  --surface-2: #2c273d;
-  --border: rgba(237, 231, 245, 0.1);
-  --border-hover: rgba(237, 231, 245, 0.22);
-  --foreground: #e8e2f0;
-  --muted: #9a8fb0;
-  --accent: #d48cb8;
-  --accent-hover: #e8a8ce;
-  --accent-fill: #f5dce9;
-  --accent-2: #6bc4b5;
-  --accent-2-fill: #c8ece4;
-  --on-accent: #3d3450;
-  --danger: #f09aa6;
-  --gold: #e0b85c;
-  --glow: rgba(212, 140, 184, 0.12);
-  --glow-strong: rgba(107, 196, 181, 0.1);
-  --glass-bg: rgba(35, 31, 50, 0.65);
-  --glass-border: rgba(212, 140, 184, 0.18);
-  --shadow-color: rgba(0, 0, 0, 0.25);
+  --background: #090a0f;
+  --surface: #12131a;
+  --surface-2: #181a24;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-hover: rgba(255, 255, 255, 0.16);
+  --foreground: #fafafa;
+  --muted: #a1a1aa;
+  --accent: #fb7185;
+  --accent-hover: #f43f5e;
+  --accent-fill: rgba(251, 113, 133, 0.12);
+  --accent-2: #34d399;
+  --accent-2-fill: rgba(52, 211, 153, 0.12);
+  --accent-3: #a78bfa;
+  --accent-3-fill: rgba(167, 139, 250, 0.12);
+  --accent-yellow: #fbbf24;
+  --accent-yellow-fill: rgba(251, 191, 36, 0.12);
+  --accent-sky: #38bdf8;
+  --accent-sky-fill: rgba(56, 189, 248, 0.12);
+  --on-accent: #090a0f;
+  --danger: #f87171;
+  --gold: #fbbf24;
+  --glow: rgba(255, 255, 255, 0.04);
+  --glow-strong: rgba(255, 255, 255, 0.08);
+  --glass-bg: rgba(18, 19, 26, 0.8);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --shadow-color: rgba(0, 0, 0, 0.4);
 }
 
 @theme inline {
@@ -65,6 +77,12 @@
   --color-accent-fill: var(--accent-fill);
   --color-accent-2: var(--accent-2);
   --color-accent-2-fill: var(--accent-2-fill);
+  --color-accent-3: var(--accent-3);
+  --color-accent-3-fill: var(--accent-3-fill);
+  --color-accent-yellow: var(--accent-yellow);
+  --color-accent-yellow-fill: var(--accent-yellow-fill);
+  --color-accent-sky: var(--accent-sky);
+  --color-accent-sky-fill: var(--accent-sky-fill);
   --color-on-accent: var(--on-accent);
   --color-danger: var(--danger);
   --color-gold: var(--gold);
@@ -98,15 +116,11 @@ body {
 
 /* ── Ambient background ──────────────────────────── */
 .grid-bg {
-  background:
-    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(245, 220, 233, 0.18), transparent),
-    radial-gradient(ellipse 60% 40% at 85% 70%, rgba(200, 236, 228, 0.12), transparent);
+  background: radial-gradient(circle 900px at 50% -10%, rgba(0, 0, 0, 0.02), transparent 70%);
 }
 
 .dark .grid-bg {
-  background:
-    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(212, 140, 184, 0.12), transparent),
-    radial-gradient(ellipse 60% 40% at 85% 70%, rgba(107, 196, 181, 0.08), transparent);
+  background: radial-gradient(circle 900px at 50% -10%, rgba(255, 255, 255, 0.025), transparent 70%);
 }
 
 /* ── Glass ───────────────────────────────────────── */
@@ -117,8 +131,8 @@ body {
 
 @media (min-width: 768px) {
   .glass {
-    backdrop-filter: blur(16px) saturate(130%);
-    -webkit-backdrop-filter: blur(16px) saturate(130%);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
   }
 }
 
@@ -129,88 +143,56 @@ body {
 
 @media (min-width: 768px) {
   .glass-strong {
-    backdrop-filter: blur(24px) saturate(140%);
-    -webkit-backdrop-filter: blur(24px) saturate(140%);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
   }
 }
 
 /* ── Glow ────────────────────────────────────────── */
 .glow-accent {
-  box-shadow: 0 0 28px var(--glow), 0 0 70px var(--glow-strong);
+  box-shadow: 0 0 24px var(--glow);
 }
 
 .dark .glow-accent {
-  box-shadow: 0 0 28px var(--glow), 0 0 70px var(--glow-strong);
+  box-shadow: 0 0 24px var(--glow);
 }
 
 .glow-accent-strong {
-  box-shadow:
-    0 0 32px var(--glow-strong),
-    0 0 80px var(--glow),
-    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 32px var(--glow-strong);
 }
 
 .dark .glow-accent-strong {
-  box-shadow:
-    0 0 32px var(--glow-strong),
-    0 0 80px var(--glow),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 32px var(--glow-strong);
 }
 
-/* ── Gradient text ───────────────────────────────── */
+/* ── Text ────────────────────────────────────────── */
 .gradient-text {
-  background: linear-gradient(135deg, #b06a9b 0%, #8a7cb8 50%, #4a9e8f 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--foreground);
 }
 
 .dark .gradient-text {
-  background: linear-gradient(135deg, #d48cb8 0%, #a89cd8 50%, #6bc4b5 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--foreground);
 }
 
-/* ── Ambient orbs ────────────────────────────────── */
+/* ── Ambient orbs (disabled) ─────────────────────── */
 .orb {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(40px);
-  opacity: 0.25;
-  pointer-events: none;
-  transform: translateZ(0);
-}
-
-@media (min-width: 768px) {
-  .orb {
-    filter: blur(64px);
-    opacity: 0.35;
-  }
+  display: none;
 }
 
 .orb-accent {
-  background: radial-gradient(circle, rgba(245, 220, 233, 0.4), transparent 70%);
+  display: none;
 }
 
 .dark .orb-accent {
-  background: radial-gradient(circle, rgba(212, 140, 184, 0.25), transparent 70%);
+  display: none;
 }
 
 .orb-pink {
-  background: radial-gradient(circle, rgba(200, 236, 228, 0.35), transparent 70%);
+  display: none;
 }
 
 .dark .orb-pink {
-  background: radial-gradient(circle, rgba(107, 196, 181, 0.2), transparent 70%);
-}
-
-/* ── Soft pastel overrides ───────────────────────── */
-.bg-accent {
-  background-color: var(--accent-fill);
-}
-.bg-accent-2 {
-  background-color: var(--accent-2-fill);
+  display: none;
 }
 
 /* ── Scrollbar ───────────────────────────────────── */
@@ -283,13 +265,21 @@ body {
 
 /* ── Marker highlighter ──────────────────────────── */
 .marker {
-  background-image: linear-gradient(
-    transparent 0%,
-    transparent 62%,
-    color-mix(in srgb, var(--accent) 28%, transparent) 62%,
-    color-mix(in srgb, var(--accent) 28%, transparent) 88%,
-    transparent 88%
-  );
+  position: relative;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.marker::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0.08em;
+  width: 100%;
+  height: 0.28em;
+  background: color-mix(in srgb, var(--accent) 25%, transparent);
+  border-radius: 4px;
+  z-index: -1;
 }
 
 /* ── Motif Background ──────────────────────────── */
@@ -373,3 +363,33 @@ body {
   opacity: 1;
   transform: translateY(0);
 }
+
+/* ── Spin Slow for Vinyl & Badges ─────────────────── */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 12s linear infinite;
+}
+
+/* ── Card subtle sheen ──────────────────────────── */
+.holo-foil {
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Interactive button feel ─────────────────────── */
+.arcade-btn {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+}
+
+.arcade-btn:hover {
+  transform: translateY(-2px);
+}
+
+.arcade-btn:active {
+  transform: translateY(0);
+}
+

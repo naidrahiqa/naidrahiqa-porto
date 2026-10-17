@@ -1,83 +1,81 @@
 "use client";
 
 import { useState } from "react";
+import { Network, Terminal, Cpu, Flag } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const SKILLS = [
-  { name: "Networking", color: "border-accent bg-accent text-on-accent" },
-  { name: "Kernel Dev", color: "border-accent-2 bg-accent-2 text-on-accent" },
-  { name: "IoT", color: "border-gold bg-gold text-on-accent" },
-  { name: "CTF", color: "border-danger bg-danger text-on-accent" },
-];
-
-function rand(seed: number) {
-  const x = Math.sin(seed * 9301 + 49297) * 233280;
-  return x - Math.floor(x);
+interface Skill {
+  name: string;
+  category: string;
+  icon: typeof Network;
+  dotColor: string;
+  hoverGlow: string;
 }
 
-export function SkillTags() {
-  const [scattered, setScattered] = useState(true);
+const SKILLS: Skill[] = [
+  {
+    name: "Networking",
+    category: "TKJ",
+    icon: Network,
+    dotColor: "bg-sky-400",
+    hoverGlow: "hover:border-sky-400/40 hover:bg-sky-500/10 hover:text-sky-300 hover:shadow-sky-500/10",
+  },
+  {
+    name: "Kernel Dev",
+    category: "C / eBPF",
+    icon: Terminal,
+    dotColor: "bg-emerald-400",
+    hoverGlow: "hover:border-emerald-400/40 hover:bg-emerald-500/10 hover:text-emerald-300 hover:shadow-emerald-500/10",
+  },
+  {
+    name: "IoT Systems",
+    category: "ESP32",
+    icon: Cpu,
+    dotColor: "bg-amber-400",
+    hoverGlow: "hover:border-amber-400/40 hover:bg-amber-500/10 hover:text-amber-300 hover:shadow-amber-500/10",
+  },
+  {
+    name: "CTF & Pwn",
+    category: "Binary",
+    icon: Flag,
+    dotColor: "bg-rose-400",
+    hoverGlow: "hover:border-rose-400/40 hover:bg-rose-500/10 hover:text-rose-300 hover:shadow-rose-500/10",
+  },
+];
 
-  const positions = SKILLS.map((_, i) => ({
-    x: rand(i * 7 + 1) * 55 + 5,
-    y: rand(i * 13 + 3) * 30 + 5,
-    r: rand(i * 19 + 5) * 50 - 25,
-    delay: rand(i * 31 + 7) * 0.4,
-  }));
+export function SkillTags() {
+  const [active, setActive] = useState<string | null>(null);
 
   return (
-    <div className="relative w-full">
-      {scattered ? (
-        <div className="relative h-32 sm:h-28">
-          {SKILLS.map((skill, i) => {
-            const p = positions[i];
-            return (
-              <button
-                key={skill.name}
-                onClick={() => setScattered(false)}
-                className={cn(
-                  "absolute rounded-2xl border-2 px-4 py-2.5",
-                  "font-display text-xs font-bold uppercase tracking-wider",
-                  "hard-shadow-sm cursor-pointer z-10",
-                  "transition-all duration-300 ease-out",
-                  "hover:scale-110 hover:brightness-110 hover:z-20 hover:rotate-0",
-                  "active:scale-95",
-                  skill.color
-                )}
-                style={{
-                  left: `${p.x}%`,
-                  top: `${p.y}%`,
-                  transform: `rotate(${p.r}deg)`,
-                  animation: `skill-float ${2.5 + i * 0.3}s ease-in-out infinite`,
-                  animationDelay: `${p.delay}s`,
-                }}
-              >
-                {skill.name}
-              </button>
-            );
-          })}
-        </div>
-      ) : (
-        <div className="flex flex-wrap gap-2">
-          {SKILLS.map((skill) => (
-            <button
-              key={skill.name}
-              onClick={() => setScattered(true)}
-              className={cn(
-                "rounded-2xl border-2 px-4 py-2.5",
-                "font-display text-xs font-bold uppercase tracking-wider",
-                "hard-shadow-sm cursor-pointer",
-                "transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]",
-                "hover:scale-105 hover:brightness-110",
-                "active:scale-95",
-                skill.color
-              )}
-            >
-              {skill.name}
-            </button>
-          ))}
-        </div>
-      )}
+    <div className="flex flex-wrap items-center justify-center gap-2.5">
+      {SKILLS.map((skill) => {
+        const Icon = skill.icon;
+        const isSelected = active === skill.name;
+
+        return (
+          <button
+            key={skill.name}
+            type="button"
+            onClick={() => setActive(isSelected ? null : skill.name)}
+            className={cn(
+              "group inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5",
+              "border-foreground/[0.08] bg-surface/40 dark:bg-white/[0.03] text-foreground/80",
+              "text-xs font-medium tracking-wide backdrop-blur-xl shadow-xs",
+              "transition-all duration-300 cursor-pointer hover:shadow-md",
+              "hover:-translate-y-0.5",
+              skill.hoverGlow,
+              isSelected ? "border-accent bg-accent/15 text-accent ring-1 ring-accent/30 shadow-accent/20" : ""
+            )}
+          >
+            <span className={cn("h-1.5 w-1.5 rounded-full shrink-0 transition-transform group-hover:scale-125", skill.dotColor)} />
+            <Icon size={13} className="shrink-0 opacity-70 group-hover:opacity-100 transition-opacity" />
+            <span className="font-semibold">{skill.name}</span>
+            <span className="text-[10px] font-mono text-muted group-hover:text-foreground/75 transition-colors">
+              {skill.category}
+            </span>
+          </button>
+        );
+      })}
     </div>
   );
 }

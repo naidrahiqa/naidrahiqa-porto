@@ -109,22 +109,22 @@ export function AchievementFilter({ items }: { items: Achievement[] }) {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-wrap gap-2.5">
+      <div className="flex flex-wrap gap-2">
         {filters.map((f, i) => (
           <button
             key={f.key}
             onClick={() => setActive(f.key)}
             className={cn(
-              "rounded-full border-2 border-foreground px-4 py-1.5 font-display text-xs font-bold uppercase tracking-wide transition-all duration-200",
+              "rounded-full border-2 px-4 py-1.5 font-display text-xs font-bold uppercase tracking-wider transition-all duration-200",
               active === f.key
-                ? "bg-accent text-on-accent -rotate-1 hard-shadow-sm"
-                : "bg-surface text-muted hover:rotate-1 hover:text-foreground"
+                ? "border-accent bg-accent text-on-accent hard-shadow-sm -translate-y-0.5"
+                : "border-border/80 bg-surface text-muted hover:border-accent/40 hover:text-foreground"
             )}
           >
             <span
               className={cn(
-                "mr-1.5",
-                active === f.key ? "text-on-accent/70" : "text-accent"
+                "mr-1.5 font-mono",
+                active === f.key ? "text-on-accent/80" : "text-accent"
               )}
             >
               {String(i + 1).padStart(2, "0")}.
@@ -138,36 +138,36 @@ export function AchievementFilter({ items }: { items: Achievement[] }) {
         {filtered.map((a, i) => (
           <div
             key={a.id}
-            className="flex flex-col gap-3 rounded-xl border-2 border-foreground bg-surface hard-shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:hard-shadow-hover active:-translate-y-0.5 active:hard-shadow-hover"
+            className="holo-foil flex flex-col gap-3 rounded-2xl border-2 border-border/80 bg-surface hard-shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-accent/40 hover:hard-shadow-hover"
           >
             {renderThumbnail(a)}
             <div className="p-5">
               <div className="flex items-center justify-between gap-3">
                 <AchievementBadge category={a.category} />
-                <span className="font-display text-xs font-bold text-foreground">
+                <span className="font-mono text-xs font-bold text-accent">
                   {a.year}
                 </span>
               </div>
               <div className="flex items-start gap-3 mt-2">
-                <span className="mt-0.5 font-display text-sm font-extrabold text-accent">
-                  {String(i + 1).padStart(2, "0")}
+                <span className="mt-0.5 font-mono text-xs font-extrabold text-accent">
+                  #{String(i + 1).padStart(2, "0")}
                 </span>
                 <div className="min-w-0">
-                  <h3 className="font-display font-bold uppercase leading-snug tracking-tight">
+                  <h3 className="font-display font-bold uppercase leading-snug tracking-tight text-foreground">
                     {a.title}
                   </h3>
                   {a.event && <p className="mt-1 text-sm text-muted">{a.event}</p>}
                 </div>
               </div>
               {a.description && (
-                <p className="text-sm leading-relaxed text-muted">{a.description}</p>
+                <p className="mt-2 text-sm leading-relaxed text-muted">{a.description}</p>
               )}
               {a.certificate_url && (
                 <a
                   href={getViewUrl(a.certificate_url, isLocalPath(a.certificate_url) ? storagePublicUrl(a.certificate_url) : a.certificate_url)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-1 inline-flex w-fit items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-accent transition-colors hover:underline"
+                  className="mt-3 inline-flex w-fit items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-accent transition-colors hover:underline"
                 >
                   <Award size={13} />
                   Certificate

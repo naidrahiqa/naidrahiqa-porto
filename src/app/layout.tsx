@@ -19,7 +19,6 @@ const geistMono = Geist_Mono({
 const plusJakarta = Plus_Jakarta_Sans({
   variable: "--font-plus-jakarta",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -80,8 +79,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="noise min-h-full flex flex-col">
         <CursorGlow />
         <ScrollProgress />
-        <div className="motif-bg pointer-events-none fixed inset-0 -z-10 opacity-40" />
         <div className="grid-bg pointer-events-none fixed inset-0 -z-10" />
+        <div className="dot-grid pointer-events-none fixed inset-0 -z-10 opacity-15" />
         <Navbar />
         <main className="flex-1 w-full max-w-5xl mx-auto px-5 sm:px-8 pb-20 page-enter">
           {children}

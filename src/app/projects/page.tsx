@@ -38,15 +38,15 @@ export default async function ProjectsPage() {
   return (
     <div className="flex flex-col gap-16 pt-12 sm:pt-16">
       <header className="max-w-2xl">
-        <p className="text-xs uppercase tracking-widest text-accent">
-          Projects
-        </p>
-        <h1 className="mt-2 font-display text-3xl font-bold uppercase tracking-tight sm:text-4xl">
-          My <span className="gradient-text">Work</span>
+        <div className="inline-flex items-center gap-1.5 rounded-full border border-accent/30 bg-accent-fill px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-accent mb-3 dark:bg-accent/20">
+          <span>✦</span>
+          <span>DISCOGRAPHY // PROJECT ARCHIVES</span>
+        </div>
+        <h1 className="font-display text-4xl font-extrabold uppercase tracking-tight sm:text-5xl text-foreground">
+          My <span className="marker">Work</span> & Discs
         </h1>
-        <p className="mt-4 text-muted">
-          School work organized by class and subject, plus personal builds -
-          kernels, IoT, Android modding, and more.
+        <p className="mt-3 text-sm sm:text-base leading-relaxed text-muted">
+          School showcases organized by class and subject, alongside personal builds in Linux kernels, IoT sensor networks, and CTF utilities.
         </p>
       </header>
 

@@ -14,16 +14,24 @@ export function MarkdownContent({ content }: { content: string }) {
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
-          p: ({ node, children }: any) => {
+          p: ({
+            node,
+            children,
+          }: {
+            node?: {
+              children?: Array<{ type?: string; value?: string; tagName?: string }>;
+            };
+            children?: React.ReactNode;
+          }) => {
             const nonWhitespace =
-              node?.children?.filter((child: any) => {
-                if (child.type === "text" && child.value.trim() === "") return false;
+              node?.children?.filter((child) => {
+                if (child.type === "text" && child.value?.trim() === "") return false;
                 return true;
               }) || [];
             const isImagesOnly =
               nonWhitespace.length > 0 &&
               nonWhitespace.every(
-                (child: any) => child.type === "element" && child.tagName === "img"
+                (child) => child.type === "element" && child.tagName === "img"
               );
 
             if (isImagesOnly) {
@@ -39,7 +47,7 @@ export function MarkdownContent({ content }: { content: string }) {
 
             return <p>{children}</p>;
           },
-          img: (props: any) => {
+          img: (props: React.ComponentPropsWithoutRef<"img">) => {
             const { src, alt } = props;
             if (!src || typeof src !== "string") return null;
             const resolved = resolveImageUrl(src);

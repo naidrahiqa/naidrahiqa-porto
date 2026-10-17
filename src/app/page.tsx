@@ -65,6 +65,57 @@ export default async function HomePage() {
       .limit(3),
   ]);
 
+  const NEW_HERO_DESC =
+    "Exploring Linux kernel optimization, embedded systems, and cybersecurity. Building competition-grade hardware and software solutions.";
+
+  const heroDescription =
+    profile?.hero_description && !profile.hero_description.startsWith("Diving deep")
+      ? profile.hero_description
+      : NEW_HERO_DESC;
+
+  const NEW_ABOUT_OVERRIDES: Record<string, string> = {
+    who_am_i:
+      "Hi, I'm Faqih Ardian Syah (just 'Faqih' is fine!). I'm a Network & Computer Engineering (TKJ) student from Jepara, Indonesia, with a deep fascination for low-level systems, networking, and cybersecurity. My daily routine revolves around building functional systems, breaking things to see how they tick, and documenting the journey.",
+    current_focus:
+      "Right now, I'm deep into custom kernel development for the Redmi 10 2022 (selene).",
+    whats_next:
+      "I'm always open to collaborating on challenging projects, exchanging insights with fellow developers, and building tools that genuinely solve problems.",
+  };
+
+  const resolvedAboutSections = (aboutSections && aboutSections.length > 0
+    ? aboutSections.map((s) => {
+        if (
+          NEW_ABOUT_OVERRIDES[s.key] &&
+          (s.content.includes("often just") ||
+            s.content === "- Developing custom kernel for Redmi 10 2022 (selene)" ||
+            s.content.includes("learning from experienced developers") ||
+            s.content.includes("Learning from experienced developers"))
+        ) {
+          return { ...s, content: NEW_ABOUT_OVERRIDES[s.key] };
+        }
+        return s;
+      })
+    : [
+        {
+          id: "who_am_i",
+          key: "who_am_i",
+          heading: "Who I Am",
+          content: NEW_ABOUT_OVERRIDES.who_am_i,
+        },
+        {
+          id: "current_focus",
+          key: "current_focus",
+          heading: "Current Focus",
+          content: NEW_ABOUT_OVERRIDES.current_focus,
+        },
+        {
+          id: "whats_next",
+          key: "whats_next",
+          heading: "What's Next?",
+          content: NEW_ABOUT_OVERRIDES.whats_next,
+        },
+      ]);
+
   let displayProjects = featuredProjects ?? [];
   if (displayProjects.length === 0) {
     const { data: fallbackProjects } = await supabase
@@ -77,104 +128,74 @@ export default async function HomePage() {
   }
 
   return (
-    <div className="flex flex-col pt-14 sm:pt-20">
-      {/* HERO */}
-      <section className="relative flex min-h-[100dvh] flex-col justify-center gap-10 overflow-hidden lg:grid lg:grid-cols-2 lg:items-center lg:gap-12">
-        <div className="orb orb-accent -top-40 -left-40 h-80 w-80" />
-        <div className="orb orb-pink top-20 -right-20 h-60 w-60" />
+    <div className="flex flex-col pt-12 sm:pt-20">
+      {/* HERO: EDITORIAL, CLEAN & CONFIDENT */}
+      <section className="relative flex min-h-[75dvh] flex-col justify-center items-center text-center py-16 sm:py-24">
+        <div className="relative z-10 flex flex-col items-center max-w-4xl mx-auto gap-8">
+          {/* Status Eyebrow */}
+          <div className="inline-flex items-center gap-2 rounded-full border border-foreground/[0.08] bg-surface-2/60 px-4 py-1.5 backdrop-blur-md">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+            <span className="font-mono text-[11px] font-medium tracking-wider uppercase text-muted">
+              TKJ Student &bull; Kernel, IoT & Security
+            </span>
+          </div>
 
-        <div className="relative z-10 flex flex-col gap-8">
-          <SkillTags />
-
-          <div className="relative z-10">
-            <h1 className="font-display text-5xl font-extrabold uppercase leading-[0.9] tracking-tight sm:text-7xl lg:text-8xl">
+          {/* Crisp Headline */}
+          <div className="flex flex-col items-center">
+            <h1 className="font-display text-6xl sm:text-8xl lg:text-9xl font-black uppercase leading-[0.9] tracking-tight text-foreground select-none">
               <TextScramble text="FAQIH" />
-              <span className="block text-3xl sm:text-4xl lg:text-5xl font-semibold mt-3">
-                <span className="marker">ARD</span>IAN <span className="marker">SYAH</span>
+              <span className="block text-4xl sm:text-6xl lg:text-7xl font-extrabold mt-3 text-foreground/85">
+                ARDIAN SYAH
               </span>
             </h1>
 
-            <p className="mt-6 max-w-lg text-base leading-relaxed text-muted">
-              {profile?.hero_description}
+            <p className="mt-6 max-w-xl text-base sm:text-lg leading-relaxed text-muted font-normal">
+              {heroDescription}
             </p>
-
-            <div className="mt-8 flex flex-wrap gap-4">
-              <MagneticButton>
-                <Link
-                  href="/projects"
-                  className="group inline-flex items-center gap-2 rounded-xl border-2 border-foreground bg-accent px-6 py-3 text-sm font-bold uppercase tracking-wide text-on-accent hard-shadow transition-all duration-150 hover:-translate-y-0.5 hover:hard-shadow-hover"
-                >
-                  View Projects
-                  <ArrowRight size={15} className="transition-transform group-hover:translate-x-0.5" />
-                </Link>
-              </MagneticButton>
-              <MagneticButton>
-                <Link
-                  href="/contact"
-                  className="inline-flex items-center gap-2 rounded-xl border-2 border-foreground bg-surface px-6 py-3 text-sm font-bold uppercase tracking-wide transition-all duration-150 hover:-translate-y-0.5"
-                >
-                  Get in Touch
-                </Link>
-              </MagneticButton>
-            </div>
           </div>
-        </div>
 
-        <div className="hidden lg:flex lg:justify-end">
-          <div className="relative w-full max-w-md">
-            <div className="glass glow-accent rounded-3xl p-6 hard-shadow">
-              <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-accent mb-4">
-                <span className="flex h-3.5 items-end gap-0.5">
-                  <span className="eq-bar block h-3.5 w-1 rounded-full bg-gradient-to-t from-accent to-accent-2" style={{ animationDelay: "0ms" }} />
-                  <span className="eq-bar block h-3.5 w-1 rounded-full bg-gradient-to-t from-accent to-accent-2" style={{ animationDelay: "180ms" }} />
-                  <span className="eq-bar block h-3.5 w-1 rounded-full bg-gradient-to-t from-accent to-accent-2" style={{ animationDelay: "360ms" }} />
-                  <span className="eq-bar block h-3.5 w-1 rounded-full bg-gradient-to-t from-accent to-accent-2" style={{ animationDelay: "120ms" }} />
-                </span>
-                Currently
-              </div>
+          {/* Clean Matte Pastel Skill Tags */}
+          <SkillTags />
 
-              <div className="space-y-3">
-                {[
-                  { label: "Exploring", value: "Linux Kernel Internals", icon: "⚡" },
-                  { label: "Building", value: "IoT Sensor Network", icon: "📡" },
-                  { label: "Learning", value: "Exploit Development", icon: "🔓" },
-                  { label: "Reading", value: "Linux Device Drivers", icon: "📖" },
-                ].map((item) => (
-                  <div key={item.label} className="flex items-center gap-3 rounded-xl border border-glass-border bg-surface-2/50 px-3 py-2.5">
-                    <span className="text-lg">{item.icon}</span>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-[10px] font-bold uppercase tracking-wider text-muted">{item.label}</p>
-                      <p className="truncate text-sm font-semibold text-foreground">{item.value}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-accent-fill/30 blur-2xl" />
-            <div className="pointer-events-none absolute -bottom-8 -left-8 h-28 w-28 rounded-full bg-accent-2-fill/30 blur-2xl" />
+          {/* Solid, High-End Action Buttons (No AI Gradients) */}
+          <div className="mt-2 flex flex-wrap items-center justify-center gap-4">
+            <MagneticButton>
+              <Link
+                href="/projects"
+                className="group inline-flex items-center gap-2.5 rounded-full bg-foreground text-background px-7 py-3.5 text-sm font-semibold tracking-wide transition-all duration-200 hover:opacity-90 active:scale-95 shadow-sm"
+              >
+                Explore Work
+                <ArrowRight size={15} className="transition-transform duration-200 group-hover:translate-x-1" />
+              </Link>
+            </MagneticButton>
+            <MagneticButton>
+              <Link
+                href="/contact"
+                className="inline-flex items-center gap-2 rounded-full border border-foreground/[0.12] bg-surface/50 backdrop-blur-md px-7 py-3.5 text-sm font-semibold tracking-wide text-foreground transition-all duration-200 hover:bg-surface-2 hover:border-foreground/20 active:scale-95"
+              >
+                Let&apos;s Connect ✦
+              </Link>
+            </MagneticButton>
           </div>
         </div>
       </section>
 
       {/* ABOUT */}
-      {aboutSections && aboutSections.length > 0 && (
-        <section id="about" className="relative flex flex-col gap-10 mt-16">
-          <span className="sticker top-0 right-10 text-lg rotate-12">✦</span>
-          <span className="sticker top-20 right-0 text-xs -rotate-6" style={{animationDelay:"1s"}}>◆</span>
-          <span className="sticker top-8 left-0 text-xs rotate-45" style={{animationDelay:"2s"}}>✦</span>
-
+      {resolvedAboutSections && resolvedAboutSections.length > 0 && (
+        <section id="about" className="relative flex flex-col gap-8 mt-20 sm:mt-28">
           <ScrollReveal>
-            <SectionHeader title="About" />
+            <SectionHeader title="About Me" subtitle="PROFILE & BACKGROUND" />
           </ScrollReveal>
-          <div className="flex flex-col gap-8 max-w-2xl">
-            {aboutSections.map((s, i) => (
-              <ScrollReveal key={s.id} delay={i * 100}>
-                <h3 className="font-display text-lg font-bold uppercase tracking-tight">
-                  <span className="marker">{s.heading}</span>
-                </h3>
-                <div className="mt-3">
-                  <MarkdownContent content={s.content} />
+          <div className="flex flex-col gap-4 max-w-3xl">
+            {resolvedAboutSections.map((s, i) => (
+              <ScrollReveal key={s.id} delay={i * 80}>
+                <div className="rounded-2xl border border-foreground/[0.08] bg-surface/50 p-6 backdrop-blur-md transition-all duration-200 hover:border-foreground/20">
+                  <h3 className="font-display text-sm font-bold uppercase tracking-wider text-foreground">
+                    {s.heading}
+                  </h3>
+                  <div className="mt-3 text-sm leading-relaxed text-muted font-normal">
+                    <MarkdownContent content={s.content} />
+                  </div>
                 </div>
               </ScrollReveal>
             ))}
@@ -183,37 +204,42 @@ export default async function HomePage() {
       )}
 
       {/* TECH STACK */}
-      <section className="flex flex-col gap-6 mt-16">
+      <section className="flex flex-col gap-6 mt-20 sm:mt-28">
         <ScrollReveal>
-          <SectionHeader title="Tech Stack" />
+          <div className="flex items-end justify-between gap-4">
+            <SectionHeader title="Tech Stack" subtitle="LANGUAGES, TOOLS & FRAMEWORKS" />
+            <span className="font-mono text-xs font-medium text-muted">12 TECHNOLOGIES</span>
+          </div>
         </ScrollReveal>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
           {[
-            { name: "C", desc: "Kernel dev", accent: true },
-            { name: "Shell", desc: "Linux modules" },
-            { name: "Python", desc: "Tools & scripts" },
-            { name: "TypeScript", desc: "Web apps", accent: true },
-            { name: "Go", desc: "Desktop apps" },
-            { name: "Kotlin", desc: "Android" },
-            { name: "Next.js", desc: "React framework", accent: true },
-            { name: "Supabase", desc: "Backend" },
-            { name: "Tailwind CSS", desc: "Styling" },
-            { name: "Git", desc: "Version control" },
-            { name: "Linux", desc: "Daily driver" },
-            { name: "Hyprland", desc: "WM rice" },
+            { name: "C", desc: "Kernel & system dev", tag: "Systems" },
+            { name: "Linux", desc: "Daily driver & kernel", tag: "OS" },
+            { name: "Shell", desc: "Bash & POSIX scripting", tag: "Scripting" },
+            { name: "Python", desc: "Tooling & exploit dev", tag: "Security" },
+            { name: "TypeScript", desc: "Modern fullstack", tag: "Frontend" },
+            { name: "Next.js", desc: "App router & SSR", tag: "Framework" },
+            { name: "Go", desc: "Daemons & network tools", tag: "Backend" },
+            { name: "Kotlin", desc: "Android tinkering", tag: "Mobile" },
+            { name: "Supabase", desc: "Postgres & secure auth", tag: "Database" },
+            { name: "Tailwind CSS", desc: "Aesthetic styling", tag: "Design" },
+            { name: "Git", desc: "Workflow control", tag: "Tool" },
+            { name: "Hyprland", desc: "Wayland WM rice", tag: "Desktop" },
           ].map((tech, i) => (
-            <ScrollReveal key={tech.name} delay={i * 50}>
+            <ScrollReveal key={tech.name} delay={i * 35}>
               <div
-                className={cn(
-                  "flex items-center gap-3 rounded-xl border-2 border-border bg-surface p-4 transition-all duration-200 hover:-translate-y-0.5 hover:hard-shadow-sm",
-                  tech.accent
-                    ? "border-accent/30 hover:border-accent/60"
-                    : "hover:border-accent-2/40"
-                )}
+                className="group relative flex flex-col justify-between rounded-2xl border border-foreground/[0.08] bg-surface/50 p-4 backdrop-blur-md transition-all duration-200 hover:-translate-y-1 hover:border-foreground/20 hover:shadow-sm"
               >
-                <TechIcon name={tech.name} size={22} />
-                <div className="min-w-0">
-                  <p className="font-display text-sm font-bold uppercase tracking-tight text-foreground">
+                <div className="flex items-center justify-between">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-foreground/[0.04] border border-foreground/[0.06] transition-transform duration-200 group-hover:scale-105">
+                    <TechIcon name={tech.name} size={22} />
+                  </div>
+                  <span className="font-mono text-[9px] font-medium text-muted px-2 py-0.5 rounded-md bg-foreground/[0.04] border border-foreground/[0.05]">
+                    {tech.tag}
+                  </span>
+                </div>
+                <div className="mt-3 min-w-0">
+                  <p className="font-display text-sm font-bold uppercase tracking-tight text-foreground transition-colors group-hover:text-foreground/90">
                     {tech.name}
                   </p>
                   <p className="mt-0.5 text-[11px] text-muted">{tech.desc}</p>
@@ -225,38 +251,48 @@ export default async function HomePage() {
       </section>
 
       {/* STATS */}
-      <section className="mt-16">
+      <section className="mt-20 sm:mt-28">
         <ScrollReveal>
           <div className="grid gap-4 sm:grid-cols-3">
-            <div className="flex flex-col items-start gap-1 rounded-xl border-2 border-border bg-surface px-6 py-5 hard-shadow-sm sm:col-span-2">
+            <div className="relative flex flex-col items-start justify-between rounded-2xl border border-foreground/[0.08] bg-surface/50 p-6 backdrop-blur-md sm:col-span-2">
+              <div className="text-[10px] font-mono font-medium uppercase tracking-wider text-muted mb-2">
+                PRODUCTION SHIPMENTS
+              </div>
               <Counter
                 target={totalProjects ?? displayProjects.length}
                 suffix="+"
-                className="font-display text-5xl font-extrabold tracking-tight text-accent"
+                className="font-display text-5xl font-extrabold tracking-tight text-foreground"
               />
-              <span className="text-sm font-semibold uppercase tracking-wider text-muted">
-                Projects Shipped
+              <span className="mt-2 text-sm font-medium uppercase tracking-wider text-muted">
+                Projects Shipped & Deployed
               </span>
             </div>
+
             <div className="flex flex-col gap-4">
-              <div className="flex flex-col items-start gap-1 rounded-xl border-2 border-border bg-surface px-5 py-4 hard-shadow-sm">
+              <div className="flex flex-col items-start gap-1 rounded-2xl border border-foreground/[0.08] bg-surface/50 p-5 backdrop-blur-md">
+                <div className="text-[10px] font-mono font-medium uppercase tracking-wider text-muted">
+                  AWARDS & MILESTONES
+                </div>
                 <Counter
                   target={totalAchievements ?? 0}
                   suffix=""
-                  className="font-display text-2xl font-extrabold tracking-tight text-accent-2"
+                  className="font-display text-3xl font-extrabold tracking-tight text-foreground"
                 />
-                <span className="text-xs font-semibold uppercase tracking-wider text-muted">
-                  Achievements
+                <span className="text-xs font-medium uppercase tracking-wider text-muted">
+                  Certificates & Medals
                 </span>
               </div>
-              <div className="flex flex-col items-start gap-1 rounded-xl border-2 border-border bg-surface px-5 py-4 hard-shadow-sm">
+              <div className="flex flex-col items-start gap-1 rounded-2xl border border-foreground/[0.08] bg-surface/50 p-5 backdrop-blur-md">
+                <div className="text-[10px] font-mono font-medium uppercase tracking-wider text-muted">
+                  TECHNOLOGIES
+                </div>
                 <Counter
                   target={12}
                   suffix="+"
-                  className="font-display text-2xl font-extrabold tracking-tight text-accent-2"
+                  className="font-display text-3xl font-extrabold tracking-tight text-foreground"
                 />
-                <span className="text-xs font-semibold uppercase tracking-wider text-muted">
-                  Tech Used
+                <span className="text-xs font-medium uppercase tracking-wider text-muted">
+                  Languages & Frameworks
                 </span>
               </div>
             </div>
@@ -265,13 +301,13 @@ export default async function HomePage() {
       </section>
 
       {/* PROJECTS */}
-      <section id="projects" className="flex flex-col gap-6 mt-16">
+      <section id="projects" className="flex flex-col gap-6 mt-20 sm:mt-28">
         <ScrollReveal>
           <div className="flex items-end justify-between gap-4">
-            <SectionHeader title="Projects" />
+            <SectionHeader title="Featured Works" subtitle="SELECTED PROJECTS" />
             <Link
               href="/projects"
-              className="group text-xs font-semibold uppercase tracking-wide text-accent transition-colors hover:text-foreground"
+              className="group text-xs font-medium uppercase tracking-wide text-muted transition-colors hover:text-foreground"
             >
               View all
               <span className="ml-1 inline-block transition-transform group-hover:translate-x-0.5">→</span>
@@ -290,13 +326,13 @@ export default async function HomePage() {
       </section>
 
       {/* ACHIEVEMENTS */}
-      <section id="achievements" className="flex flex-col gap-6 mt-16">
+      <section id="achievements" className="flex flex-col gap-6 mt-20 sm:mt-28">
         <ScrollReveal>
           <div className="flex items-end justify-between gap-4">
-            <SectionHeader title="Achievements" />
+            <SectionHeader title="Achievements" subtitle="CERTIFICATES & COMPETITIONS" />
             <Link
               href="/achievements"
-              className="group text-xs font-semibold uppercase tracking-wide text-accent transition-colors hover:text-foreground"
+              className="group text-xs font-medium uppercase tracking-wide text-muted transition-colors hover:text-foreground"
             >
               View all
               <span className="ml-1 inline-block transition-transform group-hover:translate-x-0.5">→</span>
@@ -307,14 +343,14 @@ export default async function HomePage() {
           {achievements?.map((a, i) => (
             <ScrollReveal key={a.id} delay={i * 80}>
               <div
-                className="flex flex-col gap-3 rounded-xl border-2 border-foreground bg-surface hard-shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:hard-shadow-hover"
+                className="flex flex-col gap-3 rounded-2xl border border-foreground/[0.08] bg-surface/50 backdrop-blur-md shadow-xs transition-all duration-200 hover:-translate-y-1 hover:border-foreground/20 hover:shadow-sm"
               >
                 {a.certificate_url && a.certificate_url.endsWith(".pdf") && (
                   <a
                     href={a.certificate_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block aspect-[4/3] overflow-hidden border-b-2 border-foreground bg-surface-2"
+                    className="block aspect-[4/3] overflow-hidden border-b border-foreground/[0.06] bg-surface-2/50"
                   >
                     <PDFThumbnail url={a.certificate_url} className="h-full w-full" />
                   </a>
@@ -324,32 +360,32 @@ export default async function HomePage() {
                     href={a.certificate_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block aspect-[4/3] overflow-hidden border-b-2 border-foreground bg-surface-2"
+                    className="block aspect-[4/3] overflow-hidden border-b border-foreground/[0.06] bg-surface-2/50"
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={a.certificate_url}
                       alt={a.title}
-                      className="h-full w-full object-cover"
+                      className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
                     />
                   </a>
                 )}
                 <div className="p-5">
                   <div className="flex items-center justify-between gap-3">
                     <AchievementBadge category={a.category} />
-                    <span className="font-display text-xs font-bold text-foreground">{a.year}</span>
+                    <span className="font-mono text-xs font-medium text-muted">{a.year}</span>
                   </div>
-                  <h3 className="mt-2 font-display font-bold uppercase leading-snug tracking-tight">{a.title}</h3>
+                  <h3 className="mt-2 font-display font-bold uppercase leading-snug tracking-tight text-foreground">{a.title}</h3>
                   <p className="mt-1 text-sm text-muted">{a.event}</p>
                   {a.certificate_url && (
                     <a
                       href={a.certificate_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="mt-2 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-accent hover:underline"
+                      className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-foreground hover:underline"
                     >
                       <ExternalLink size={12} />
-                      Certificate
+                      View Certificate
                     </a>
                   )}
                 </div>
@@ -361,23 +397,28 @@ export default async function HomePage() {
 
       {/* CTA */}
       <ScrollReveal>
-        <section className="relative mt-20 overflow-hidden rounded-2xl border-2 border-foreground bg-surface p-8 text-center hard-shadow sm:p-12">
-          <div className="orb orb-accent -top-20 left-1/2 h-40 w-60 -translate-x-1/2" />
+        <section className="relative mt-20 sm:mt-28 overflow-hidden rounded-3xl border border-foreground/[0.08] bg-surface/50 backdrop-blur-md p-8 text-center sm:p-12">
           <div className="relative z-10">
-            <h2 className="font-display text-2xl font-bold uppercase tracking-tight sm:text-3xl">
-              Let&apos;s <span className="marker">connect</span>
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-foreground/[0.1] bg-foreground/[0.04] px-3 py-1 text-[11px] font-mono font-medium uppercase tracking-wider text-muted mb-4">
+              <span>✦</span>
+              <span>OPEN FOR COLLABORATION</span>
+              <span>✦</span>
+            </div>
+            <h2 className="font-display text-3xl font-extrabold uppercase tracking-tight sm:text-4xl text-foreground">
+              Let&apos;s connect & build
             </h2>
-            <p className="mx-auto mt-3 max-w-md text-sm text-muted">
-              Interested in systems programming, IoT, or cybersecurity? My inbox is
-              always open.
+            <p className="mx-auto mt-3 max-w-md text-sm text-muted leading-relaxed">
+              Interested in systems programming, IoT telemetry, or cybersecurity? My inbox is always open for ideas and collaborations.
             </p>
-            <Link
-              href="/contact"
-              className="mt-6 inline-flex items-center gap-2 rounded-xl border-2 border-foreground bg-accent px-6 py-3 text-sm font-bold uppercase tracking-wide text-on-accent transition-all duration-150 hover:-translate-y-0.5"
-            >
-              Contact Me
-              <ArrowRight size={15} />
-            </Link>
+            <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+              <Link
+                href="/contact"
+                className="inline-flex items-center gap-2 rounded-full bg-foreground text-background px-7 py-3.5 text-sm font-semibold tracking-wide transition-all duration-200 hover:opacity-90 active:scale-95 shadow-sm"
+              >
+                Send a Message
+                <ArrowRight size={15} />
+              </Link>
+            </div>
           </div>
         </section>
       </ScrollReveal>
@@ -385,13 +426,18 @@ export default async function HomePage() {
   );
 }
 
-function SectionHeader({ title }: { title: string }) {
+function SectionHeader({ title, subtitle }: { title: string; subtitle?: string }) {
   return (
     <div>
-      <h2 className="font-display text-3xl font-extrabold uppercase tracking-tight sm:text-4xl">
-        <span className="marker">{title}</span>
+      {subtitle && (
+        <p className="font-mono text-[10px] font-medium uppercase tracking-[0.2em] text-muted mb-1">
+          ✦ {subtitle}
+        </p>
+      )}
+      <h2 className="font-display text-3xl font-extrabold uppercase tracking-tight sm:text-4xl text-foreground">
+        {title}
       </h2>
-      <div className="mt-3 h-0.5 w-12 bg-foreground/15" />
+      <div className="mt-2.5 h-0.5 w-10 bg-foreground/20 rounded-full" />
     </div>
   );
 }
