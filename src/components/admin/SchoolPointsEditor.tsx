@@ -311,10 +311,10 @@ export function SchoolPointsEditor({
   return (
     <div className="flex flex-col gap-6">
       {/* HEADER BANNER */}
-      <div className="flex flex-col gap-3 rounded-2xl border-2 border-foreground bg-surface p-4 hard-shadow">
+      <div className="flex flex-col gap-3 rounded-2xl border border-border bg-surface p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent text-on-accent hard-shadow-sm font-bold">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent text-on-accent font-bold">
               <BookOpen size={18} />
             </div>
             <div>
@@ -331,7 +331,7 @@ export function SchoolPointsEditor({
             <button
               type="button"
               onClick={addPoint}
-              className="inline-flex items-center gap-1.5 rounded-xl border-2 border-foreground bg-accent px-3 py-1.5 text-xs font-bold text-on-accent transition-colors hover:bg-accent-hover"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-accent px-3 py-1.5 text-xs font-bold text-on-accent transition-colors hover:bg-accent-hover"
             >
               <Plus size={14} />
               Tambah Poin
@@ -376,7 +376,7 @@ export function SchoolPointsEditor({
       </div>
 
       {/* 1. LATAR BELAKANG */}
-      <div className="rounded-2xl border-2 border-foreground bg-surface p-5 hard-shadow">
+      <div className="rounded-2xl border border-border bg-surface p-5">
         <div className="mb-2 flex items-center justify-between">
           <Label htmlFor="school-intro">
             Latar Belakang & Pendahuluan
@@ -451,7 +451,7 @@ export function SchoolPointsEditor({
         </div>
 
         {points.length === 0 ? (
-          <div className="rounded-2xl border-2 border-dashed border-border bg-surface-2/30 p-8 text-center">
+          <div className="rounded-2xl border border-dashed border-border bg-surface-2/30 p-8 text-center">
             <BookOpen size={32} className="mx-auto text-muted mb-2 opacity-50" />
             <p className="font-semibold text-foreground text-sm">
               Belum ada poin kegiatan yang dibuat
@@ -463,7 +463,7 @@ export function SchoolPointsEditor({
               <button
                 type="button"
                 onClick={onGeneratePancasila}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-accent px-4 py-2 text-xs font-bold text-on-accent hard-shadow-sm"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-accent px-4 py-2 text-xs font-bold text-on-accent"
               >
                 <Sparkles size={14} />
                 Susun 5 Sila Otomatis (10 Foto)
@@ -482,7 +482,7 @@ export function SchoolPointsEditor({
           points.map((point, ptIdx) => (
             <div
               key={point.id || ptIdx}
-              className="rounded-2xl border-2 border-foreground bg-surface p-5 hard-shadow transition-all"
+              className="rounded-2xl border border-border bg-surface p-5 transition-all"
             >
               {/* Header Poin Card */}
               <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-3 mb-4">
@@ -548,7 +548,7 @@ export function SchoolPointsEditor({
                       <button
                         type="button"
                         onClick={() => handleSmartAutoDraft(ptIdx)}
-                        className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-2.5 py-1 text-[11px] font-bold text-on-accent transition-transform active:scale-95 hover:bg-accent-hover hard-shadow-sm"
+                        className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-2.5 py-1 text-[11px] font-bold text-on-accent transition-transform active:scale-95 hover:bg-accent-hover"
                         title="Tulis teks otomatis berdasarkan judul poin ini"
                       >
                         <Sparkles size={11} />
@@ -811,7 +811,7 @@ export function SchoolPointsEditor({
           <button
             type="button"
             onClick={addPoint}
-            className="flex items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-border p-4 text-xs font-bold text-muted transition-colors hover:border-accent hover:text-accent hover:bg-surface-2/40"
+            className="flex items-center justify-center gap-2 rounded-2xl border border-dashed border-border p-4 text-xs font-bold text-muted transition-colors hover:border-accent hover:text-accent hover:bg-surface-2/40"
           >
             <Plus size={16} />
             Tambah Poin Pembahasan Baru
@@ -820,7 +820,7 @@ export function SchoolPointsEditor({
       </div>
 
       {/* 3. KESIMPULAN & REFLEKSI */}
-      <div className="rounded-2xl border-2 border-foreground bg-surface p-5 hard-shadow">
+      <div className="rounded-2xl border border-border bg-surface p-5">
         <div className="mb-2 flex items-center justify-between">
           <Label htmlFor="school-conclusion">
             Kesimpulan & Refleksi Akhir

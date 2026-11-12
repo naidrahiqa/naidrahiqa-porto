@@ -43,14 +43,14 @@ export default async function SchoolClassPage({
           Semua Proyek
         </Link>
         <header className="max-w-2xl">
-          <p className="text-xs uppercase tracking-widest text-accent">
+          <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-accent">
             Kelas {cls.toUpperCase()}
           </p>
           <h1 className="mt-2 font-display text-3xl font-bold uppercase tracking-tight sm:text-4xl">
-            Proyek Sekolah <span className="gradient-text">Kelas {cls.toUpperCase()}</span>
+            Proyek Sekolah Kelas {cls.toUpperCase()}
           </h1>
         </header>
-        <div className="rounded-2xl border-2 border-border bg-surface p-12 text-center hard-shadow-sm">
+        <div className="rounded-2xl border border-dashed border-border bg-surface/50 p-12 text-center">
           <p className="font-display text-lg font-bold text-foreground">
             Belum ada proyek untuk Kelas {cls.toUpperCase()}
           </p>
@@ -59,7 +59,7 @@ export default async function SchoolClassPage({
           </p>
           <Link
             href="/projects"
-            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-accent px-5 py-2.5 text-xs font-bold uppercase text-on-accent transition-all hover:bg-accent-hover"
+            className="mt-6 inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2.5 text-xs font-semibold text-background transition-opacity hover:opacity-90"
           >
             Lihat Proyek Lainnya
           </Link>
@@ -107,13 +107,13 @@ export default async function SchoolClassPage({
       </Link>
 
       <header className="max-w-2xl">
-        <p className="text-xs uppercase tracking-wider text-accent">
+        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-accent">
           School
         </p>
         <h1 className="mt-2 font-display text-3xl font-bold uppercase tracking-tight sm:text-4xl">
-          Kelas <span className="gradient-text">{cls.toUpperCase()}</span>
+          Kelas <span className="text-foreground/30">{cls.toUpperCase()}</span>
         </h1>
-        <p className="mt-3 text-muted">
+        <p className="mt-3 font-mono text-xs text-muted">
           {groups.length} mapel · {items.length} showcase
         </p>
       </header>

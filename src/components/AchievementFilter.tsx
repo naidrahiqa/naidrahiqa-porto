@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { Award, ExternalLink, FileText } from "lucide-react";
-import { cn, storagePublicUrl } from "@/lib/utils";
+import { cn, isTrustedImageHost, storagePublicUrl } from "@/lib/utils";
 import { AchievementBadge } from "@/components/cards";
 import { PDFThumbnail } from "@/components/PDFThumbnail";
 import type { Achievement } from "@/lib/types";
@@ -67,7 +67,7 @@ export function AchievementFilter({ items }: { items: Achievement[] }) {
           href={viewUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="block aspect-[3/2] overflow-hidden border-b-2 border-foreground bg-surface-2"
+          className="block aspect-[3/2] overflow-hidden border-b border-border bg-surface-2"
         >
           <PDFThumbnail url={directUrl} className="h-full w-full" />
         </a>
@@ -80,13 +80,14 @@ export function AchievementFilter({ items }: { items: Achievement[] }) {
           href={viewUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="block aspect-[3/2] overflow-hidden border-b-2 border-foreground bg-surface-2"
+          className="block aspect-[3/2] overflow-hidden border-b border-border bg-surface-2"
         >
           <Image
             src={directUrl}
             alt={a.title}
             width={600}
             height={400}
+            unoptimized={!isTrustedImageHost(directUrl)}
             className="h-full w-full object-cover"
           />
         </a>
@@ -98,7 +99,7 @@ export function AchievementFilter({ items }: { items: Achievement[] }) {
         href={viewUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex aspect-[3/2] items-center justify-center gap-2 border-b-2 border-foreground bg-surface-2 text-muted transition-colors hover:text-accent"
+        className="flex aspect-[3/2] items-center justify-center gap-2 border-b border-border bg-surface-2 text-muted transition-colors hover:text-accent"
       >
         <FileText size={24} />
         <span className="text-xs font-bold uppercase">View Certificate</span>
@@ -115,10 +116,10 @@ export function AchievementFilter({ items }: { items: Achievement[] }) {
             key={f.key}
             onClick={() => setActive(f.key)}
             className={cn(
-              "rounded-full border-2 px-4 py-1.5 font-display text-xs font-bold uppercase tracking-wider transition-all duration-200",
+              "rounded-full border px-4 py-1.5 font-display text-xs font-bold uppercase tracking-wider transition-colors duration-200",
               active === f.key
-                ? "border-accent bg-accent text-on-accent hard-shadow-sm -translate-y-0.5"
-                : "border-border/80 bg-surface text-muted hover:border-accent/40 hover:text-foreground"
+                ? "border-foreground bg-foreground text-background"
+                : "border-border bg-surface text-muted hover:border-foreground/30 hover:text-foreground"
             )}
           >
             <span
@@ -138,7 +139,7 @@ export function AchievementFilter({ items }: { items: Achievement[] }) {
         {filtered.map((a, i) => (
           <div
             key={a.id}
-            className="holo-foil flex flex-col gap-3 rounded-2xl border-2 border-border/80 bg-surface hard-shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-accent/40 hover:hard-shadow-hover"
+            className="flex flex-col overflow-hidden rounded-2xl border border-border bg-surface transition-colors duration-200 hover:border-foreground/25"
           >
             {renderThumbnail(a)}
             <div className="p-5">

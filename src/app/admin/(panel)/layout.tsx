@@ -14,7 +14,7 @@ export default async function AdminLayout({
     <ToastProvider>
       <div className="flex min-h-[80vh] flex-col gap-8 pt-10 lg:flex-row">
         <aside className="shrink-0 lg:w-56">
-          <div className="glass rounded-xl p-4 lg:sticky lg:top-20">
+          <div className="rounded-2xl border border-border bg-surface p-4 lg:sticky lg:top-20">
             <AdminSidebar email={user.email ?? ""} />
             <div className="mt-3 border-t border-border/50 pt-3">
               <LogoutButton />

@@ -89,6 +89,14 @@ export interface Project {
   featured: boolean;
   language: string;
   sort_order: number;
+  repo_name: string | null;
+  repo_stars: number;
+  repo_forks: number;
+  repo_is_fork: boolean;
+  repo_archived: boolean;
+  repo_pushed_at: string | null;
+  repo_homepage: string | null;
+  repo_topics: string[];
   created_at: string;
   updated_at: string;
 }

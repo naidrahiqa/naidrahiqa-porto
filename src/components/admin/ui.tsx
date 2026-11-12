@@ -8,49 +8,33 @@ import { cn } from "@/lib/utils";
 
 export function Label({ children, htmlFor }: { children: React.ReactNode; htmlFor?: string }) {
   return (
-    <label htmlFor={htmlFor} className="mb-1.5 block text-xs font-medium text-muted">
+    <label
+      htmlFor={htmlFor}
+      className="mb-1.5 block font-mono text-[10px] uppercase tracking-[0.14em] text-muted"
+    >
       {children}
     </label>
   );
 }
 
+const fieldBase =
+  "w-full rounded-xl border border-border bg-surface px-3 py-2.5 text-sm text-foreground placeholder:text-muted/50 outline-none transition-colors focus:border-foreground/40";
+
 export function Input(props: InputHTMLAttributes<HTMLInputElement>) {
-  return (
-    <input
-      {...props}
-      className={cn(
-        "w-full rounded-lg border border-border bg-surface-2/50 px-3 py-2.5 text-sm text-foreground placeholder:text-muted/50",
-        "outline-none transition-all duration-200 focus:border-accent/60 focus:bg-surface-2 focus:ring-2 focus:ring-accent/10",
-        props.className
-      )}
-    />
-  );
+  return <input {...props} className={cn(fieldBase, props.className)} />;
 }
 
 export function TextArea(props: TextareaHTMLAttributes<HTMLTextAreaElement>) {
   return (
     <textarea
       {...props}
-      className={cn(
-        "w-full rounded-lg border border-border bg-surface-2/50 px-3 py-2.5 text-sm leading-relaxed text-foreground placeholder:text-muted/50",
-        "outline-none transition-all duration-200 focus:border-accent/60 focus:bg-surface-2 focus:ring-2 focus:ring-accent/10",
-        props.className
-      )}
+      className={cn(fieldBase, "leading-relaxed", props.className)}
     />
   );
 }
 
 export function Select(props: SelectHTMLAttributes<HTMLSelectElement>) {
-  return (
-    <select
-      {...props}
-      className={cn(
-        "w-full rounded-lg border border-border bg-surface-2/50 px-3 py-2.5 text-sm text-foreground",
-        "outline-none transition-all duration-200 focus:border-accent/60 focus:bg-surface-2 focus:ring-2 focus:ring-accent/10",
-        props.className
-      )}
-    />
-  );
+  return <select {...props} className={cn(fieldBase, props.className)} />;
 }
 
 export function Button({
@@ -63,11 +47,11 @@ export function Button({
     <button
       {...props}
       className={cn(
-        "inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-all duration-200 disabled:opacity-50 disabled:pointer-events-none",
+        "inline-flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold transition-colors duration-200 disabled:opacity-50 disabled:pointer-events-none",
         variant === "primary" &&
-          "bg-accent text-on-accent shadow-sm hover:bg-accent-hover hover:shadow-lg hover:shadow-accent/20 hover:-translate-y-0.5",
+          "bg-foreground text-background hover:opacity-90",
         variant === "secondary" &&
-          "border border-border bg-surface/50 text-foreground hover:border-border-hover hover:text-accent",
+          "border border-border bg-surface text-foreground hover:border-foreground/30",
         variant === "danger" &&
           "border border-danger/40 bg-danger/10 text-danger hover:bg-danger/20",
         props.className
@@ -86,7 +70,7 @@ export function Card({
   return (
     <div
       className={cn(
-        "glass rounded-xl p-5 transition-colors duration-200",
+        "rounded-2xl border border-border bg-surface p-5 transition-colors duration-200",
         className
       )}
     >
@@ -99,16 +83,16 @@ export function StatusPill({ ok, text }: { ok: boolean; text: string }) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11px]",
+        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider",
         ok
-          ? "border-accent/30 bg-accent/5 text-accent"
-          : "border-amber-400/30 bg-amber-400/5 text-amber-400"
+          ? "border-accent-2/30 bg-accent-2-fill text-accent-2"
+          : "border-amber-400/30 bg-amber-400/5 text-amber-500"
       )}
     >
       <span
         className={cn(
           "h-1.5 w-1.5 rounded-full",
-          ok ? "bg-accent" : "bg-amber-400"
+          ok ? "bg-accent-2" : "bg-amber-400"
         )}
       />
       {text}

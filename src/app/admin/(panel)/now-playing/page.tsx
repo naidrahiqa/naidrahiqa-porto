@@ -105,7 +105,7 @@ export default function NowPlayingAdminPage() {
   return (
     <div className="flex flex-col gap-6">
       <header>
-        <h1 className="text-2xl font-bold tracking-tight">Now Playing</h1>
+        <h1 className="font-display text-2xl font-extrabold uppercase tracking-tight text-foreground">Now Playing</h1>
         <p className="mt-2 text-sm text-muted">
           Lagu yang tampil di card home - rotasi otomatis tiap hari. Urutan
           diambil dari kolom sort (1, 2, 3...). Tiap lagu bisa pakai link bebas

@@ -72,7 +72,7 @@ export default function ProfileEditorPage() {
   return (
     <div className="flex max-w-xl flex-col gap-6">
       <header>
-        <h1 className="text-2xl font-bold tracking-tight">Profile</h1>
+        <h1 className="font-display text-2xl font-extrabold uppercase tracking-tight text-foreground">Profile</h1>
         <p className="mt-2 text-sm text-muted">
           Your personal information shown on the homepage and about page.
         </p>

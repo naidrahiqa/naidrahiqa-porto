@@ -27,7 +27,7 @@ export default async function AboutPage() {
     supabase.from("about_sections").select("*").order("sort_order"),
   ]);
 
-  const sections = (rawSections && rawSections.length > 0
+  const sections = rawSections && rawSections.length > 0
     ? rawSections.map((s) => {
         if (
           NEW_ABOUT_OVERRIDES[s.key] &&
@@ -59,41 +59,47 @@ export default async function AboutPage() {
           heading: "What's Next?",
           content: NEW_ABOUT_OVERRIDES.whats_next,
         },
-      ]);
+      ];
 
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-12 pt-12 sm:pt-16">
-      <header className="flex flex-col gap-5">
-        <div className="inline-flex w-fit items-center gap-1.5 rounded-full border border-foreground/[0.08] bg-surface-2/60 px-3.5 py-1 text-[11px] font-mono font-medium uppercase tracking-wider text-muted">
-          <span>IDENTITY &bull; ABOUT ME</span>
+    <div className="flex flex-col gap-14 pt-12 sm:pt-16">
+      <header>
+        <div className="flex items-center gap-2.5">
+          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-accent">
+            01 / Profile
+          </span>
+          <span className="h-px w-8 bg-border" />
+          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted">
+            Identity
+          </span>
         </div>
-        <h1 className="font-display text-4xl font-extrabold uppercase tracking-tight sm:text-5xl text-foreground">
-          Who is Naidra?
+        <h1 className="mt-5 max-w-[18ch] font-display text-4xl font-extrabold uppercase leading-[0.9] tracking-[-0.035em] text-foreground sm:text-6xl">
+          Who is <span className="text-foreground/30">Naidra</span>?
         </h1>
 
         {profile && (
-          <div className="flex flex-col items-center gap-5 rounded-2xl border border-foreground/[0.08] bg-surface/50 p-6 backdrop-blur-md sm:flex-row sm:items-center sm:gap-6">
+          <div className="mt-8 flex flex-col items-start gap-5 rounded-2xl border border-border bg-surface p-6 sm:flex-row sm:items-center">
             {profile.profile_image ? (
               <Image
                 src={resolveImageUrl(profile.profile_image)}
                 alt={profile.name}
                 width={100}
                 height={100}
-                className="h-24 w-24 shrink-0 rounded-2xl object-cover border border-foreground/[0.08]"
+                className="h-24 w-24 shrink-0 rounded-2xl border border-border object-cover"
               />
             ) : (
-              <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-2xl bg-foreground/[0.06] text-3xl font-extrabold text-foreground border border-foreground/[0.08]">
+              <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-2xl border border-border bg-surface-2 font-display text-3xl font-extrabold text-foreground">
                 {profile.nickname?.charAt(0) ?? "N"}
               </div>
             )}
-            <div className="min-w-0 text-center sm:text-left">
-              <span className="font-mono text-[10px] font-medium uppercase tracking-wider text-muted">
-                PROFILE &bull; {profile.nickname ?? "NAIDRA"}
-              </span>
-              <h2 className="font-display text-2xl font-extrabold text-foreground mt-0.5">
+            <div className="min-w-0">
+              <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
+                Profile / {profile.nickname ?? "NAIDRA"}
+              </p>
+              <h2 className="mt-1 font-display text-2xl font-bold tracking-tight text-foreground">
                 {profile.name}
               </h2>
-              <p className="mt-1 text-sm text-muted leading-relaxed font-normal">
+              <p className="mt-1 text-sm leading-relaxed text-muted">
                 {profile.tagline}
               </p>
             </div>
@@ -101,19 +107,27 @@ export default async function AboutPage() {
         )}
       </header>
 
-      <div className="flex flex-col gap-4">
-        {sections?.map((section, idx) => (
-          <ScrollReveal key={section.id} delay={idx * 60}>
-            <section className="rounded-2xl border border-foreground/[0.08] bg-surface/50 p-6 backdrop-blur-md transition-all duration-200 hover:border-foreground/20">
-              <h2 className="font-display text-sm font-bold uppercase tracking-wider text-foreground">
-                {section.heading}
-              </h2>
-              <div className="mt-3 text-sm leading-relaxed text-muted font-normal">
-                <MarkdownContent content={section.content} />
-              </div>
-            </section>
-          </ScrollReveal>
-        ))}
+      <div className="grid gap-10 lg:grid-cols-[200px_1fr] lg:gap-16">
+        <div className="hidden lg:block">
+          <p className="max-w-[16ch] font-display text-lg font-semibold leading-snug tracking-tight text-foreground/70">
+            Building systems, breaking them, documenting the process.
+          </p>
+        </div>
+
+        <div className="flex flex-col">
+          {sections?.map((section, idx) => (
+            <ScrollReveal key={section.id} delay={idx * 60}>
+              <article className="border-t border-border py-7 first:border-t-0 first:pt-0">
+                <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
+                  {String(idx + 1).padStart(2, "0")} / {section.heading}
+                </p>
+                <div className="mt-3">
+                  <MarkdownContent content={section.content} />
+                </div>
+              </article>
+            </ScrollReveal>
+          ))}
+        </div>
       </div>
     </div>
   );

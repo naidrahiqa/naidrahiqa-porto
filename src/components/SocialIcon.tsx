@@ -28,14 +28,16 @@ export function SocialLink({
       href={href}
       target={platform === "email" ? undefined : "_blank"}
       rel={platform === "email" ? undefined : "noopener noreferrer"}
-      className="group flex items-center gap-4 rounded-xl border-2 border-foreground bg-surface p-4 hard-shadow-sm transition-all duration-200 hover:-translate-y-1 hover:hard-shadow-hover"
+      className="group flex items-center gap-4 rounded-2xl border border-border bg-surface p-4 transition-colors duration-200 hover:border-foreground/25"
     >
-      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border-2 border-foreground bg-accent text-on-accent transition-transform duration-200 group-hover:rotate-6 group-hover:scale-105">
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-border bg-accent-fill text-accent transition-colors duration-200 group-hover:border-accent/40">
         <BrandIcon platform={platform} size={20} />
       </span>
       <span className="min-w-0">
-        <span className="block text-sm font-bold uppercase tracking-wide">{platform}</span>
-        <span className="block truncate text-xs font-semibold text-muted">
+        <span className="block font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
+          {platform}
+        </span>
+        <span className="mt-0.5 block truncate text-sm font-medium text-foreground">
           {handle || url}
         </span>
       </span>

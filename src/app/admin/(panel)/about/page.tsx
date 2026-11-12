@@ -117,7 +117,7 @@ export default function AboutEditorPage() {
   return (
     <div className="flex flex-col gap-6">
       <header>
-        <h1 className="text-2xl font-bold tracking-tight">About Sections</h1>
+        <h1 className="font-display text-2xl font-extrabold uppercase tracking-tight text-foreground">About Sections</h1>
         <p className="mt-2 text-sm text-muted">
           Each section renders on /about with its heading. Content supports markdown.
         </p>

@@ -31,7 +31,7 @@ export default async function EditProjectPage({
       </nav>
 
       <header>
-        <h1 className="text-2xl font-bold tracking-tight">Edit Project</h1>
+        <h1 className="font-display text-2xl font-extrabold uppercase tracking-tight text-foreground">Edit Project</h1>
       </header>
       <ProjectForm initial={project} />
     </div>

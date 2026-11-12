@@ -62,7 +62,7 @@ function SortableRow({
       ref={setNodeRef}
       style={style}
       className={cn(
-        "flex items-center gap-3 rounded-xl border-2 border-foreground bg-surface p-3 hard-shadow-sm transition-shadow",
+        "flex items-center gap-3 rounded-xl border border-border bg-surface p-3 transition-shadow",
         isDragging && "z-10 opacity-80 ring-2 ring-accent"
       )}
     >
@@ -79,7 +79,7 @@ function SortableRow({
         {index + 1}
       </span>
 
-      <div className="h-12 w-16 shrink-0 overflow-hidden rounded-md border-2 border-foreground bg-surface-2">
+      <div className="h-12 w-16 shrink-0 overflow-hidden rounded-md border border-border bg-surface-2">
         {preview.kind === "image" ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -118,7 +118,7 @@ function SortableRow({
             href={item.certificate_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 rounded-md border-2 border-border bg-surface-2 px-2 py-1 text-[11px] font-bold uppercase text-muted transition-colors hover:text-accent"
+            className="inline-flex items-center gap-1 rounded-md border border-border bg-surface-2 px-2 py-1 text-[11px] font-bold uppercase text-muted transition-colors hover:text-accent"
             title="Open certificate"
           >
             <ExternalLink size={13} />
@@ -126,7 +126,7 @@ function SortableRow({
         )}
         <Link
           href={`/admin/achievements/${item.id}`}
-          className="inline-flex items-center gap-1 rounded-md border-2 border-border bg-surface-2 px-2 py-1 text-[11px] font-bold uppercase text-muted transition-colors hover:text-accent"
+          className="inline-flex items-center gap-1 rounded-md border border-border bg-surface-2 px-2 py-1 text-[11px] font-bold uppercase text-muted transition-colors hover:text-accent"
           title="Edit"
         >
           <Pencil size={13} />

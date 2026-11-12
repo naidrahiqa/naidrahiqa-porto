@@ -1,69 +1,172 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight } from "lucide-react";
-import { cn, getStoragePath, storagePublicUrl } from "@/lib/utils";
+import { ArrowRight, GitFork, Star } from "lucide-react";
+import {
+  cn,
+  formatRelativeTime,
+  isTrustedImageHost,
+  languageColor,
+  resolveImageUrl,
+} from "@/lib/utils";
 import type { Project, Achievement } from "@/lib/types";
 
 function resolveCover(cover: string | null | undefined): string | null {
   if (!cover) return null;
-  const path = getStoragePath(cover);
-  return path ? storagePublicUrl(path) : cover;
+  return resolveImageUrl(cover) || null;
+}
+
+function ProjectThumb({ project }: { project: Project }) {
+  const imgSrc = resolveCover(project.cover_image);
+
+  if (imgSrc) {
+    return (
+      <div className="relative aspect-[16/10] overflow-hidden border-b border-border bg-surface-2">
+        <Image
+          src={imgSrc}
+          alt={project.title}
+          fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          unoptimized={!isTrustedImageHost(imgSrc)}
+          className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative flex aspect-[16/10] items-center justify-center overflow-hidden border-b border-border bg-gradient-to-br from-surface-2 to-surface">
+      <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted">
+        {project.language || "project"}
+      </span>
+      <span className="absolute -right-2 -bottom-6 font-display text-8xl font-black leading-none text-foreground/[0.04]">
+        {project.title.charAt(0)}
+      </span>
+    </div>
+  );
 }
 
 export function ProjectCard({ project }: { project: Project }) {
-  const imgSrc = resolveCover(project.cover_image);
+  const meta = project.category === "school" ? project.subject : "Personal";
 
   return (
     <Link
       href={`/projects/${project.slug}`}
-      className="group block overflow-hidden rounded-2xl border border-foreground/[0.08] bg-surface/40 dark:bg-white/[0.02] backdrop-blur-xl shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-accent/40 hover:shadow-lg"
+      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-surface transition-colors duration-200 hover:border-foreground/25"
     >
-      {imgSrc ? (
-        <div className="relative aspect-video overflow-hidden border-b border-border/60 bg-surface-2">
-          <Image
-            src={imgSrc}
-            alt={project.title}
-            fill
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
-          />
-        </div>
-      ) : (
-        <div className="relative flex aspect-video items-center justify-center border-b border-border/60 bg-gradient-to-br from-surface to-surface-2">
-          <span className="font-display text-4xl font-bold text-accent/20">
-            {project.title.charAt(0)}
-          </span>
-        </div>
-      )}
-      <div className="p-4">
-        <div className="flex flex-wrap items-center gap-1.5">
-          {project.category === "school" && project.class_level && (
-            <span className="rounded-full bg-accent-fill px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent border border-accent/20 dark:bg-accent/15">
-              kelas {project.class_level}
-            </span>
-          )}
-          {project.category === "school" && project.subject && (
-            <span className="rounded-full border border-border bg-surface-2 px-2 py-0.5 text-[10px] font-semibold text-muted">
-              {project.subject}
-            </span>
-          )}
-          {project.category === "personal" && (
-            <span className="rounded-full bg-accent-2-fill px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent-2 border border-accent-2/20 dark:bg-accent-2/15">
-              personal
-            </span>
-          )}
+      <ProjectThumb project={project} />
+
+      <div className="flex flex-1 flex-col p-5">
+        <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
+          <span>{meta || "Project"}</span>
           {project.language && (
-            <span className="rounded-full border border-border bg-surface-2 px-2 py-0.5 font-mono text-[10px] font-semibold text-muted">
-              {project.language}
-            </span>
+            <>
+              <span className="h-px w-3 bg-border" />
+              <span>{project.language}</span>
+            </>
           )}
         </div>
-        <h3 className="mt-2.5 font-display font-bold uppercase leading-snug tracking-tight text-foreground transition-colors group-hover:text-accent">
+
+        <h3 className="mt-2 font-display text-base font-bold leading-snug tracking-tight text-foreground transition-colors group-hover:text-accent">
           {project.title}
         </h3>
-        <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-muted">
+
+        <p className="mt-2 line-clamp-2 text-[13px] leading-relaxed text-muted">
           {project.description}
         </p>
+
+        <div className="mt-auto flex items-center justify-between gap-3 pt-5">
+          <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-foreground">
+            Open project
+            <ArrowRight
+              size={13}
+              className="transition-transform duration-200 group-hover:translate-x-1"
+            />
+          </span>
+          {project.repo_name && (
+            <span className="flex items-center gap-2 font-mono text-[10px] text-muted">
+              <span className="inline-flex items-center gap-1">
+                <Star size={11} />
+                {project.repo_stars ?? 0}
+              </span>
+              <span className="inline-flex items-center gap-1">
+                <GitFork size={11} />
+                {project.repo_forks ?? 0}
+              </span>
+            </span>
+          )}
+        </div>
+      </div>
+    </Link>
+  );
+}
+
+export function RepoCard({ project }: { project: Project }) {
+  const pushed = project.repo_pushed_at ?? project.updated_at;
+  const topics = project.repo_topics ?? [];
+  const badge = project.repo_archived
+    ? "Archived"
+    : project.repo_is_fork
+      ? "Fork"
+      : "Public";
+
+  return (
+    <Link
+      href={`/projects/${project.slug}`}
+      className="group flex h-full flex-col rounded-2xl border border-border bg-surface p-5 transition-colors duration-200 hover:border-foreground/25"
+    >
+      <div className="flex items-start justify-between gap-3">
+        <h3 className="min-w-0 break-all font-display text-[15px] font-bold tracking-tight text-foreground transition-colors group-hover:text-accent">
+          {project.repo_name ?? project.slug}
+        </h3>
+        <span className="shrink-0 rounded-full border border-border bg-background px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-muted">
+          {badge}
+        </span>
+      </div>
+
+      <p className="mt-3 line-clamp-2 min-h-[2.6em] text-[13px] leading-relaxed text-muted">
+        {project.description || "No description provided."}
+      </p>
+
+      <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-1.5 font-mono text-[10px] text-muted">
+        {project.language && (
+          <span className="inline-flex items-center gap-1.5">
+            <span
+              className="h-2 w-2 rounded-full"
+              style={{ backgroundColor: languageColor(project.language) }}
+            />
+            {project.language}
+          </span>
+        )}
+        <span className="inline-flex items-center gap-1">
+          <Star size={11} />
+          {project.repo_stars ?? 0}
+        </span>
+        <span className="inline-flex items-center gap-1">
+          <GitFork size={11} />
+          {project.repo_forks ?? 0}
+        </span>
+        {pushed && <span>updated {formatRelativeTime(pushed)}</span>}
+      </div>
+
+      {topics.length > 0 && (
+        <div className="mt-4 flex flex-wrap gap-1.5">
+          {topics.slice(0, 3).map((topic) => (
+            <span
+              key={topic}
+              className="rounded-full bg-surface-2 px-2 py-0.5 font-mono text-[9px] tracking-wide text-muted"
+            >
+              {topic}
+            </span>
+          ))}
+        </div>
+      )}
+
+      <div className="mt-auto flex items-center gap-1.5 pt-5 text-[11px] font-semibold text-foreground">
+        Case study
+        <ArrowRight
+          size={12}
+          className="transition-transform duration-200 group-hover:translate-x-1"
+        />
       </div>
     </Link>
   );
@@ -81,33 +184,30 @@ export function ClassCard({
   return (
     <Link
       href={`/projects/school/${cls}`}
-      className="group relative block overflow-hidden rounded-2xl border border-foreground/[0.08] bg-surface/40 dark:bg-white/[0.02] backdrop-blur-xl p-6 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-accent/40 hover:shadow-lg"
+      className="group relative block overflow-hidden rounded-2xl border border-border bg-surface p-6 transition-colors duration-200 hover:border-foreground/25"
     >
-      <div className="pointer-events-none absolute right-4 top-2 select-none font-display text-[64px] font-black uppercase leading-none text-accent/10 transition-colors group-hover:text-accent/20">
+      <div className="pointer-events-none absolute right-4 top-2 select-none font-display text-[64px] font-black uppercase leading-none text-foreground/[0.05] transition-colors group-hover:text-accent/15">
         {cls}
       </div>
       <div className="relative z-10">
         <h3 className="font-display text-xl font-extrabold uppercase tracking-tight text-foreground transition-colors group-hover:text-accent">
           Kelas {cls.toUpperCase()}
         </h3>
-        <p className="mt-0.5 text-xs font-semibold text-muted">
+        <p className="mt-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
           {itemCount} showcase projects
         </p>
         {subjects.length > 0 && (
-          <div className="mt-3.5 flex flex-wrap gap-1.5">
-            {subjects.slice(0, 4).map((s, i) => (
+          <div className="mt-4 flex flex-wrap gap-1.5">
+            {subjects.slice(0, 4).map((s) => (
               <span
                 key={s}
-                className={cn(
-                  "rounded-full border bg-surface-2/70 px-2 py-0.5 text-[10px] font-semibold text-muted",
-                  i % 2 === 0 ? "border-accent/30 -rotate-1" : "border-border rotate-1"
-                )}
+                className="rounded-full border border-border bg-background px-2 py-0.5 text-[10px] font-semibold text-muted"
               >
                 {s}
               </span>
             ))}
             {subjects.length > 4 && (
-              <span className="rounded-full border border-border bg-surface-2 px-2 py-0.5 text-[10px] font-semibold text-muted">
+              <span className="rounded-full border border-border bg-background px-2 py-0.5 text-[10px] font-semibold text-muted">
                 +{subjects.length - 4}
               </span>
             )}
@@ -132,17 +232,19 @@ export function SubjectRow({
   return (
     <Link
       href={`/projects/school/${cls}/${slug}`}
-      className="group flex items-center justify-between rounded-2xl border border-foreground/[0.08] bg-surface/40 dark:bg-white/[0.02] backdrop-blur-xl px-5 py-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-md active:-translate-y-0.5"
+      className="group flex items-center justify-between rounded-2xl border border-border bg-surface px-5 py-4 transition-colors duration-200 hover:border-foreground/25"
     >
       <div>
         <h3 className="font-display font-bold uppercase tracking-tight transition-colors group-hover:text-accent">
           {subject}
         </h3>
-        <p className="mt-0.5 text-xs font-semibold text-muted">{itemCount} showcase</p>
+        <p className="mt-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
+          {itemCount} showcase
+        </p>
       </div>
       <ArrowRight
         size={16}
-        className="text-accent transition-all duration-300 group-hover:translate-x-1"
+        className="text-accent transition-transform duration-300 group-hover:translate-x-1"
       />
     </Link>
   );
@@ -166,7 +268,7 @@ export function AchievementBadge({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 font-display text-[10px] font-bold uppercase tracking-wider hard-shadow-sm",
+        "inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 font-display text-[10px] font-bold uppercase tracking-wider",
         styles[category]
       )}
     >

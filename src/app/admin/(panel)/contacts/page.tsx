@@ -97,7 +97,7 @@ export default function ContactsEditorPage() {
   return (
     <div className="flex flex-col gap-6">
       <header>
-        <h1 className="text-2xl font-bold tracking-tight">Contacts</h1>
+        <h1 className="font-display text-2xl font-extrabold uppercase tracking-tight text-foreground">Contacts</h1>
         <p className="mt-2 text-sm text-muted">
           These render on /contact and in the footer.
         </p>

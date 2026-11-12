@@ -77,12 +77,21 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
       </head>
       <body className="noise min-h-full flex flex-col">
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-foreground focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-background"
+        >
+          Skip to content
+        </a>
         <CursorGlow />
         <ScrollProgress />
         <div className="grid-bg pointer-events-none fixed inset-0 -z-10" />
         <div className="dot-grid pointer-events-none fixed inset-0 -z-10 opacity-15" />
         <Navbar />
-        <main className="flex-1 w-full max-w-5xl mx-auto px-5 sm:px-8 pb-20 page-enter">
+        <main
+          id="main"
+          className="flex-1 w-full max-w-5xl mx-auto px-5 sm:px-8 pb-20 page-enter"
+        >
           {children}
         </main>
         <Footer />

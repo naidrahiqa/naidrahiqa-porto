@@ -14,7 +14,7 @@ export default function NewProjectPage() {
       </nav>
 
       <header>
-        <h1 className="text-2xl font-bold tracking-tight">New Project</h1>
+        <h1 className="font-display text-2xl font-extrabold uppercase tracking-tight text-foreground">New Project</h1>
       </header>
       <ProjectForm />
     </div>

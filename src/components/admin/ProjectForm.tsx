@@ -30,18 +30,12 @@ import {
   BookOpen,
   FolderGit2,
   Layers,
-  Trash2,
-  ArrowUp,
-  ArrowDown,
-  ImagePlus,
-  X,
 } from "lucide-react";
 import { slugify, resolveImageUrl } from "@/lib/utils";
 import type { Project, ProjectMedia, ProjectLayout } from "@/lib/types";
 import {
   isStructuredSchoolProject,
   type SchoolPoint,
-  type SchoolPointImage,
 } from "@/components/SchoolProjectView";
 import { SchoolPointsEditor } from "@/components/admin/SchoolPointsEditor";
 import {
@@ -312,62 +306,10 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
     [markDirty]
   );
 
-  const addSchoolPoint = () => {
-    const nextIdx = schoolPoints.length + 1;
-    const newPoint: SchoolPoint = {
-      id: `point-${Date.now()}`,
-      title: `Poin #${nextIdx}`,
-      text: "",
-      images: [],
-    };
-    const nextPts = [...schoolPoints, newPoint];
-    setSchoolPoints(nextPts);
-    syncPointsToContent(schoolIntro, nextPts, schoolConclusion);
-    toast("success", `Poin #${nextIdx} ditambahkan!`);
-  };
-
   const updateSchoolPoint = (index: number, patch: Partial<SchoolPoint>) => {
     const nextPts = schoolPoints.map((pt, i) => (i === index ? { ...pt, ...patch } : pt));
     setSchoolPoints(nextPts);
     syncPointsToContent(schoolIntro, nextPts, schoolConclusion);
-  };
-
-  const removeSchoolPoint = (index: number) => {
-    const nextPts = schoolPoints.filter((_, i) => i !== index);
-    setSchoolPoints(nextPts);
-    syncPointsToContent(schoolIntro, nextPts, schoolConclusion);
-    toast("success", "Poin dihapus.");
-  };
-
-  const moveSchoolPoint = (index: number, direction: -1 | 1) => {
-    const target = index + direction;
-    if (target < 0 || target >= schoolPoints.length) return;
-    const nextPts = [...schoolPoints];
-    [nextPts[index], nextPts[target]] = [nextPts[target], nextPts[index]];
-    setSchoolPoints(nextPts);
-    syncPointsToContent(schoolIntro, nextPts, schoolConclusion);
-  };
-
-  const attachImageToPoint = (pointIndex: number, img: SchoolPointImage) => {
-    const point = schoolPoints[pointIndex];
-    if (!point) return;
-    const nextImages = [...(point.images || []), img];
-    updateSchoolPoint(pointIndex, { images: nextImages });
-    toast("success", `Foto ditambahkan ke ${point.title || `Poin #${pointIndex + 1}`}`);
-  };
-
-  const removeImageFromPoint = (pointIndex: number, imgIndex: number) => {
-    const point = schoolPoints[pointIndex];
-    if (!point) return;
-    const nextImages = point.images.filter((_, i) => i !== imgIndex);
-    updateSchoolPoint(pointIndex, { images: nextImages });
-  };
-
-  const updatePointImageCaption = (pointIndex: number, imgIndex: number, caption: string) => {
-    const point = schoolPoints[pointIndex];
-    if (!point) return;
-    const nextImages = point.images.map((img, i) => (i === imgIndex ? { ...img, caption } : img));
-    updateSchoolPoint(pointIndex, { images: nextImages });
   };
 
   const generatePancasilaTemplate = () => {
@@ -708,7 +650,7 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
   return (
     <form onSubmit={handleSubmit} onChange={markDirty} className="flex flex-col gap-6">
       {/* TOP STICKY ACTION BAR */}
-      <div className="sticky top-16 z-30 flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-foreground bg-surface p-3.5 hard-shadow backdrop-blur-md">
+      <div className="sticky top-16 z-30 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-surface p-3.5 backdrop-blur-md">
         <div className="flex flex-wrap items-center gap-2.5">
           <span className="font-display text-sm font-bold uppercase tracking-tight text-foreground truncate max-w-[200px] sm:max-w-[320px]">
             {title ? title : isEdit ? "Editing Project" : "New Project Studio"}
@@ -799,7 +741,7 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
           onClick={() => setActiveTab("story")}
           className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold transition-all ${
             activeTab === "story"
-              ? "bg-accent text-on-accent hard-shadow-sm"
+              ? "bg-accent text-on-accent"
               : "bg-surface-2/60 text-muted hover:text-foreground hover:bg-surface-2"
           }`}
         >
@@ -812,7 +754,7 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
           onClick={() => setActiveTab("details")}
           className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold transition-all ${
             activeTab === "details"
-              ? "bg-accent text-on-accent hard-shadow-sm"
+              ? "bg-accent text-on-accent"
               : "bg-surface-2/60 text-muted hover:text-foreground hover:bg-surface-2"
           }`}
         >
@@ -825,7 +767,7 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
           onClick={() => setActiveTab("media")}
           className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold transition-all ${
             activeTab === "media"
-              ? "bg-accent text-on-accent hard-shadow-sm"
+              ? "bg-accent text-on-accent"
               : "bg-surface-2/60 text-muted hover:text-foreground hover:bg-surface-2"
           }`}
         >
@@ -843,7 +785,7 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
       {activeTab === "story" && (
         <div className="flex flex-col gap-6">
           {/* TITLE & SLUG CARD */}
-          <div className="rounded-2xl border-2 border-foreground bg-surface p-5 hard-shadow">
+          <div className="rounded-2xl border border-border bg-surface p-5">
             <div className="flex flex-col gap-4">
               <div>
                 <Label htmlFor="title">Project Title *</Label>
@@ -929,13 +871,13 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
 
           {/* FORMAT SWITCHER: POIN SEKOLAH vs MARKDOWN BEBAS */}
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-1 rounded-xl border-2 border-foreground bg-surface p-1 hard-shadow-sm">
+            <div className="flex items-center gap-1 rounded-xl border border-border bg-surface p-1">
               <button
                 type="button"
                 onClick={() => handleSwitchContentFormat("points")}
                 className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-bold transition-all ${
                   contentFormat === "points"
-                    ? "bg-accent text-on-accent hard-shadow-sm"
+                    ? "bg-accent text-on-accent"
                     : "text-muted hover:text-foreground"
                 }`}
               >
@@ -947,7 +889,7 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
                 onClick={() => handleSwitchContentFormat("markdown")}
                 className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-bold transition-all ${
                   contentFormat === "markdown"
-                    ? "bg-accent text-on-accent hard-shadow-sm"
+                    ? "bg-accent text-on-accent"
                     : "text-muted hover:text-foreground"
                 }`}
               >
@@ -979,7 +921,7 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
             />
           ) : (
             /* MARKDOWN STORY STUDIO */
-            <div className="rounded-2xl border-2 border-foreground bg-surface hard-shadow overflow-hidden">
+            <div className="rounded-2xl border border-border bg-surface overflow-hidden">
             {/* STUDIO HEADER */}
             <div className="flex flex-wrap items-center justify-between gap-3 border-b-2 border-foreground bg-surface-2/80 p-3">
               <div className="flex items-center gap-2">
@@ -1371,7 +1313,7 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
       {activeTab === "details" && (
         <div className="flex flex-col gap-6">
           {/* CATEGORY SELECTOR */}
-          <div className="rounded-2xl border-2 border-foreground bg-surface p-5 hard-shadow">
+          <div className="rounded-2xl border border-border bg-surface p-5">
             <h3 className="font-display text-sm font-bold uppercase tracking-tight text-foreground mb-3">
               Classification
             </h3>
@@ -1383,9 +1325,9 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
                   setCategory("personal");
                   markDirty();
                 }}
-                className={`flex items-start gap-3 rounded-xl border-2 p-4 text-left transition-all ${
+                className={`flex items-start gap-3 rounded-xl border p-4 text-left transition-all ${
                   category === "personal"
-                    ? "border-accent bg-accent/10 hard-shadow-sm"
+                    ? "border-accent bg-accent/10"
                     : "border-border bg-surface-2/30 hover:border-border-hover"
                 }`}
               >
@@ -1412,9 +1354,9 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
                   setCategory("school");
                   markDirty();
                 }}
-                className={`flex items-start gap-3 rounded-xl border-2 p-4 text-left transition-all ${
+                className={`flex items-start gap-3 rounded-xl border p-4 text-left transition-all ${
                   category === "school"
-                    ? "border-accent bg-accent/10 hard-shadow-sm"
+                    ? "border-accent bg-accent/10"
                     : "border-border bg-surface-2/30 hover:border-border-hover"
                 }`}
               >
@@ -1451,7 +1393,7 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
                             setClassLevel(cls);
                             markDirty();
                           }}
-                          className={`flex-1 rounded-xl border-2 py-2 text-xs font-bold uppercase transition-all ${
+                          className={`flex-1 rounded-xl border py-2 text-xs font-bold uppercase transition-all ${
                             classLevel === cls
                               ? "border-accent bg-accent text-on-accent"
                               : "border-border bg-surface-2/50 text-muted hover:text-foreground"
@@ -1574,7 +1516,7 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
                             }}
                             className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs font-semibold transition-all ${
                               isSelected
-                                ? "border-accent bg-accent text-on-accent hard-shadow-sm ring-1 ring-accent"
+                                ? "border-accent bg-accent text-on-accent ring-1 ring-accent"
                                 : "border-accent/30 bg-surface text-foreground hover:bg-accent/15 hover:border-accent"
                             }`}
                           >
@@ -1772,7 +1714,7 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
           </div>
 
           {/* DETAIL PAGE LAYOUT SELECTION */}
-          <div className="rounded-2xl border-2 border-foreground bg-surface p-5 hard-shadow">
+          <div className="rounded-2xl border border-border bg-surface p-5">
             <h3 className="font-display text-sm font-bold uppercase tracking-tight text-foreground mb-1">
               Detail Page Layout Variant
             </h3>
@@ -1791,9 +1733,9 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
                       setLayout(opt.value);
                       markDirty();
                     }}
-                    className={`relative flex flex-col gap-2 rounded-xl border-2 p-3 text-left transition-all ${
+                    className={`relative flex flex-col gap-2 rounded-xl border p-3 text-left transition-all ${
                       isSelected
-                        ? "border-accent bg-accent/10 hard-shadow-sm ring-1 ring-accent"
+                        ? "border-accent bg-accent/10 ring-1 ring-accent"
                         : "border-border bg-surface-2/30 hover:border-border-hover"
                     }`}
                   >
@@ -1825,7 +1767,7 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
       {activeTab === "media" && (
         <div className="flex flex-col gap-6">
           {/* COVER IMAGE */}
-          <div className="rounded-2xl border-2 border-foreground bg-surface p-5 hard-shadow">
+          <div className="rounded-2xl border border-border bg-surface p-5">
             <h3 className="font-display text-sm font-bold uppercase tracking-tight text-foreground mb-1">
               Cover Image
             </h3>
@@ -1845,7 +1787,7 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
           </div>
 
           {/* HERO VIDEO */}
-          <div className="rounded-2xl border-2 border-foreground bg-surface p-5 hard-shadow">
+          <div className="rounded-2xl border border-border bg-surface p-5">
             <h3 className="font-display text-sm font-bold uppercase tracking-tight text-foreground mb-1">
               Hero Video (Optional)
             </h3>
@@ -1865,7 +1807,7 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
           </div>
 
           {/* MEDIA GALLERY */}
-          <div className="rounded-2xl border-2 border-foreground bg-surface p-5 hard-shadow">
+          <div className="rounded-2xl border border-border bg-surface p-5">
             <div className="flex items-center justify-between mb-1">
               <h3 className="font-display text-sm font-bold uppercase tracking-tight text-foreground">
                 Media Gallery
@@ -1899,7 +1841,7 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
       )}
 
       {/* BOTTOM ACTION BAR */}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-foreground bg-surface p-4 hard-shadow">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-surface p-4">
         <div className="text-xs text-muted">
           {isDirty.current ? (
             <span className="font-semibold text-amber-400">● Unsaved changes in progress</span>
@@ -1938,7 +1880,7 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
       {/* MODAL: STORY TEMPLATES */}
       {showTemplateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-xl rounded-2xl border-2 border-foreground bg-surface p-6 hard-shadow">
+          <div className="w-full max-w-xl rounded-2xl border border-border bg-surface p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-display text-base font-bold uppercase tracking-tight text-foreground">
                 Choose a Story Template

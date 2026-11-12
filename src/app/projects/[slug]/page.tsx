@@ -1,11 +1,33 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ExternalLink } from "lucide-react";
+import { ArrowLeft, ExternalLink, GitFork, Star } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
-import { cn, formatDate, slugify } from "@/lib/utils";
+import {
+  cn,
+  formatDate,
+  formatRelativeTime,
+  languageColor,
+  slugify,
+} from "@/lib/utils";
 import { ProjectLayout } from "@/components/ProjectLayout";
 import type { Project, ProjectMedia } from "@/lib/types";
+
+interface SchoolPointImage {
+  url?: string;
+  caption?: string;
+}
+
+interface SchoolPoint {
+  id?: string;
+  text?: string;
+  images?: SchoolPointImage[];
+}
+
+interface SchoolProjectContent {
+  points?: SchoolPoint[];
+  [key: string]: unknown;
+}
 
 export async function generateMetadata({
   params,
@@ -52,19 +74,19 @@ export default async function ProjectDetailPage({
     .eq("project_id", project.id)
     .order("sort_order");
 
-  let resolvedProject = project;
+  let resolvedProject: Project = project;
   if (slug === "penerapan-sila-pancasila-pada-kehidupan-sehari-hari") {
     let resolvedContent = project.content;
     if (resolvedContent) {
       try {
-        const parsed = JSON.parse(resolvedContent);
+        const parsed = JSON.parse(resolvedContent) as SchoolProjectContent;
         if (Array.isArray(parsed.points)) {
-          parsed.points = parsed.points.map((pt: any) => {
+          parsed.points = parsed.points.map((pt) => {
             if (pt.id === "sila-1") {
               return {
                 ...pt,
                 text: "* **Simbol**: Bintang emas berlatar perisai hitam.\n* **Makna Nilai**: Mengakui keberadaan Tuhan Yang Maha Esa, menjunjung tinggi toleransi antarumat beragama, dan menjalankan perintah agama dengan ikhlas dan penuh kedisiplinan.\n* **Aksi Nyata di Sekolah**: Mendengarkan khutbah sholat Jumat dengan khusyuk, tenang, dan tertib di mushola sekolah bersama teman-teman, menjaga adab dengan tidak berbicara saat khatib menyampaikan khutbah sebagai wujud ketaatan beribadah kepada Tuhan Yang Maha Esa.",
-                images: pt.images?.map((img: any) => {
+                images: pt.images?.map((img) => {
                   if (img.url?.includes("1_0GQozFV4Xs5FzfgyKYXJbl9427WOi0e")) {
                     return {
                       ...img,
@@ -80,7 +102,7 @@ export default async function ProjectDetailPage({
               return {
                 ...pt,
                 text: "* **Simbol**: Padi dan Kapas.\n* **Makna Nilai**: Mengembangkan sikap adil terhadap sesama, menjaga keseimbangan antara hak dan kewajiban, serta menghormati hak orang lain demi mewujudkan kesejahteraan dan keadilan sosial yang merata.\n* **Aksi Nyata di Sekolah**: Pembagian dan pendistribusian makanan Program Makan Bergizi Gratis (MBG) secara tertib dan merata kepada seluruh siswa di kelas menggunakan wadah omprengan stainless steel, memastikan setiap teman memperoleh hak porsi makanan sehat dan bergizi yang sama tanpa ada yang terlewatkan.",
-                images: pt.images?.map((img: any) => {
+                images: pt.images?.map((img) => {
                   if (img.url?.includes("17BeH00qmGdqIDDoDR9991rKANoxHBV3I")) {
                     return {
                       ...img,
@@ -174,29 +196,77 @@ export default async function ProjectDetailPage({
               {resolvedProject.subject}
             </span>
           )}
+          {resolvedProject.language && (
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-muted">
+              <span
+                className="h-1.5 w-1.5 rounded-full"
+                style={{ backgroundColor: languageColor(resolvedProject.language) }}
+              />
+              {resolvedProject.language}
+            </span>
+          )}
+          {resolvedProject.repo_is_fork && (
+            <span className="rounded-full border border-border bg-surface px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-muted">
+              Fork
+            </span>
+          )}
+          {resolvedProject.repo_archived && (
+            <span className="rounded-full border border-border bg-surface px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-muted">
+              Archived
+            </span>
+          )}
         </div>
         <h1 className="font-display text-3xl font-bold uppercase tracking-tight sm:text-4xl">
           {resolvedProject.title}
         </h1>
         {resolvedProject.description && (
-          <p className="text-lg leading-relaxed text-muted">
+          <p className="text-[15px] leading-relaxed text-muted sm:text-base">
             {resolvedProject.description}
           </p>
         )}
-        <div className="flex flex-wrap items-center gap-4 text-sm text-muted">
+        <div className="flex flex-wrap items-center gap-4 font-mono text-[11px] text-muted">
           <time>{formatDate(resolvedProject.created_at)}</time>
+          {resolvedProject.repo_name && (
+            <span className="inline-flex items-center gap-1">
+              <Star size={12} />
+              {resolvedProject.repo_stars ?? 0}
+            </span>
+          )}
+          {resolvedProject.repo_name && (
+            <span className="inline-flex items-center gap-1">
+              <GitFork size={12} />
+              {resolvedProject.repo_forks ?? 0}
+            </span>
+          )}
+          {resolvedProject.repo_pushed_at && (
+            <span>
+              updated {formatRelativeTime(resolvedProject.repo_pushed_at)}
+            </span>
+          )}
           {resolvedProject.link && (
             <a
               href={resolvedProject.link}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-accent hover:underline"
+              className="inline-flex items-center gap-1.5 font-sans text-sm font-semibold text-accent hover:underline"
             >
               <ExternalLink size={13} />
-              GitHub
+              View repository
             </a>
           )}
         </div>
+        {(resolvedProject.repo_topics?.length ?? 0) > 0 && (
+          <div className="flex flex-wrap gap-1.5">
+            {resolvedProject.repo_topics.map((topic) => (
+              <span
+                key={topic}
+                className="rounded-full bg-surface-2 px-2 py-0.5 font-mono text-[10px] tracking-wide text-muted"
+              >
+                {topic}
+              </span>
+            ))}
+          </div>
+        )}
       </header>
 
       {/* Layout content */}

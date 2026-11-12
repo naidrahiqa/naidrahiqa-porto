@@ -16,6 +16,64 @@ export function slugify(text: string): string {
     .replace(/[\s-]+/g, "-");
 }
 
+export function formatRelativeTime(iso: string | null | undefined): string {
+  if (!iso) return "";
+  const then = new Date(iso).getTime();
+  if (Number.isNaN(then)) return "";
+  const diff = Date.now() - then;
+  const minutes = Math.round(diff / 60000);
+  if (minutes < 1) return "just now";
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.round(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.round(hours / 24);
+  if (days < 30) return `${days}d ago`;
+  const months = Math.round(days / 30);
+  if (months < 12) return `${months}mo ago`;
+  return `${Math.round(months / 12)}y ago`;
+}
+
+export const LANGUAGE_COLORS: Record<string, string> = {
+  C: "#555555",
+  "C++": "#f34b7d",
+  "C#": "#178600",
+  Go: "#00ADD8",
+  Java: "#b07219",
+  JavaScript: "#f1e05a",
+  Kotlin: "#A97BFF",
+  Python: "#3572A5",
+  QML: "#44a51c",
+  Shell: "#89e051",
+  TypeScript: "#3178c6",
+  Blade: "#f7523f",
+  HTML: "#e34c26",
+  CSS: "#563d7c",
+};
+
+export function languageColor(language: string | null | undefined): string {
+  if (!language) return "#8b8b93";
+  return LANGUAGE_COLORS[language] ?? "#8b8b93";
+}
+
+const TRUSTED_IMAGE_HOSTS = ["lh3.googleusercontent.com", "img.youtube.com"];
+
+export function isTrustedImageHost(src: string): boolean {
+  if (!src) return true;
+  if (
+    src.startsWith("/") ||
+    src.startsWith("data:") ||
+    src.startsWith("blob:")
+  ) {
+    return true;
+  }
+  try {
+    const host = new URL(src).hostname;
+    return host.endsWith("supabase.co") || TRUSTED_IMAGE_HOSTS.includes(host);
+  } catch {
+    return true;
+  }
+}
+
 export function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString("en-US", {
     year: "numeric",

@@ -51,15 +51,16 @@ export default async function SchoolProjectsHubPage() {
 
       {/* HEADER SECTION */}
       <header className="flex flex-col gap-4 max-w-3xl">
-        <div className="inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/10 px-3 py-1 w-fit">
-          <BookOpen size={13} className="text-accent" />
-          <span className="font-mono text-xs font-bold uppercase tracking-wider text-accent">
-            School Projects & Showcase
+        <div className="inline-flex w-fit items-center gap-2 rounded-full border border-border bg-surface px-3 py-1">
+          <BookOpen size={12} className="text-accent" />
+          <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
+            School archive
           </span>
         </div>
 
-        <h1 className="font-display text-3xl font-extrabold uppercase tracking-tight sm:text-5xl">
-          Tugas & Praktikum <span className="gradient-text">Sekolah</span>
+        <h1 className="font-display text-3xl font-extrabold uppercase tracking-tight text-foreground sm:text-5xl">
+          Tugas &amp; Praktikum{" "}
+          <span className="text-foreground/30">Sekolah</span>
         </h1>
 
         <p className="text-sm leading-relaxed text-muted sm:text-base">
@@ -67,24 +68,22 @@ export default async function SchoolProjectsHubPage() {
         </p>
 
         {/* STATS STRIP */}
-        <div className="mt-2 flex flex-wrap items-center gap-3">
-          <div className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface px-3 py-1.5 hard-shadow-sm">
-            <Layers size={13} className="text-accent" />
-            <span className="text-xs font-semibold text-foreground">
-              {projects.length} Total Showcase
+        <div className="mt-2 flex flex-wrap items-center gap-2">
+          <div className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1.5">
+            <Layers size={12} className="text-accent" />
+            <span className="text-xs text-muted">
+              <span className="font-semibold text-foreground">{projects.length}</span> total showcase
             </span>
           </div>
-          <div className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface px-3 py-1.5 hard-shadow-sm">
-            <Award size={13} className="text-accent" />
-            <span className="text-xs font-semibold text-foreground">
-              {totalSubjects} Mata Pelajaran
+          <div className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1.5">
+            <Award size={12} className="text-accent" />
+            <span className="text-xs text-muted">
+              <span className="font-semibold text-foreground">{totalSubjects}</span> mata pelajaran
             </span>
           </div>
-          <div className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface px-3 py-1.5 hard-shadow-sm">
-            <span className="font-mono text-xs font-bold text-accent">3</span>
-            <span className="text-xs font-semibold text-foreground">
-              Tingkat Kelas (X, XI, XII)
-            </span>
+          <div className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1.5">
+            <span className="font-mono text-[10px] text-accent">3</span>
+            <span className="text-xs text-muted">tingkat kelas</span>
           </div>
         </div>
       </header>

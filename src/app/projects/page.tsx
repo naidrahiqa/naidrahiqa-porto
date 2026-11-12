@@ -1,13 +1,17 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
+import { ArrowUpRight } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { CLASS_LEVELS } from "@/lib/utils";
 import { ClassCard } from "@/components/cards";
 import { ProjectFilter } from "@/components/ProjectFilter";
+import { BrandIcon } from "@/components/BrandIcon";
 import type { Project } from "@/lib/types";
 
 export const metadata: Metadata = {
   title: "Projects",
-  description: "Projects - Naidrahiqa",
+  description:
+    "School showcases and personal open-source repositories by Faqih Ardian Syah.",
 };
 
 export default async function ProjectsPage() {
@@ -29,38 +33,39 @@ export default async function ProjectsPage() {
     return {
       cls,
       items,
-      subjectCount: subjectSet.size,
       subjects: [...subjectSet].sort(),
-      cover: items[0]?.cover_image ?? null,
     };
   }).filter((c) => c.items.length > 0);
 
   return (
-    <div className="flex flex-col gap-16 pt-12 sm:pt-16">
-      <header className="max-w-2xl">
-        <div className="inline-flex items-center gap-1.5 rounded-full border border-accent/30 bg-accent-fill px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-accent mb-3 dark:bg-accent/20">
-          <span>✦</span>
-          <span>DISCOGRAPHY // PROJECT ARCHIVES</span>
+    <div className="flex flex-col pb-8 pt-12 sm:pt-16">
+      <header className="max-w-3xl">
+        <div className="flex items-center gap-2.5">
+          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-accent">
+            Archive
+          </span>
+          <span className="h-px w-8 bg-border" />
+          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted">
+            {all.length} entries
+          </span>
         </div>
-        <h1 className="font-display text-4xl font-extrabold uppercase tracking-tight sm:text-5xl text-foreground">
-          My <span className="marker">Work</span> & Discs
+        <h1 className="mt-5 max-w-[20ch] font-display text-4xl font-extrabold uppercase leading-[0.92] tracking-[-0.03em] text-foreground sm:text-6xl">
+          Work &amp; repositories
         </h1>
-        <p className="mt-3 text-sm sm:text-base leading-relaxed text-muted">
-          School showcases organized by class and subject, alongside personal builds in Linux kernels, IoT sensor networks, and CTF utilities.
+        <p className="mt-5 max-w-xl text-[15px] leading-relaxed text-muted">
+          School showcases organized by class and subject, alongside personal
+          builds in Linux kernels, IoT sensor networks, and CTF utilities.
         </p>
       </header>
 
       {classes.length > 0 && (
-        <section className="flex flex-col gap-6">
-          <div>
-            <p className="text-xs uppercase tracking-wider text-accent">
-              School
-            </p>
-            <h2 className="mt-1 text-2xl font-bold tracking-tight">
-              Per Kelas
-            </h2>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <section className="mt-16">
+          <SectionRow
+            index="01"
+            title="School"
+            note="Per class & subject"
+          />
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {classes.map((c) => (
               <ClassCard
                 key={c.cls}
@@ -74,28 +79,76 @@ export default async function ProjectsPage() {
       )}
 
       {personal.length > 0 && (
-        <section className="flex flex-col gap-6">
-          <div>
-            <p className="text-xs uppercase tracking-wider text-accent-2">
-              Personal
-            </p>
-            <h2 className="mt-1 text-2xl font-bold tracking-tight">
-              From GitHub
-            </h2>
-            <p className="mt-2 text-sm text-muted">
-              {personal.length} projects - kernels, modules, tools, and web
-              apps.
-            </p>
+        <section className="mt-16">
+          <SectionRow
+            index="02"
+            title="From GitHub"
+            note={`${personal.length} public repositories`}
+            action={
+              <a
+                href="https://github.com/naidrahiqa"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-muted transition-colors hover:text-foreground"
+              >
+                <BrandIcon platform="github" size={12} />
+                @naidrahiqa
+                <ArrowUpRight
+                  size={12}
+                  className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                />
+              </a>
+            }
+          />
+          <p className="mt-4 max-w-xl text-[13px] leading-relaxed text-muted">
+            Kernels, Android tooling, IoT firmware, and web apps. Metadata is
+            synced from the GitHub API, so languages, stars, and topics stay
+            current.
+          </p>
+          <div className="mt-6">
+            <ProjectFilter projects={personal} />
           </div>
-          <ProjectFilter projects={personal} />
         </section>
       )}
 
       {all.length === 0 && (
-        <p className="rounded-xl border border-border bg-surface p-8 text-center text-sm text-muted">
-          No projects yet
+        <p className="mt-16 rounded-2xl border border-dashed border-border bg-surface/50 p-8 text-center text-sm text-muted">
+          No projects yet.
         </p>
       )}
+    </div>
+  );
+}
+
+function SectionRow({
+  index,
+  title,
+  note,
+  action,
+}: {
+  index: string;
+  title: string;
+  note?: string;
+  action?: ReactNode;
+}) {
+  return (
+    <div className="flex flex-wrap items-end justify-between gap-4 border-b border-border pb-4">
+      <div className="flex items-baseline gap-3">
+        <span className="font-mono text-[10px] tracking-[0.2em] text-accent">
+          {index}
+        </span>
+        <h2 className="font-display text-xl font-extrabold uppercase tracking-tight text-foreground sm:text-2xl">
+          {title}
+        </h2>
+      </div>
+      <div className="flex items-center gap-5">
+        {note && (
+          <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
+            {note}
+          </span>
+        )}
+        {action}
+      </div>
     </div>
   );
 }

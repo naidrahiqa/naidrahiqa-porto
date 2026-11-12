@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { ExternalLink, FileText, ImageOff } from "lucide-react";
-import { resolveImageUrl, getSourceHref } from "@/lib/utils";
+import { resolveImageUrl, getSourceHref, isTrustedImageHost } from "@/lib/utils";
 import { VideoEmbed } from "@/components/VideoEmbed";
 import { ImageLightbox } from "@/components/ImageLightbox";
 import type { ProjectMedia } from "@/lib/types";
@@ -118,6 +118,7 @@ function GalleryImage({
             alt={img.caption || "project photo"}
             fill
             sizes="(max-width: 640px) 100vw, 50vw"
+            unoptimized={!isTrustedImageHost(src)}
             className="object-cover transition-transform duration-300 group-hover:scale-105"
             onError={() => setError(true)}
           />

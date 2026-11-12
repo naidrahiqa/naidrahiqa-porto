@@ -14,7 +14,7 @@ export default async function AdminAchievementsPage() {
     <div className="flex flex-col gap-6">
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Achievements</h1>
+          <h1 className="font-display text-2xl font-extrabold uppercase tracking-tight text-foreground">Achievements</h1>
           <p className="mt-1 text-sm text-muted">
             Drag the handle to reorder - the top items appear first on your site.
           </p>

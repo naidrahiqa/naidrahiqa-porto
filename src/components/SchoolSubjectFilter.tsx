@@ -30,16 +30,16 @@ export function SchoolSubjectFilter({
     <div className="flex flex-col gap-6">
       {/* Class Level Switcher Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-1.5 rounded-xl border-2 border-foreground bg-surface p-1 hard-shadow-sm">
+        <div className="flex items-center gap-1 rounded-full border border-border bg-surface p-1">
           {CLASS_LEVELS.map((cls) => (
             <Link
               key={cls}
               href={`/projects/school/${cls}`}
               className={cn(
-                "rounded-lg px-3.5 py-1.5 text-xs font-bold uppercase transition-all",
+                "rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors",
                 currentClass === cls
-                  ? "bg-accent text-on-accent hard-shadow-sm"
-                  : "text-muted hover:text-foreground hover:bg-surface-2"
+                  ? "bg-foreground text-background"
+                  : "text-muted hover:bg-surface-2 hover:text-foreground"
               )}
             >
               Kelas {cls.toUpperCase()}
@@ -58,7 +58,7 @@ export function SchoolSubjectFilter({
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Cari mapel..."
-            className="w-full rounded-xl border border-border bg-surface px-8 py-2 text-xs text-foreground placeholder:text-muted/50 outline-none transition-colors focus:border-accent"
+            className="w-full rounded-xl border border-border bg-surface px-8 py-2 text-xs text-foreground placeholder:text-muted/50 outline-none transition-colors focus:border-foreground/40"
           />
           {search && (
             <button
@@ -85,7 +85,7 @@ export function SchoolSubjectFilter({
         ))}
 
         {filtered.length === 0 && (
-          <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-border bg-surface p-8 text-center text-muted">
+          <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-surface/50 p-8 text-center text-muted">
             <Layers size={28} className="mb-2 text-muted/40" />
             <p className="text-sm font-semibold text-foreground">
               Tidak ada mapel yang cocok dengan &quot;{search}&quot;
@@ -93,7 +93,7 @@ export function SchoolSubjectFilter({
             <button
               type="button"
               onClick={() => setSearch("")}
-              className="mt-2 text-xs font-bold text-accent hover:underline"
+              className="mt-2 text-xs font-semibold text-accent hover:underline"
             >
               Reset pencarian
             </button>

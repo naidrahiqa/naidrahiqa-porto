@@ -36,7 +36,7 @@ export default function AdminLoginPage() {
     <div className="flex min-h-[70vh] items-center justify-center pt-12">
       <div className="w-full max-w-sm">
         <div className="mb-6 text-center">
-          <h1 className="text-2xl font-bold tracking-tight">
+          <h1 className="font-display text-2xl font-extrabold uppercase tracking-tight text-foreground">
             Admin Panel
           </h1>
           <p className="mt-2 text-sm text-muted">Sign in to manage content</p>

@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import { Search, X, BookOpen, Layers, ArrowRight } from "lucide-react";
 import { ProjectCard } from "@/components/cards";
-import { cn, slugify } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import type { Project } from "@/lib/types";
 
 interface SchoolProjectsExplorerProps {
@@ -62,7 +62,7 @@ export function SchoolProjectsExplorer({ projects }: SchoolProjectsExplorerProps
   return (
     <div className="flex flex-col gap-8">
       {/* FILTER CONTROL BAR */}
-      <div className="flex flex-col gap-4 rounded-2xl border-2 border-foreground bg-surface p-5 hard-shadow">
+      <div className="flex flex-col gap-4 rounded-2xl border border-border bg-surface p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           {/* CLASS PILLS */}
           <div className="flex flex-wrap items-center gap-1.5">
@@ -77,19 +77,19 @@ export function SchoolProjectsExplorer({ projects }: SchoolProjectsExplorerProps
                 type="button"
                 onClick={() => handleClassChange(tab.id)}
                 className={cn(
-                  "inline-flex items-center gap-1.5 rounded-xl px-3.5 py-1.5 text-xs font-bold uppercase transition-all duration-150",
+                  "inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors duration-150",
                   selectedClass === tab.id
-                    ? "bg-accent text-on-accent hard-shadow-sm"
-                    : "border border-border bg-surface-2/60 text-muted hover:border-accent hover:text-foreground"
+                    ? "bg-foreground text-background"
+                    : "border border-border bg-surface text-muted hover:border-foreground/30 hover:text-foreground"
                 )}
               >
                 <span>{tab.label}</span>
                 <span
                   className={cn(
-                    "rounded-md px-1.5 py-0.2 font-mono text-[10px]",
+                    "rounded-md px-1.5 py-0.5 font-mono text-[10px]",
                     selectedClass === tab.id
-                      ? "bg-black/20 text-on-accent"
-                      : "bg-surface text-muted"
+                      ? "bg-background/20 text-background"
+                      : "bg-surface-2 text-muted"
                   )}
                 >
                   {tab.count}
@@ -109,7 +109,7 @@ export function SchoolProjectsExplorer({ projects }: SchoolProjectsExplorerProps
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Cari judul, materi, atau topik..."
-              className="w-full rounded-xl border border-border bg-surface-2/40 px-8 py-2 text-xs text-foreground placeholder:text-muted/50 outline-none transition-colors focus:border-accent focus:bg-surface"
+              className="w-full rounded-xl border border-border bg-surface-2/40 px-8 py-2 text-xs text-foreground placeholder:text-muted/50 outline-none transition-colors focus:border-foreground/40 focus:bg-surface"
             />
             {search && (
               <button
@@ -187,7 +187,7 @@ export function SchoolProjectsExplorer({ projects }: SchoolProjectsExplorerProps
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-border bg-surface p-12 text-center">
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-surface/50 p-12 text-center">
           <BookOpen size={36} className="mb-3 text-muted/40" />
           <h3 className="font-display text-base font-bold text-foreground">
             Tidak ada proyek yang cocok
@@ -204,7 +204,7 @@ export function SchoolProjectsExplorer({ projects }: SchoolProjectsExplorerProps
               setSelectedClass("all");
               setSelectedSubject("all");
             }}
-            className="mt-4 inline-flex items-center gap-1 rounded-xl bg-accent px-4 py-2 text-xs font-bold text-on-accent hard-shadow-sm hover:bg-accent-hover"
+            className="mt-4 inline-flex items-center gap-1 rounded-full bg-foreground px-4 py-2 text-xs font-semibold text-background transition-opacity hover:opacity-90"
           >
             Reset Semua Filter
           </button>

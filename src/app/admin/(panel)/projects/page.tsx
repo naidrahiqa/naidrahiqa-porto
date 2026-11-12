@@ -3,6 +3,7 @@ import { Plus, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { CLASS_LEVELS, cn } from "@/lib/utils";
 import { ProjectReorderList } from "./ProjectReorderList";
+import { GitHubSyncButton } from "@/components/admin/GitHubSyncButton";
 
 export const dynamic = "force-dynamic";
 
@@ -78,19 +79,22 @@ export default async function AdminProjectsPage({
     <div className="flex flex-col gap-6">
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Projects</h1>
+          <h1 className="font-display text-2xl font-extrabold uppercase tracking-tight text-foreground">Projects</h1>
           <p className="mt-1 text-sm text-muted">
             Drag to reorder - the top items appear first on your site.{" "}
             {projects?.length ?? 0} total
           </p>
         </div>
-        <Link
-          href="/admin/projects/new"
-          className="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-on-accent transition-all duration-200 hover:bg-accent-hover hover:-translate-y-0.5"
-        >
-          <Plus size={15} />
-          New Project
-        </Link>
+        <div className="flex flex-wrap items-center gap-2">
+          <GitHubSyncButton />
+          <Link
+            href="/admin/projects/new"
+            className="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-on-accent transition-all duration-200 hover:bg-accent-hover hover:-translate-y-0.5"
+          >
+            <Plus size={15} />
+            New Project
+          </Link>
+        </div>
       </header>
 
       {/* Category tabs */}
@@ -132,7 +136,7 @@ export default async function AdminProjectsPage({
 
       {/* School Class & Mapel filters */}
       {category === "school" && (
-        <div className="flex flex-col gap-3 rounded-2xl border-2 border-foreground bg-surface p-4 hard-shadow-sm">
+        <div className="flex flex-col gap-3 rounded-2xl border border-border bg-surface p-4">
           {/* Class filter */}
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-xs font-bold uppercase tracking-wider text-muted">

@@ -82,7 +82,7 @@ export function PDFThumbnail({ url, className = "" }: PDFThumbnailProps) {
     <div className={`relative ${className}`}>
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center bg-surface-2">
-          <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
+          <div className="h-5 w-5 animate-spin rounded-full border-2 border-border border-t-accent" />
         </div>
       )}
       <canvas

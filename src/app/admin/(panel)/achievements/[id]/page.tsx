@@ -18,7 +18,7 @@ export default async function EditAchievementPage({
   return (
     <div className="flex flex-col gap-6">
       <header>
-        <h1 className="text-2xl font-bold tracking-tight">Edit Achievement</h1>
+        <h1 className="font-display text-2xl font-extrabold uppercase tracking-tight text-foreground">Edit Achievement</h1>
       </header>
       <AchievementForm initial={achievement} />
     </div>

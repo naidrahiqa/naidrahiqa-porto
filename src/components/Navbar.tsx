@@ -56,7 +56,7 @@ export default function Navbar() {
           <span className="text-foreground group-hover:text-accent transition-colors">
             naidrahiqa
           </span>
-          <span className="text-accent text-xs animate-spin-slow">✦</span>
+          <span className="text-accent text-xs">✦</span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-1 rounded-full border border-border/70 bg-surface/70 px-2 py-1 backdrop-blur-md">

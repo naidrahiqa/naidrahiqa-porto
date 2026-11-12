@@ -27,8 +27,8 @@ export function AdminSidebar({ email }: { email: string }) {
   return (
     <>
       <div className="mb-3 hidden px-1 lg:block">
-        <p className="text-[10px] font-semibold uppercase tracking-widest text-muted/60">
-          Admin Panel
+        <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-muted/60">
+          Admin panel
         </p>
         <p className="mt-1 truncate text-xs text-muted">{email}</p>
       </div>
@@ -41,10 +41,10 @@ export function AdminSidebar({ email }: { email: string }) {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-all duration-200 ${
+              className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors duration-150 ${
                 isActive
-                  ? "bg-accent/15 font-semibold text-accent"
-                  : "text-muted hover:bg-accent/10 hover:text-accent"
+                  ? "bg-foreground font-semibold text-background"
+                  : "text-muted hover:bg-surface-2 hover:text-foreground"
               }`}
             >
               <item.icon size={16} />
@@ -54,10 +54,10 @@ export function AdminSidebar({ email }: { email: string }) {
         })}
         <Link
           href="/"
-          className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted transition-all duration-200 hover:bg-accent/10 hover:text-accent"
+          className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted transition-colors duration-150 hover:bg-surface-2 hover:text-foreground"
         >
           <ExternalLink size={16} />
-          View Site
+          View site
         </Link>
       </nav>
     </>

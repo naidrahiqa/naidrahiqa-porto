@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { ExternalLink } from "lucide-react";
-import { resolveImageUrl, getSourceHref } from "@/lib/utils";
+import { resolveImageUrl, getSourceHref, isTrustedImageHost } from "@/lib/utils";
 import { MarkdownContent } from "@/components/MarkdownContent";
 import { VideoEmbed } from "@/components/VideoEmbed";
 import { ProjectGallery } from "@/components/ProjectGallery";
@@ -166,7 +166,7 @@ export function ProjectLayout({
       return (
         <div className="flex flex-col gap-8">
           {cover && (
-            <div className="overflow-hidden rounded-2xl border-2 border-foreground bg-surface hard-shadow-sm">
+            <div className="overflow-hidden rounded-2xl border border-border bg-surface">
               <button
                 type="button"
                 onClick={() => setCoverLightbox(true)}
@@ -178,6 +178,7 @@ export function ProjectLayout({
                     alt={project.title}
                     fill
                     sizes="(max-width: 768px) 100vw, 768px"
+                    unoptimized={!isTrustedImageHost(cover)}
                     className="object-cover"
                   />
                 </div>
