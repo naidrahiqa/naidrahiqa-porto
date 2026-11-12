@@ -80,10 +80,9 @@ export default async function HomePage() {
   const [
     { data: profile },
     { data: featuredProjects },
-    { count: totalProjects },
-    { count: totalRepos },
+    { data: publishedProjects },
     { data: achievements },
-    { count: totalAchievements },
+    { data: allAchievements },
     { data: aboutSections },
   ] = await Promise.all([
     supabase.from("profiles").select("*").eq("id", 1).single(),
@@ -94,29 +93,24 @@ export default async function HomePage() {
       .eq("featured", true)
       .order("sort_order", { ascending: true })
       .limit(6),
-    supabase
-      .from("projects")
-      .select("id", { count: "exact", head: true })
-      .eq("published", true),
-    supabase
-      .from("projects")
-      .select("id", { count: "exact", head: true })
-      .eq("published", true)
-      .eq("category", "personal"),
+    supabase.from("projects").select("id, category").eq("published", true),
     supabase
       .from("achievements")
       .select("*")
       .order("sort_order")
       .limit(4),
-    supabase
-      .from("achievements")
-      .select("id", { count: "exact", head: true }),
+    supabase.from("achievements").select("id"),
     supabase
       .from("about_sections")
       .select("*")
       .order("sort_order")
       .limit(3),
   ]);
+
+  const totalProjects = publishedProjects?.length ?? 0;
+  const totalRepos =
+    publishedProjects?.filter((p) => p.category === "personal").length ?? 0;
+  const totalAchievements = allAchievements?.length ?? 0;
 
   const NEW_HERO_DESC =
     "Exploring Linux kernel optimization, embedded systems, and cybersecurity. Building competition-grade hardware and software solutions.";

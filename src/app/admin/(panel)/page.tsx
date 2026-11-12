@@ -44,19 +44,18 @@ const quickActions = [
 export default async function AdminDashboardPage() {
   const supabase = await createClient();
 
-  const [{ count: projects }, { count: achievements }, { count: about }, { count: contacts }] =
-    await Promise.all([
-      supabase.from("projects").select("id", { count: "exact", head: true }),
-      supabase.from("achievements").select("id", { count: "exact", head: true }),
-      supabase.from("about_sections").select("id", { count: "exact", head: true }),
-      supabase.from("contacts").select("id", { count: "exact", head: true }),
-    ]);
+  const [projects, achievements, about, contacts] = await Promise.all([
+    supabase.from("projects").select("id"),
+    supabase.from("achievements").select("id"),
+    supabase.from("about_sections").select("id"),
+    supabase.from("contacts").select("id"),
+  ]);
 
   const stats = {
-    projects: projects ?? 0,
-    achievements: achievements ?? 0,
-    about: about ?? 0,
-    contacts: contacts ?? 0,
+    projects: projects.data?.length ?? 0,
+    achievements: achievements.data?.length ?? 0,
+    about: about.data?.length ?? 0,
+    contacts: contacts.data?.length ?? 0,
   };
 
   return (

@@ -10,10 +10,10 @@ export async function GET() {
   const supabase = await createClient();
 
   const [projects, achievements, about, contacts] = await Promise.all([
-    supabase.from("projects").select("id", { count: "exact", head: true }),
-    supabase.from("achievements").select("id", { count: "exact", head: true }),
-    supabase.from("about_sections").select("id", { count: "exact", head: true }),
-    supabase.from("contacts").select("id", { count: "exact", head: true }),
+    supabase.from("projects").select("id"),
+    supabase.from("achievements").select("id"),
+    supabase.from("about_sections").select("id"),
+    supabase.from("contacts").select("id"),
   ]);
 
   if ([projects, achievements, about, contacts].some((r) => r.error)) {
@@ -21,9 +21,9 @@ export async function GET() {
   }
 
   return NextResponse.json({
-    projects: projects.count ?? 0,
-    achievements: achievements.count ?? 0,
-    about: about.count ?? 0,
-    contacts: contacts.count ?? 0,
+    projects: projects.data?.length ?? 0,
+    achievements: achievements.data?.length ?? 0,
+    about: about.data?.length ?? 0,
+    contacts: contacts.data?.length ?? 0,
   });
 }
