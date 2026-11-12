@@ -2,6 +2,9 @@ import { slugify } from "@/lib/utils";
 
 export const GITHUB_USERNAME = process.env.GITHUB_USERNAME || "naidrahiqa";
 
+const PER_PAGE = 100;
+const MAX_PAGES = 10;
+
 export interface GitHubRepo {
   name: string;
   description: string | null;
@@ -26,17 +29,30 @@ export async function fetchGitHubRepos(): Promise<GitHubRepo[]> {
   };
   if (token) headers.Authorization = `Bearer ${token}`;
 
-  const response = await fetch(
-    `https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=100&sort=pushed`,
-    { headers, next: { revalidate: 3600 } }
-  );
+  const collected: GitHubRepo[] = [];
+  const seen = new Set<string>();
 
-  if (!response.ok) {
-    throw new Error(`GitHub API responded with ${response.status}`);
+  for (let page = 1; page <= MAX_PAGES; page += 1) {
+    const response = await fetch(
+      `https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=100&sort=pushed&page=${page}`,
+      { headers, next: { revalidate: 3600 } }
+    );
+
+    if (!response.ok) {
+      throw new Error(`GitHub API responded with ${response.status}`);
+    }
+
+    const batch = (await response.json()) as GitHubRepo[];
+    for (const repo of batch) {
+      if (seen.has(repo.name) || repo.name.startsWith(".")) continue;
+      seen.add(repo.name);
+      collected.push(repo);
+    }
+
+    if (batch.length < PER_PAGE) break;
   }
 
-  const repos = (await response.json()) as GitHubRepo[];
-  return repos.filter((repo) => !repo.name.startsWith("."));
+  return collected;
 }
 
 export function repoNameFromUrl(url: string | null | undefined): string | null {

@@ -70,7 +70,10 @@ export async function POST() {
     if (key) byRepo.set(key, project);
   }
 
-  const usedSlugs = new Set(current.map((project) => project.slug));
+  const { data: slugRows } = await supabase.from("projects").select("slug");
+  const usedSlugs = new Set(
+    (slugRows ?? []).map((row: { slug: string }) => row.slug)
+  );
   let created = 0;
   let updated = 0;
   const failures: string[] = [];
@@ -106,8 +109,13 @@ export async function POST() {
       continue;
     }
 
-    let slug = repoSlug(repo.name);
-    if (usedSlugs.has(slug)) slug = `${slug}-${index + 1}`;
+    const baseSlug = repoSlug(repo.name);
+    let slug = baseSlug;
+    let attempt = 1;
+    while (usedSlugs.has(slug)) {
+      attempt += 1;
+      slug = `${baseSlug}-${attempt}`;
+    }
     usedSlugs.add(slug);
 
     const { error } = await supabase.from("projects").insert({
