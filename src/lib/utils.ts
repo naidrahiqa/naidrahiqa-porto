@@ -68,7 +68,11 @@ export function isTrustedImageHost(src: string): boolean {
   }
   try {
     const host = new URL(src).hostname;
-    return host.endsWith("supabase.co") || TRUSTED_IMAGE_HOSTS.includes(host);
+    return (
+      host === "supabase.co" ||
+      host.endsWith(".supabase.co") ||
+      TRUSTED_IMAGE_HOSTS.includes(host)
+    );
   } catch {
     return true;
   }

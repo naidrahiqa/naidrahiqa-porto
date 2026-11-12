@@ -42,11 +42,14 @@ export async function fetchGitHubRepos(): Promise<GitHubRepo[]> {
 export function repoNameFromUrl(url: string | null | undefined): string | null {
   if (!url) return null;
   const match = url.match(/github\.com\/[^/]+\/([^/?#]+)/i);
-  return match ? match[1] : null;
+  return match ? match[1].replace(/\.git$/i, "") : null;
 }
 
 export function repoSlug(name: string): string {
-  return slugify(name.replace(/\./g, "-")) || name.toLowerCase();
+  return (
+    slugify(name.replace(/[._]+/g, "-")).replace(/^-+|-+$/g, "") ||
+    name.toLowerCase()
+  );
 }
 
 export function prettifyRepoName(name: string): string {
