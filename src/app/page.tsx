@@ -3,7 +3,6 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import {
   ArrowRight,
-  ArrowUpRight,
   ExternalLink,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
@@ -14,7 +13,6 @@ import { PDFThumbnail } from "@/components/PDFThumbnail";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { TextScramble } from "@/components/TextScramble";
 import { Counter } from "@/components/Counter";
-import { SkillTags } from "@/components/SkillTags";
 import { TechIcon } from "@/components/TechIcon";
 
 export const metadata: Metadata = {
@@ -45,24 +43,6 @@ const TECH = [
   { name: "Hyprland", desc: "Wayland WM rice", tag: "Desktop" },
 ];
 
-const FOCUS = [
-  {
-    label: "Phrolova Kernel",
-    meta: "Linux 4.19, Redmi 10 (selene)",
-    href: "/projects/phrolova-kernel-selene",
-  },
-  {
-    label: "IoT telemetry",
-    meta: "Aqua Safe Monitor, ESP32",
-    href: "/projects/aqua-safe-monitor",
-  },
-  {
-    label: "Offensive security",
-    meta: "CTF, exploit dev & tooling",
-    href: "/projects/catchido",
-  },
-];
-
 const SPECS = [
   ["Based in", "Jepara, Indonesia"],
   ["Focus", "Kernel, IoT, security"],
@@ -74,14 +54,12 @@ export default async function HomePage() {
   const supabase = await createClient();
 
   const [
-    { data: profile },
     { data: featuredProjects },
     { data: publishedProjects },
     { data: achievements },
     { data: allAchievements },
     { data: aboutSections },
   ] = await Promise.all([
-    supabase.from("profiles").select("*").eq("id", 1).single(),
     supabase
       .from("projects")
       .select("*")
@@ -107,14 +85,6 @@ export default async function HomePage() {
   const totalRepos =
     publishedProjects?.filter((p) => p.category === "personal").length ?? 0;
   const totalAchievements = allAchievements?.length ?? 0;
-
-  const NEW_HERO_DESC =
-    "Exploring Linux kernel optimization, embedded systems, and cybersecurity. Building competition-grade hardware and software solutions.";
-
-  const heroDescription =
-    profile?.hero_description && !profile.hero_description.startsWith("Diving deep")
-      ? profile.hero_description
-      : NEW_HERO_DESC;
 
   const NEW_ABOUT_OVERRIDES: Record<string, string> = {
     who_am_i:
@@ -189,10 +159,6 @@ export default async function HomePage() {
             <span className="block">SYAH</span>
           </h1>
 
-          <p className="mt-7 max-w-xl text-[15px] leading-relaxed text-muted sm:text-base">
-            {heroDescription}
-          </p>
-
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <Link
               href="/projects"
@@ -211,63 +177,29 @@ export default async function HomePage() {
               Let&apos;s connect
             </Link>
           </div>
-
-          <div className="mt-8">
-            <SkillTags />
-          </div>
         </div>
 
-        <aside className="relative">
-          <div className="rounded-2xl border border-border bg-surface p-6 sm:p-8">
-            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted">
-              Currently
-            </p>
-
-            <ul className="mt-4 flex flex-col">
-              {FOCUS.map((item) => (
-                <li
-                  key={item.label}
-                  className="border-t border-border first:border-t-0"
-                >
-                  <Link
-                    href={item.href}
-                    className="group flex items-center gap-3 py-3.5"
-                  >
-                    <span className="min-w-0 flex-1">
-                      <span className="block text-sm font-semibold text-foreground transition-colors group-hover:text-accent">
-                        {item.label}
-                      </span>
-                      <span className="mt-0.5 block font-mono text-[10px] tracking-wide text-muted">
-                        {item.meta}
-                      </span>
-                    </span>
-                    <ArrowUpRight
-                      size={15}
-                      className="shrink-0 text-muted transition-all duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground"
-                    />
-                  </Link>
-                </li>
-              ))}
-            </ul>
-
-            <div className="mt-6 grid grid-cols-3 gap-4 border-t border-border pt-6">
-              {[
-                { value: totalRepos ?? 0, label: "Repos" },
-                { value: totalProjects ?? 0, label: "Projects" },
-                { value: totalAchievements ?? 0, label: "Certs" },
-              ].map((stat) => (
-                <div key={stat.label}>
-                  <Counter
-                    target={stat.value}
-                    className="font-display text-2xl font-bold tracking-tight text-foreground"
-                  />
-                  <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.16em] text-muted">
-                    {stat.label}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
+        <aside className="lg:justify-self-end lg:w-full lg:max-w-[340px]">
+          <ul className="flex flex-col">
+            {[
+              { value: totalRepos, label: "Repositories" },
+              { value: totalProjects, label: "Projects" },
+              { value: totalAchievements, label: "Certificates" },
+            ].map((stat) => (
+              <li
+                key={stat.label}
+                className="flex items-baseline justify-between gap-4 border-t border-border py-5 first:border-t-0 first:pt-0"
+              >
+                <Counter
+                  target={stat.value}
+                  className="font-display text-3xl font-extrabold tracking-tight text-foreground"
+                />
+                <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
+                  {stat.label}
+                </span>
+              </li>
+            ))}
+          </ul>
         </aside>
       </section>
 
