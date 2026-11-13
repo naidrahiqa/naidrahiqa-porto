@@ -12,12 +12,8 @@ export default async function Footer() {
     <footer className="mt-auto border-t border-border/60 bg-surface/40 backdrop-blur-md">
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-5 py-10 sm:px-8 md:flex-row md:items-center md:justify-between">
         <div>
-          <div className="flex items-center gap-1.5 font-display text-sm font-extrabold uppercase text-foreground">
-            <span className="text-accent">✦</span>
-            <span>naidrahiqa</span>
-          </div>
-          <p className="mt-1 text-xs text-muted">
-            Kernel developer, IoT builder, security enthusiast
+          <p className="font-display text-sm font-extrabold uppercase text-foreground">
+            naidrahiqa
           </p>
         </div>
 

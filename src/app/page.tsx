@@ -145,14 +145,7 @@ export default async function HomePage() {
       {/* HERO */}
       <section className="relative grid gap-12 pb-16 pt-12 sm:pt-16 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-16 lg:pb-24 lg:pt-20">
         <div className="flex flex-col items-start">
-          <div className="inline-flex flex-wrap items-center gap-2.5">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted">
-              Open for collaboration
-            </span>
-          </div>
-
-          <h1 className="mt-7 font-display text-[clamp(2.25rem,6vw,3.75rem)] font-black uppercase leading-[0.92] tracking-[-0.04em] text-foreground">
+          <h1 className="font-display text-[clamp(2.25rem,6vw,3.75rem)] font-black uppercase leading-[0.92] tracking-[-0.04em] text-foreground">
             <span className="block">
               <TextScramble text="FAQIH" /> ARDIAN
             </span>
