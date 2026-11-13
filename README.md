@@ -19,6 +19,15 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+Environment variables (`.env.local` locally, Vercel dashboard in production):
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+ADMIN_EMAIL=...              # admin login for RLS
+RESEND_API_KEY=...           # optional: contact form email
+```
+
 ## Project Structure
 
 ```
@@ -50,6 +59,7 @@ src/
 npm run dev      # Dev server
 npm run build    # Production build
 npm run lint     # ESLint
+npm test         # Vitest unit tests (src/lib)
 ```
 
 ## Database

@@ -138,9 +138,11 @@ boards: 01 Hero, 02 Projects, 03 Tokens - design source, not code).
 - `masonry` — Pinterest-style image grid
 
 ### Admin Form UX
-- ProjectForm uses collapsible sections (Basic Info / Content / Media / Display Settings)
+- ProjectForm is a single page with 3 collapsible sections (Story & Content / Details & Layout / Media & Gallery); each has a sticky header with a live summary, and the pill nav on top jumps to a section (expanding it if collapsed). No tab switching, nothing hidden
+- Universal presets: "Struktur Tugas Universal (4 Poin)" (points mode) and the "Universal (Any Project)" story template. Task-specific presets (Pancasila, TKJ, Observation) were removed - do not reintroduce one-off hardcodings
+- Ctrl+S saves from anywhere on the form (global keydown + textarea handler)
 - Unsaved changes warning via `beforeunload` + cancel confirmation
-- Media loading indicator prevents save-before-load
+- Media: FileUpload does real drag & drop, VideoFields auto-detects the video type from the URL and shows a preview, MediaGallery auto-switches media type when a YouTube/Drive URL is pasted, single Add button
 - Toast notifications for success/error feedback
 - Breadcrumb navigation on edit pages
 - Delete confirmations show item name
@@ -255,6 +257,8 @@ accent, hairline borders, real data over filler.
 ## Changes Log
 
 ### 2026-11-13
+- Admin form overhaul: replaced the 3 tabs with one page of collapsible sections (sticky headers with live summaries, pill nav jumps to a section, nothing hidden); universal story template + "Struktur Tugas Universal" point preset replace the hardcoded Pancasila/TKJ/Observation presets; global Ctrl+S save; emoji removed from admin UI
+- Media UX: FileUpload drag & drop, VideoFields auto-detect + preview, MediaGallery single add button and auto type switch on URL paste
 - GitHub sync: `repo_*` metadata columns (migration 021), `src/lib/github.ts` with Vitest tests, admin **Sync GitHub** action; `/projects` shows 23 repos with language/forks/topics
 - Test setup: Vitest 5.1 (`vitest.config.mts`), 36 tests covering `lib/` helpers
 - Fixed zeroed homepage/dashboard counters (count queries returned null; derive from row length)

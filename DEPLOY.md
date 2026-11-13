@@ -8,8 +8,8 @@
 ## 2. Jalankan Migrasi
 
 1. Buka **SQL Editor** di dashboard Supabase.
-2. Paste isi `supabase/migrations/001_init.sql` → **Run**.
-3. Paste isi `supabase/migrations/002_seed.sql` → **Run** (berisi profile, about sections, 7 contacts, 6 projects, 7 achievements, 2 posts dari Google Sites).
+2. Jalankan semua file di `supabase/migrations/` secara berurutan (001 sampai 021) via **Run**. Jangan lompat, jangan jalankan ulang file yang sudah pernah dijalankan.
+3. `002_seed.sql` berisi data awal: profile, about sections, contacts, projects, achievements.
 
 ## 3. Buat User Admin
 
@@ -17,11 +17,13 @@ Di **Authentication → Users → Add user**, buat akun email + password (mis. `
 
 ## 4. Isi Environment
 
-Edit `.env.local` (jangan pernah di-commit — sudah ada di .gitignore):
+Edit `.env.local` (jangan pernah di-commit - sudah ada di .gitignore):
 
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://xxxx.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
+ADMIN_EMAIL=naidrahiqa@naidra.dev
+RESEND_API_KEY=re_xxx            # opsional: form kontak (resend.com)
 ```
 
 ## 5. Verifikasi Lokal
@@ -38,7 +40,7 @@ Buka `http://localhost:3000` (cek halaman publik) dan `http://localhost:3000/adm
 git add .
 git commit -m "feat: naidra portfolio + admin panel"
 git branch -M main
-git remote add origin https://github.com/<user>/naidra.git
+git remote add origin https://github.com/naidrahiqa/naidrahiqa-porto.git
 git push -u origin main
 ```
 
@@ -48,6 +50,8 @@ git push -u origin main
 
 ## Catatan
 
-- Semua halaman server-rendered (dynamic), jadi konten baru langsung muncul setelah edit di `/admin` — tidak perlu redeploy.
+- Semua halaman server-rendered (dynamic), jadi konten baru langsung muncul setelah edit di `/admin` - tidak perlu redeploy.
+- Repo GitHub (project personal): klik **Sync GitHub** di dashboard admin untuk menarik metadata terbaru (stars, forks, topics, bahasa) ke database.
+- Form kontak butuh `RESEND_API_KEY` di Vercel; tanpa itu API balas "Email service is not configured".
 - Video: dukung URL YouTube, Google Drive (format `drive.google.com/file/d/<id>` atau `/uc?id=`), dan file di bucket `media`.
 - Upload gambar/video via admin tersimpan di Storage bucket `media` (public, RLS: authenticated write).
