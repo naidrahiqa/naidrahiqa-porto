@@ -29,10 +29,18 @@ Personal portfolio + school project showcase. Next.js 16 (`src/` dir) + TypeScri
 3. Fetch data server-side with `createClient()` from `src/lib/supabase/server.ts`
 
 ### Modifying the project form
-- `ProjectForm.tsx` uses collapsible `<Section>` components
-- Media is managed via `MediaGallery` + `FileUpload`
+- `ProjectForm.tsx` is a single page with 3 collapsible sections (Story & Content / Details & Layout / Media & Gallery)
+- Each section has a sticky header with a live summary and quick pill nav
+- Presets: "Universal (Any Project)" story template and "Struktur Tugas Universal (4 Poin)"
+- Ctrl+S saves globally from anywhere in the form
+- Media is managed via `MediaGallery` (single Add button, auto type switch on paste) + `FileUpload` (drag & drop) + `VideoFields` (auto-detect type + preview)
 - Hero video is separate from media gallery
 - Unsaved changes tracked via `isDirty` ref + `beforeunload` event
+
+### GitHub Sync (Personal Projects)
+- `src/lib/github.ts` fetches GitHub API (stars, forks, topics, language)
+- `POST /api/admin/github/sync` runs sync via dashboard button `GitHubSyncButton.tsx`
+- Unit tests in `src/lib/github.test.ts`
 
 ### Image/Video URLs
 - `resolveImageUrl()` handles: bare filenames, `media/...` paths, Google Drive, HTTP URLs
@@ -44,7 +52,7 @@ Personal portfolio + school project showcase. Next.js 16 (`src/` dir) + TypeScri
 1. Create migration in `supabase/migrations/` (numbered sequentially)
 2. Never modify applied migrations — create new ones
 3. Run in Supabase SQL Editor in order
-4. Current latest: 009 (`replace_project_media` RPC)
+4. Current latest: 021 (`repo_*` metadata columns for GitHub sync)
 
 ## Gotchas
 

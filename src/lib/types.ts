@@ -28,20 +28,6 @@ export interface Contact {
   sort_order: number;
 }
 
-export interface Post {
-  id: string;
-  title: string;
-  slug: string;
-  excerpt: string;
-  content: string;
-  cover_image: string | null;
-  video_url: string | null;
-  video_type: VideoType;
-  published: boolean;
-  created_at: string;
-  updated_at: string;
-}
-
 export type ProjectCategory = "school" | "personal";
 
 export type ProjectLayout =
@@ -103,18 +89,6 @@ export interface Project {
 
 export type AchievementCategory = "competition" | "training" | "seminar";
 
-export interface NowPlayingSong {
-  id: string;
-  title: string;
-  artist: string;
-  album: string;
-  art_url: string;
-  link: string;
-  sort_order: number;
-  created_at: string;
-  updated_at: string;
-}
-
 export interface Achievement {
   id: string;
   title: string;
@@ -126,17 +100,6 @@ export interface Achievement {
   sort_order: number;
   created_at: string;
   updated_at: string;
-}
-
-export interface PostInsert {
-  title: string;
-  slug: string;
-  excerpt?: string;
-  content?: string;
-  cover_image?: string | null;
-  video_url?: string | null;
-  video_type?: VideoType;
-  published?: boolean;
 }
 
 export interface ProjectInsert {

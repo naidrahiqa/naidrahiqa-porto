@@ -1,14 +1,3 @@
-export const postFields = [
-  "title",
-  "slug",
-  "excerpt",
-  "content",
-  "cover_image",
-  "video_url",
-  "video_type",
-  "published",
-] as const;
-
 export const projectFields = [
   "title",
   "slug",
@@ -35,15 +24,6 @@ export const achievementFields = [
   "year",
   "description",
   "certificate_url",
-  "sort_order",
-] as const;
-
-export const nowPlayingFields = [
-  "title",
-  "artist",
-  "album",
-  "art_url",
-  "link",
   "sort_order",
 ] as const;
 

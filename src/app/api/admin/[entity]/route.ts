@@ -3,21 +3,19 @@ import { createClient } from "@/lib/supabase/server";
 import { requireAdmin } from "@/lib/admin";
 import { slugify, detectVideoType } from "@/lib/utils";
 import { dbError } from "@/lib/api";
-import { pickFields, projectFields, achievementFields, nowPlayingFields } from "@/lib/admin-fields";
+import { pickFields, projectFields, achievementFields } from "@/lib/admin-fields";
 
-const entities = ["projects", "achievements", "now_playing"] as const;
+const entities = ["projects", "achievements"] as const;
 type Entity = (typeof entities)[number];
 
 const allowedFields: Record<Entity, readonly string[]> = {
   projects: projectFields,
   achievements: achievementFields,
-  now_playing: nowPlayingFields,
 };
 
 const orderBy: Record<Entity, { column: string; ascending: boolean }> = {
   projects: { column: "sort_order", ascending: true },
   achievements: { column: "sort_order", ascending: true },
-  now_playing: { column: "sort_order", ascending: true },
 };
 
 export async function GET(
