@@ -124,11 +124,16 @@ export function MediaGallery({
 
       {error && <p className="text-xs text-danger">{error}</p>}
 
-      {items.length === 0 && (
-        <p className="rounded-lg border border-dashed border-border p-4 text-center text-xs text-muted">
-          No media yet - add photos or videos to showcase
-        </p>
-      )}
+      {items.length === 0 ? (
+        <button
+          type="button"
+          onClick={addImage}
+          className="flex w-full flex-col items-center gap-2 rounded-xl border border-dashed border-border bg-surface-2/30 p-8 text-center text-xs text-muted transition-colors hover:border-accent/50 hover:text-accent"
+        >
+          <ImagePlus size={20} />
+          No media yet - click to add photos or videos
+        </button>
+      ) : null}
 
       <div className="flex flex-col gap-4">
         {items.map((item, index) => (
@@ -262,7 +267,15 @@ export function MediaGallery({
                   <Input
                     id={`media-url-${index}`}
                     value={item.url}
-                    onChange={(e) => update(index, { url: e.target.value })}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      const detected = detectVideoType(value);
+                      if (detected && detected !== "none" && detected !== item.media_type) {
+                        update(index, { url: value, media_type: detected });
+                      } else {
+                        update(index, { url: value });
+                      }
+                    }}
                     placeholder={
                       item.media_type === "youtube"
                         ? "https://youtube.com/watch?v=..."
@@ -306,15 +319,6 @@ export function MediaGallery({
           </div>
         ))}
       </div>
-
-      <button
-        type="button"
-        onClick={addImage}
-        className="inline-flex w-fit items-center gap-1.5 rounded-lg border border-dashed border-border bg-surface-2 px-3 py-2 text-[11px] text-muted transition-colors hover:border-accent/50 hover:text-accent"
-      >
-        <ImagePlus size={13} />
-        Add Media Item
-      </button>
     </div>
   );
 }

@@ -11,7 +11,6 @@ import {
   ImagePlus,
   ExternalLink,
   Wand2,
-  FileText,
   Zap,
 } from "lucide-react";
 import { resolveImageUrl } from "@/lib/utils";
@@ -26,54 +25,59 @@ interface SchoolPointsEditorProps {
   conclusion: string;
   media: MediaDraft[];
   onChange: (intro: string, points: SchoolPoint[], conclusion: string) => void;
-  onGeneratePancasila: () => void;
 }
 
 const INTRO_PRESETS = {
-  pancasila:
-    "Pancasila bukan sekadar dasar falsafah negara yang dihafal bunyinya, melainkan pedoman moral dan etika bertindak yang harus diwujudkan dalam kehidupan nyata. Sebagai siswa kejuruan di SMK Negeri 3 Jepara, penerapan nilai-nilai Pancasila menjadi fondasi penting dalam membentuk karakter kedisiplinan, solidaritas, kepedulian sosial, serta integritas moral.\n\nMelalui tugas proyek mata pelajaran Pendidikan Pancasila ini, kami mendokumentasikan aksi konkret penerapan kelima sila Pancasila yang berlangsung di lingkungan sekolah dan ruang kelas kami sehari-hari.",
-  tkj:
-    "Praktikum kejuruan Teknik Komputer dan Jaringan merupakan sarana mengasah kompetensi teknis, pemahaman protokol jaringan, dan kebiasaan kerja terstandar di laboratorium. Pada modul kegiatan ini, kami mengimplementasikan arsitektur jaringan secara terstruktur mulai dari perencanaan topologi, pengkabelan fisik, konfigurasi perangkat, hingga validasi komunikasi data.\n\nLaporan ini merangkum setiap tahapan teknis beserta bukti visual hasil pengujian sistem.",
+  teknis:
+    "Praktikum dan tugas kejuruan merupakan sarana mengasah kompetensi teknis, pemahaman materi, dan kebiasaan kerja terstandar di ruang kelas maupun laboratorium. Pada kegiatan ini, kami mengimplementasikan materi secara terstruktur mulai dari perencanaan, pelaksanaan, hingga validasi hasil.\n\nLaporan ini merangkum setiap tahapan beserta bukti visual hasil pengujian.",
   observasi:
     "Kegiatan observasi dan proyek ini dilaksanakan sebagai bagian dari tugas pembelajaran berbasis proyek (Project-Based Learning) untuk memadukan pemahaman teori dengan kondisi aktual di lingkungan sekolah. Melalui pengamatan terarah, dokumentasi visual yang terstruktur, dan diskusi kelompok, kami mengumpulkan bukti konkret untuk mengevaluasi topik yang dipelajari.",
 };
 
 const CONCLUSION_PRESETS = {
-  karakter:
-    "Melalui pelaksanaan kegiatan ini, kami belajar bahwa pengamalan nilai-nilai moral dan Pancasila tidak harus dimulai dari hal-hal besar, melainkan dari kebiasaan sederhana sehari-hari di ruang kelas dan lingkungan sekolah. Menghargai perbedaan, menjaga ketertiban, mengutamakan musyawarah, serta bersikap adil adalah modal utama membangun integritas sebagai generasi muda yang siap menyongsong masa depan.",
   teknis:
-    "Seluruh rangkaian kegiatan dan praktikum ini berhasil diselesaikan sesuai spesifikasi modul. Melalui pengujian bertahap dan pemecahan kendala teknis secara langsung, kami memperoleh pemahaman mendalam tentang prinsip kerja sistem serta pentingnya ketelitian, keselamatan kerja, dan standar operasional dalam konfigurasi perangkat.",
+    "Seluruh rangkaian kegiatan ini berhasil diselesaikan sesuai spesifikasi modul. Melalui pengujian bertahap dan pemecahan kendala secara langsung, kami memperoleh pemahaman mendalam tentang prinsip kerja sistem serta pentingnya ketelitian dan standar operasional dalam setiap tahapan.",
   tim:
     "Proyek ini membuktikan bahwa koordinasi yang rapi dan komunikasi terbuka adalah kunci penyelesaian tugas bersama secara optimal. Setiap anggota berkontribusi aktif sesuai perannya masing-masing sehingga seluruh dokumentasi dan target pembelajaran dapat tercapai dengan hasil yang memuaskan.",
 };
 
+const UNIVERSAL_INTRO =
+  "Kegiatan ini dilaksanakan sebagai bagian dari pembelajaran berbasis proyek untuk menghubungkan materi di kelas dengan praktik nyata. Melalui perencanaan, pelaksanaan, dan evaluasi yang terstruktur, kami mendokumentasikan setiap tahapan kegiatan beserta bukti visualnya.\n\nLaporan ini merangkum tujuan, proses, hasil, dan refleksi dari kegiatan tersebut.";
+
+const UNIVERSAL_CONCLUSION =
+  "Kegiatan ini telah diselesaikan sesuai rencana dan tujuan pembelajaran. Melalui proses langsung, kami memahami materi lebih mendalam, terbiasa bekerja secara sistematis, dan belajar menyelesaikan kendala secara bertahap. Harapan ke depan, kompetensi yang diperoleh dapat terus diterapkan pada tugas berikutnya.";
+
+function universalPoints(): SchoolPoint[] {
+  return [
+    {
+      id: `up-1-${Date.now()}`,
+      title: "Poin 1: Persiapan & Tujuan",
+      text: "* **Tujuan**: Menjelaskan sasaran kegiatan dan kompetensi yang ingin dicapai.\n* **Alat & Bahan**: Menyiapkan perangkat, software, atau bahan yang dibutuhkan sebelum mulai.\n* **Rencana Kerja**: Membagi peran dan menyusun langkah kerja bersama tim.",
+      images: [],
+    },
+    {
+      id: `up-2-${Date.now()}`,
+      title: "Poin 2: Pelaksanaan / Langkah Kerja",
+      text: "* **Langkah Kerja**: Menjalankan tahapan kegiatan sesuai rencana dan panduan.\n* **Dokumentasi**: Mengambil foto pada setiap tahap penting sebagai bukti proses.",
+      images: [],
+    },
+    {
+      id: `up-3-${Date.now()}`,
+      title: "Poin 3: Hasil & Pengujian",
+      text: "* **Hasil**: Memeriksa hasil akhir kegiatan terhadap tujuan yang ditetapkan.\n* **Pengujian**: Melakukan uji sederhana untuk memastikan hasil berfungsi sebagaimana mestinya.",
+      images: [],
+    },
+    {
+      id: `up-4-${Date.now()}`,
+      title: "Poin 4: Analisis & Refleksi",
+      text: "* **Analisis**: Menilai keberhasilan kegiatan beserta kendala yang ditemui.\n* **Refleksi**: Menarik pelajaran dan perbaikan untuk kegiatan berikutnya.",
+      images: [],
+    },
+  ];
+}
+
 const QUICK_PHRASES = [
   { label: "Pilih kalimat contoh siap pakai...", value: "" },
-  {
-    label: "[Sila 1] Sholat berjamaah & toleransi di mushola sekolah",
-    value:
-      "* **Aksi Nyata**: Melaksanakan sholat berjamaah tepat waktu di mushola sekolah dan saling menjaga ketenangan saat ibadah berlangsung.",
-  },
-  {
-    label: "[Sila 2] Berbagi bekal makanan & saling tolong teman",
-    value:
-      "* **Aksi Nyata**: Menumbuhkan rasa peduli dengan saling berbagi bekal makanan kepada teman sekelas dan menolong teman yang kesulitan tanpa diskriminasi.",
-  },
-  {
-    label: "[Sila 3] Menghargai keberagaman & jajan produk lokal di kantin",
-    value:
-      "* **Aksi Nyata**: Mendukung produk lokal di kantin sekolah dengan berbelanja tertib serta berteman rukun tanpa membeda-bedakan latar belakang.",
-  },
-  {
-    label: "[Sila 4] Musyawarah mufakat & diskusi kelompok di kelas",
-    value:
-      "* **Aksi Nyata**: Berdiskusi aktif dalam kerja kelompok di kelas, saling bertukar argumen secara demokratis, dan menerima hasil mufakat bersama.",
-  },
-  {
-    label: "[Sila 5] Piket kebersihan adil & rawat fasilitas sekolah",
-    value:
-      "* **Aksi Nyata**: Menjalankan pembagian tugas piket kebersihan kelas secara adil serta menjaga dan merawat fasilitas bersama secara bertanggung jawab.",
-  },
   {
     label: "[TKJ] Crimping kabel UTP T568B & tes 8 pin LAN tester",
     value:
@@ -158,7 +162,6 @@ export function SchoolPointsEditor({
   conclusion,
   media,
   onChange,
-  onGeneratePancasila,
 }: SchoolPointsEditorProps) {
   const [activeUploadPtIdx, setActiveUploadPtIdx] = useState<number | null>(null);
 
@@ -236,76 +239,8 @@ export function SchoolPointsEditor({
     updatePoint(index, { text: nextText });
   };
 
-  const generateTkjTemplate = () => {
-    const introText = INTRO_PRESETS.tkj;
-    const tkjPoints: SchoolPoint[] = [
-      {
-        id: "tkj-1",
-        title: "Poin 1: Persiapan Alat, Bahan & Topologi Jaringan",
-        text: "* **Alat & Bahan**: PC/Laptop, kabel UTP Cat5e, konektor RJ-45, tang crimping, LAN tester, switch manageable, dan router MikroTik.\n* **Rancangan Topologi**: Menggunakan topologi star untuk menghubungkan switch distribusi dengan workstation klien dan gateway router.\n* **Standar K3**: Memastikan ruang lab rapi dan kabel tertata aman dalam ducting.",
-        images: media[0]
-          ? [{ url: media[0].url, caption: "Persiapan alat, bahan, dan skema topologi jaringan" }]
-          : [],
-      },
-      {
-        id: "tkj-2",
-        title: "Poin 2: Pengkabelan Fisik & Pengalamatan IP",
-        text: "* **Pengkabelan**: Membuat kabel straight-through dengan susunan standar T568B pada kedua ujung konektor RJ-45.\n* **Pengujian Fisik**: Indikator 1 sampai 8 pada LAN tester menyala berurutan tanpa silang atau putus.\n* **Alokasi IP**: Menetapkan skema IP Address statis untuk manajemen interface perangkat lab.",
-        images: media[1]
-          ? [{ url: media[1].url, caption: "Proses crimping dan pengujian kabel LAN tester" }]
-          : [],
-      },
-      {
-        id: "tkj-3",
-        title: "Poin 3: Konfigurasi Perangkat (Switch & Router)",
-        text: "* **Konfigurasi Switch**: Membuat VLAN segmen dan memetakan access port untuk klien.\n* **Konfigurasi Router**: Mengatur IP address interface, DHCP server pool, gateway internet, serta NAT masquerade.\n* **Manajemen Bandwidth**: Mengonfigurasi Simple Queue untuk memastikan distribusi koneksi adil.",
-        images: media[2]
-          ? [{ url: media[2].url, caption: "Konfigurasi interface dan routing via terminal/Winbox" }]
-          : [],
-      },
-      {
-        id: "tkj-4",
-        title: "Poin 4: Pengujian Konektivitas & Hasil Verifikasi",
-        text: "* **Uji Ping**: Melakukan uji ping dari workstation klien ke gateway dan IP publik internet (8.8.8.8) dengan hasil reply 0% packet loss.\n* **Uji DHCP**: Klien berhasil mendapatkan IP otomatis sesuai rentang yang ditentukan.\n* **Verifikasi Web**: Klien dapat melakukan browsing lancar dengan latensi responsif.",
-        images: media[3]
-          ? [{ url: media[3].url, caption: "Dokumentasi hasil verifikasi ping dan pengujian koneksi" }]
-          : [],
-      },
-    ];
-    const concText = CONCLUSION_PRESETS.teknis;
-    onChange(introText, tkjPoints, concText);
-  };
-
-  const generateObservationTemplate = () => {
-    const introText = INTRO_PRESETS.observasi;
-    const obsPoints: SchoolPoint[] = [
-      {
-        id: "obs-1",
-        title: "Poin 1: Perencanaan & Pembagian Tugas Tim",
-        text: "* **Perencanaan**: Menentukan fokus pengamatan, menyusun lembar ceklis observasi, dan menyiapkan kamera dokumentasi.\n* **Koordinasi**: Pembagian peran yang jelas antaranggota tim agar seluruh target observasi tercatat rapi.",
-        images: media[0]
-          ? [{ url: media[0].url, caption: "Diskusi perencanaan dan pembagian peran anggota tim" }]
-          : [],
-      },
-      {
-        id: "obs-2",
-        title: "Poin 2: Pelaksanaan Observasi & Aksi Lapangan",
-        text: "* **Pelaksanaan**: Mengamati aktivitas di lingkungan sekolah secara langsung dan mencatat perilaku atau temuan lapangan.\n* **Dokumentasi**: Mengambil bukti foto otentik sebagai representasi data observasi.",
-        images: media[1]
-          ? [{ url: media[1].url, caption: "Dokumentasi observasi lapangan secara langsung" }]
-          : [],
-      },
-      {
-        id: "obs-3",
-        title: "Poin 3: Analisis Temuan & Diskusi Kelompok",
-        text: "* **Analisis**: Membandingkan hasil temuan di lapangan dengan teori mata pelajaran.\n* **Refleksi**: Merumuskan solusi atau rekomendasi aksi nyata yang dapat diterapkan oleh siswa sehari-hari.",
-        images: media[2]
-          ? [{ url: media[2].url, caption: "Diskusi analisis data hasil temuan bersama kelompok" }]
-          : [],
-      },
-    ];
-    const concText = CONCLUSION_PRESETS.tim;
-    onChange(introText, obsPoints, concText);
+  const generateUniversalTemplate = () => {
+    onChange(UNIVERSAL_INTRO, universalPoints(), UNIVERSAL_CONCLUSION);
   };
 
   return (
@@ -343,34 +278,16 @@ export function SchoolPointsEditor({
         <div className="flex flex-wrap items-center gap-2 border-t border-border pt-3">
           <span className="flex items-center gap-1 text-[11px] font-bold text-muted">
             <Zap size={12} className="text-accent" />
-            Preset Tugas Cepat:
+            Mulai cepat:
           </span>
           <button
             type="button"
-            onClick={onGeneratePancasila}
+            onClick={generateUniversalTemplate}
             className="inline-flex items-center gap-1.5 rounded-xl border border-accent bg-accent/15 px-3 py-1 text-xs font-bold text-accent transition-colors hover:bg-accent hover:text-on-accent"
-            title="Otomatis susun 5 Sila Pancasila lengkap dengan 10 foto"
+            title="Susun struktur tugas universal: latar belakang, 4 poin, kesimpulan"
           >
-            <Sparkles size={12} />
-            🪄 5 Sila Pancasila (10 Foto)
-          </button>
-          <button
-            type="button"
-            onClick={generateTkjTemplate}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-surface-2/60 px-3 py-1 text-xs font-bold text-foreground transition-colors hover:border-accent hover:text-accent"
-            title="Susun template praktikum jaringan TKJ 4 langkah"
-          >
-            <FileText size={12} />
-            ⚡ Praktik TKJ (4 Langkah)
-          </button>
-          <button
-            type="button"
-            onClick={generateObservationTemplate}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-surface-2/60 px-3 py-1 text-xs font-bold text-foreground transition-colors hover:border-accent hover:text-accent"
-            title="Susun template observasi kelompok 3 langkah"
-          >
-            <FileText size={12} />
-            📋 Observasi Kelompok (3 Poin)
+            <Zap size={12} />
+            Struktur Tugas Universal (4 Poin)
           </button>
         </div>
       </div>
@@ -394,24 +311,17 @@ export function SchoolPointsEditor({
           </span>
           <button
             type="button"
-            onClick={() => updateIntro(INTRO_PRESETS.pancasila)}
+            onClick={() => updateIntro(INTRO_PRESETS.teknis)}
             className="rounded-lg border border-border bg-surface px-2.5 py-1 text-[11px] font-medium text-foreground hover:border-accent hover:text-accent transition-colors"
           >
-            🏛️ Nilai Pancasila / PKn
-          </button>
-          <button
-            type="button"
-            onClick={() => updateIntro(INTRO_PRESETS.tkj)}
-            className="rounded-lg border border-border bg-surface px-2.5 py-1 text-[11px] font-medium text-foreground hover:border-accent hover:text-accent transition-colors"
-          >
-            💻 Praktikum Jaringan TKJ
+            Praktikum / Tugas Teknis
           </button>
           <button
             type="button"
             onClick={() => updateIntro(INTRO_PRESETS.observasi)}
             className="rounded-lg border border-border bg-surface px-2.5 py-1 text-[11px] font-medium text-foreground hover:border-accent hover:text-accent transition-colors"
           >
-            🔬 Observasi Lapangan
+            Observasi / Proyek Kelompok
           </button>
           <button
             type="button"
@@ -462,11 +372,11 @@ export function SchoolPointsEditor({
             <div className="mt-4 flex flex-wrap justify-center gap-2">
               <button
                 type="button"
-                onClick={onGeneratePancasila}
+                onClick={generateUniversalTemplate}
                 className="inline-flex items-center gap-1.5 rounded-xl bg-accent px-4 py-2 text-xs font-bold text-on-accent"
               >
                 <Sparkles size={14} />
-                Susun 5 Sila Otomatis (10 Foto)
+                Susun Struktur Tugas Universal
               </button>
               <button
                 type="button"
@@ -552,7 +462,7 @@ export function SchoolPointsEditor({
                         title="Tulis teks otomatis berdasarkan judul poin ini"
                       >
                         <Sparkles size={11} />
-                        ✨ Tulis Otomatis Sesuai Judul
+                        Tulis Otomatis Sesuai Judul
                       </button>
                     </div>
 
@@ -645,7 +555,7 @@ export function SchoolPointsEditor({
                     </span>
                     <span className="font-mono text-[11px] text-muted">
                       {point.images?.length === 2
-                        ? "✨ Tampil 2 kolom berdampingan"
+                        ? "Tampil 2 kolom berdampingan"
                         : point.images?.length === 1
                           ? "Tampil 1 kolom lebar"
                           : "Pilih foto di bawah untuk memasang"}
@@ -838,24 +748,17 @@ export function SchoolPointsEditor({
           </span>
           <button
             type="button"
-            onClick={() => updateConclusion(CONCLUSION_PRESETS.karakter)}
-            className="rounded-lg border border-border bg-surface px-2.5 py-1 text-[11px] font-medium text-foreground hover:border-accent hover:text-accent transition-colors"
-          >
-            🏛️ Refleksi Nilai & Karakter
-          </button>
-          <button
-            type="button"
             onClick={() => updateConclusion(CONCLUSION_PRESETS.teknis)}
             className="rounded-lg border border-border bg-surface px-2.5 py-1 text-[11px] font-medium text-foreground hover:border-accent hover:text-accent transition-colors"
           >
-            💻 Evaluasi Praktikum Teknis
+            Evaluasi Teknis
           </button>
           <button
             type="button"
             onClick={() => updateConclusion(CONCLUSION_PRESETS.tim)}
             className="rounded-lg border border-border bg-surface px-2.5 py-1 text-[11px] font-medium text-foreground hover:border-accent hover:text-accent transition-colors"
           >
-            🤝 Kerjasama & Solidaritas Tim
+            Refleksi Kerjasama Tim
           </button>
           <button
             type="button"

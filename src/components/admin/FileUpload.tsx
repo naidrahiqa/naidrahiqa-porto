@@ -73,6 +73,7 @@ export function FileUpload({
   const [error, setError] = useState<string | null>(null);
   const [urlInput, setUrlInput] = useState("");
   const [mode, setMode] = useState<"upload" | "url">("upload");
+  const [dragging, setDragging] = useState(false);
 
   async function handleFile(file: File | undefined) {
     if (!file) return;
@@ -107,7 +108,25 @@ export function FileUpload({
   }
 
   return (
-    <div>
+    <div
+      onDragOver={(e) => {
+        if (!Array.from(e.dataTransfer.types).includes("Files")) return;
+        e.preventDefault();
+        setDragging(true);
+      }}
+      onDragLeave={() => setDragging(false)}
+      onDrop={(e) => {
+        const file = e.dataTransfer.files?.[0];
+        if (!file) return;
+        e.preventDefault();
+        setDragging(false);
+        setMode("upload");
+        handleFile(file);
+      }}
+      className={`rounded-xl transition-colors ${
+        dragging ? "bg-accent/5 ring-2 ring-accent/40" : ""
+      }`}
+    >
       {label && <p className="mb-1.5 text-xs font-medium text-foreground">{label}</p>}
 
       <div className="mb-2 flex gap-2">
@@ -176,15 +195,15 @@ export function FileUpload({
       )}
 
       {value && (
-        <div className="mt-2 flex items-center gap-2">
+        <div className="mt-2 flex items-center gap-3 rounded-xl border border-border bg-surface-2/50 p-2.5">
           {isImageUrl(value) ? (
             <img
               src={getPreviewUrl(value)}
               alt="Preview"
-              className="h-16 w-16 rounded-lg border border-border object-cover"
+              className="h-14 w-14 shrink-0 rounded-lg border border-border object-cover"
             />
           ) : (
-            <span className="flex items-center gap-1.5 rounded-lg border border-border bg-surface-2 px-3 py-1.5 text-xs text-muted">
+            <span className="flex shrink-0 items-center gap-1.5 rounded-lg border border-border bg-surface px-3 py-1.5 text-xs text-muted">
               {value.includes("drive.google.com") ? (
                 <><FileVideo size={12} /> Google Drive file</>
               ) : (
@@ -192,10 +211,18 @@ export function FileUpload({
               )}
             </span>
           )}
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-xs font-medium text-foreground">
+              {value.split("/").pop()}
+            </p>
+            <p className="text-[10px] text-muted">
+              {uploading ? "Uploading..." : "Drop or pick another file to replace it"}
+            </p>
+          </div>
           <button
             type="button"
             onClick={() => onChange(null)}
-            className="text-danger hover:text-danger/80"
+            className="shrink-0 rounded-md p-1.5 text-danger transition-colors hover:bg-danger/10"
             aria-label="Remove file"
           >
             <X size={14} />

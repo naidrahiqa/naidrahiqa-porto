@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import {
   Wand2,
@@ -26,10 +26,12 @@ import {
   Minus,
   HelpCircle,
   Check,
+  ChevronDown,
   Plus,
   BookOpen,
   FolderGit2,
   Layers,
+  type LucideIcon,
 } from "lucide-react";
 import { slugify, resolveImageUrl } from "@/lib/utils";
 import type { Project, ProjectMedia, ProjectLayout } from "@/lib/types";
@@ -58,6 +60,59 @@ import {
   type StoryTemplate,
 } from "@/components/admin/project-form-data";
 
+type SectionId = "story" | "details" | "media";
+
+function SectionCard({
+  id,
+  title,
+  icon: Icon,
+  summary,
+  collapsed,
+  onToggle,
+  children,
+}: {
+  id: string;
+  title: string;
+  icon: LucideIcon;
+  summary: string;
+  collapsed: boolean;
+  onToggle: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <section id={`section-${id}`} className="flex scroll-mt-40 flex-col gap-6">
+      <div className="sticky top-32 z-20">
+        <button
+          type="button"
+          onClick={onToggle}
+          aria-expanded={!collapsed}
+          className="flex w-full items-center justify-between gap-3 rounded-2xl border border-border bg-surface px-5 py-4 text-left backdrop-blur-md"
+        >
+          <span className="flex min-w-0 items-center gap-3">
+            <span className="rounded-lg bg-accent/15 p-2 text-accent">
+              <Icon size={16} />
+            </span>
+            <span className="min-w-0">
+              <span className="block font-display text-sm font-bold uppercase tracking-tight text-foreground">
+                {title}
+              </span>
+              <span className="block truncate text-xs text-muted">{summary}</span>
+            </span>
+          </span>
+          <ChevronDown
+            size={16}
+            className={`shrink-0 text-muted transition-transform ${
+              collapsed ? "" : "rotate-180"
+            }`}
+          />
+        </button>
+      </div>
+
+      {!collapsed && children}
+    </section>
+  );
+}
+
 export function ProjectForm({ initial }: { initial?: Project | null }) {
   const router = useRouter();
   const { toast } = useToast();
@@ -67,7 +122,22 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
     isDirty.current = true;
   }, []);
 
-  const [activeTab, setActiveTab] = useState<"story" | "details" | "media">("story");
+  const [collapsed, setCollapsed] = useState<Record<SectionId, boolean>>({
+    story: false,
+    details: false,
+    media: false,
+  });
+
+  const jumpToSection = (id: SectionId) => {
+    setCollapsed((prev) => (prev[id] ? { ...prev, [id]: false } : prev));
+    window.requestAnimationFrame(() => {
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      document.getElementById(`section-${id}`)?.scrollIntoView({
+        behavior: reduce ? "auto" : "smooth",
+        block: "start",
+      });
+    });
+  };
   const [editorMode, setEditorMode] = useState<"write" | "split" | "preview">("write");
 
   const [title, setTitle] = useState(initial?.title ?? "");
@@ -151,104 +221,6 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
     },
     [markDirty]
   );
-
-  const updateSchoolPoint = (index: number, patch: Partial<SchoolPoint>) => {
-    const nextPts = schoolPoints.map((pt, i) => (i === index ? { ...pt, ...patch } : pt));
-    setSchoolPoints(nextPts);
-    syncPointsToContent(schoolIntro, nextPts, schoolConclusion);
-  };
-
-  const generatePancasilaTemplate = () => {
-    const intro =
-      "Pancasila bukan sekadar dasar falsafah negara yang dihafal bunyinya, melainkan pedoman moral dan etika bertindak yang harus diwujudkan dalam kehidupan nyata. Sebagai siswa kejuruan di SMK Negeri 3 Jepara, penerapan nilai-nilai Pancasila menjadi fondasi penting dalam membentuk karakter kedisiplinan, solidaritas, kepedulian sosial, serta integritas moral.\n\nMelalui tugas proyek mata pelajaran Pendidikan Pancasila ini, kami mendokumentasikan aksi konkret penerapan kelima sila Pancasila yang berlangsung di lingkungan sekolah dan ruang kelas kami sehari-hari.";
-
-    const pts: SchoolPoint[] = [
-      {
-        id: "sila-1",
-        title: "Sila Pertama: Ketuhanan Yang Maha Esa",
-        text: "* **Simbol**: Bintang emas berlatar perisai hitam.\n* **Makna Nilai**: Mengakui keberadaan Tuhan Yang Maha Esa, menjunjung tinggi toleransi antarumat beragama, dan menjalankan perintah agama dengan ikhlas dan penuh kedisiplinan.\n* **Aksi Nyata di Sekolah**: Mendengarkan khutbah sholat Jumat dengan khusyuk, tenang, dan tertib di mushola sekolah bersama teman-teman, menjaga adab dengan tidak berbicara saat khatib menyampaikan khutbah sebagai wujud ketaatan beribadah kepada Tuhan Yang Maha Esa.",
-        images: [
-          {
-            url: media[0]?.url || "https://lh3.googleusercontent.com/d/1BzzjvkPjHUi-abyuZTOSGV5bLsouRj5P=s0",
-            caption: "Simbol Sila ke-1: Bintang (Ketuhanan Yang Maha Esa)",
-          },
-          {
-            url: media[1]?.url || "https://lh3.googleusercontent.com/d/1_0GQozFV4Xs5FzfgyKYXJbl9427WOi0e=s0",
-            caption: "Penerapan Sila ke-1: Mendengarkan khutbah sholat Jumat dengan khusyuk di mushola sekolah",
-          },
-        ],
-      },
-      {
-        id: "sila-2",
-        title: "Sila Kedua: Kemanusiaan yang Adil dan Beradab",
-        text: "* **Simbol**: Rantai emas dengan gelang lingkaran dan persegi.\n* **Makna Nilai**: Mengakui persamaan harkat dan martabat setiap individu tanpa diskriminasi, serta menumbuhkan empati dan tolong-menolong.\n* **Aksi Nyata di Sekolah**: Menumbuhkan rasa peduli dengan saling berbagi bekal makanan kepada teman sekelas dan memperlakukan sesama dengan santun.",
-        images: [
-          {
-            url: media[2]?.url || "https://lh3.googleusercontent.com/d/18ZTkSHRKRB_HXGNUAr81KgT7_-YIWztN=s0",
-            caption: "Simbol Sila ke-2: Rantai (Kemanusiaan yang Adil dan Beradab)",
-          },
-          {
-            url: media[3]?.url || "https://lh3.googleusercontent.com/d/1yVOcV1uuGRBMOX3DBGpYsSn47noLvWyr=s0",
-            caption: "Penerapan Sila ke-2: Berbagi makanan dengan teman sekelas",
-          },
-        ],
-      },
-      {
-        id: "sila-3",
-        title: "Sila Ketiga: Persatuan Indonesia",
-        text: "* **Simbol**: Pohon Beringin.\n* **Makna Nilai**: Menempatkan kesatuan dan keselamatan bersama di atas kepentingan pribadi, serta cinta tanah air dan produk buatan dalam negeri.\n* **Aksi Nyata di Sekolah**: Mendukung produk lokal dan kantin sekolah dengan berbelanja secara tertib serta membaur tanpa membeda-bedakan pertemanan.",
-        images: [
-          {
-            url: media[4]?.url || "https://lh3.googleusercontent.com/d/1fwDxo5rz5efIyejXIoZcn_UNpndCGF8o=s0",
-            caption: "Simbol Sila ke-3: Pohon Beringin (Persatuan Indonesia)",
-          },
-          {
-            url: media[5]?.url || "https://lh3.googleusercontent.com/d/1SYtW89NFwM6hwgZhfGPGApH6acnUppPf=s0",
-            caption: "Penerapan Sila ke-3: Mendukung produk lokal di kantin sekolah",
-          },
-        ],
-      },
-      {
-        id: "sila-4",
-        title: "Sila Keempat: Kerakyatan yang Dipimpin oleh Hikmat Kebijaksanaan dalam Permusyawaratan/Perwakilan",
-        text: "* **Simbol**: Kepala Banteng.\n* **Makna Nilai**: Mengutamakan musyawarah mufakat dalam mengambil keputusan bersama dan menghormati setiap perbedaan pandangan.\n* **Aksi Nyata di Sekolah**: Berdiskusi aktif dalam kerja kelompok di kelas, saling bertukar argumen secara demokratis, dan menerima hasil mufakat.",
-        images: [
-          {
-            url: media[6]?.url || "https://lh3.googleusercontent.com/d/1ASfipttavPp9SgactCdfWi-D-ca2KUAZ=s0",
-            caption: "Simbol Sila ke-4: Kepala Banteng (Permusyawaratan/Perwakilan)",
-          },
-          {
-            url: media[7]?.url || "https://lh3.googleusercontent.com/d/1lx2bW4Rc5bzxEe3kiK9Hs7YY7qvD_mes=s0",
-            caption: "Penerapan Sila ke-4: Diskusi dan musyawarah tugas kelompok di kelas",
-          },
-        ],
-      },
-      {
-        id: "sila-5",
-        title: "Sila Kelima: Keadilan Sosial bagi Seluruh Rakyat Indonesia",
-        text: "* **Simbol**: Padi dan Kapas.\n* **Makna Nilai**: Mengembangkan sikap adil terhadap sesama, menjaga keseimbangan antara hak dan kewajiban, serta menghormati hak orang lain demi mewujudkan kesejahteraan dan keadilan sosial yang merata.\n* **Aksi Nyata di Sekolah**: Pembagian dan pendistribusian makanan Program Makan Bergizi Gratis (MBG) secara tertib dan merata kepada seluruh siswa di kelas menggunakan wadah omprengan stainless steel, memastikan setiap teman memperoleh hak porsi makanan sehat dan bergizi yang sama tanpa ada yang terlewatkan.",
-        images: [
-          {
-            url: media[8]?.url || "https://lh3.googleusercontent.com/d/1E1W3W0SYs95oXRLTGrO4LTrruxDeJTQK=s0",
-            caption: "Simbol Sila ke-5: Padi dan Kapas (Keadilan Sosial)",
-          },
-          {
-            url: media[9]?.url || "https://lh3.googleusercontent.com/d/17BeH00qmGdqIDDoDR9991rKANoxHBV3I=s0",
-            caption: "Penerapan Sila ke-5: Pembagian makanan Program Makan Bergizi Gratis (MBG) secara adil dan merata di kelas",
-          },
-        ],
-      },
-    ];
-
-    const conc =
-      "Praktik pengamalan Pancasila tidak harus menunggu momen kenegaraan yang besar. Dari hal-hal sederhana di sekolah - mulai dari menjaga sholat berjamaah di mushola, kepedulian berbagi bekal, mendukung produk lokal di kantin, bermusyawarah di bangku kelas, hingga pembagian porsi Makan Bergizi Gratis (MBG) secara adil dan merata - nilai luhur Pancasila telah hidup dan terjaga dalam kebiasaan kita sehari-hari.";
-
-    setSchoolIntro(intro);
-    setSchoolPoints(pts);
-    setSchoolConclusion(conc);
-    syncPointsToContent(intro, pts, conc);
-    toast("success", "Berhasil menyusun 5 Sila beserta 10 foto media!");
-  };
 
   const handleSwitchContentFormat = (newFormat: "points" | "markdown") => {
     if (newFormat === contentFormat) return;
@@ -490,8 +462,50 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
     }
   }
 
+  const submitRef = useRef(handleSubmit);
+  submitRef.current = handleSubmit;
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s") {
+        if (e.defaultPrevented) return;
+        e.preventDefault();
+        submitRef.current();
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, []);
+
   const wordCount = content.trim() ? content.trim().split(/\s+/).length : 0;
   const readTimeMinutes = Math.max(1, Math.ceil(wordCount / 200));
+
+  const sectionSummary = (id: SectionId): string => {
+    if (id === "story") {
+      return contentFormat === "points"
+        ? `${schoolPoints.length} poin`
+        : `${wordCount} kata`;
+    }
+    if (id === "details") {
+      const layoutLabel = LAYOUTS.find((l) => l.value === layout)?.label ?? layout;
+      const base =
+        category === "school"
+          ? `Sekolah, Kelas ${classLevel ? classLevel.toUpperCase() : "-"}, ${subject || "mapel belum dipilih"}`
+          : `Personal, ${language || "tech belum dipilih"}`;
+      return `${base}, ${layoutLabel}`;
+    }
+    return `${coverImage ? "Cover siap" : "Tanpa cover"}, ${media.length} media`;
+  };
+
+  const navSummary = (id: SectionId): string => {
+    if (id === "story") {
+      return contentFormat === "points"
+        ? `${schoolPoints.length} poin`
+        : `${wordCount} kata`;
+    }
+    if (id === "details") return category === "school" ? "Sekolah" : "Personal";
+    return `${media.length} media`;
+  };
 
   return (
     <form onSubmit={handleSubmit} onChange={markDirty} className="flex flex-col gap-6">
@@ -580,55 +594,37 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
         </div>
       )}
 
-      {/* STUDIO NAVIGATION TABS */}
+      {/* SECTION JUMP NAV */}
       <div className="flex flex-wrap items-center gap-2 border-b border-border pb-2">
-        <button
-          type="button"
-          onClick={() => setActiveTab("story")}
-          className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold transition-all ${
-            activeTab === "story"
-              ? "bg-accent text-on-accent"
-              : "bg-surface-2/60 text-muted hover:text-foreground hover:bg-surface-2"
-          }`}
-        >
-          <PenSquare size={16} />
-          Story & Content
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab("details")}
-          className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold transition-all ${
-            activeTab === "details"
-              ? "bg-accent text-on-accent"
-              : "bg-surface-2/60 text-muted hover:text-foreground hover:bg-surface-2"
-          }`}
-        >
-          <Layers size={16} />
-          Project Details & Layout
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab("media")}
-          className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold transition-all ${
-            activeTab === "media"
-              ? "bg-accent text-on-accent"
-              : "bg-surface-2/60 text-muted hover:text-foreground hover:bg-surface-2"
-          }`}
-        >
-          <ImageIcon size={16} />
-          Media & Gallery
-          {media.length > 0 && (
-            <span className="ml-1 rounded-full bg-surface/30 px-2 py-0.5 text-[11px] font-mono">
-              {media.length}
+        {[
+          { id: "story" as const, label: "Story & Content", icon: PenSquare },
+          { id: "details" as const, label: "Details & Layout", icon: Layers },
+          { id: "media" as const, label: "Media & Gallery", icon: ImageIcon },
+        ].map((s) => (
+          <button
+            key={s.id}
+            type="button"
+            onClick={() => jumpToSection(s.id)}
+            className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface-2/60 px-4 py-2 text-sm font-bold text-muted transition-colors hover:border-accent hover:text-foreground"
+          >
+            <s.icon size={16} />
+            {s.label}
+            <span className="rounded-full bg-surface px-2 py-0.5 font-mono text-[11px] font-medium text-accent">
+              {navSummary(s.id)}
             </span>
-          )}
-        </button>
+          </button>
+        ))}
       </div>
 
-      {/* TAB 1: STORY & CONTENT */}
-      {activeTab === "story" && (
+      {/* SECTION 1: STORY & CONTENT */}
+      <SectionCard
+        id="story"
+        title="Story & Content"
+        icon={PenSquare}
+        summary={sectionSummary("story")}
+        collapsed={collapsed.story}
+        onToggle={() => setCollapsed((c) => ({ ...c, story: !c.story }))}
+      >
         <div className="flex flex-col gap-6">
           {/* TITLE & SLUG CARD */}
           <div className="rounded-2xl border border-border bg-surface p-5">
@@ -763,7 +759,6 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
                 setSchoolConclusion(newConc);
                 syncPointsToContent(newIntro, newPts, newConc);
               }}
-              onGeneratePancasila={generatePancasilaTemplate}
             />
           ) : (
             /* MARKDOWN STORY STUDIO */
@@ -1153,10 +1148,17 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
           </div>
           )}
         </div>
-      )}
+      </SectionCard>
 
-      {/* TAB 2: PROJECT DETAILS & LAYOUT */}
-      {activeTab === "details" && (
+      {/* SECTION 2: PROJECT DETAILS & LAYOUT */}
+      <SectionCard
+        id="details"
+        title="Details & Layout"
+        icon={Layers}
+        summary={sectionSummary("details")}
+        collapsed={collapsed.details}
+        onToggle={() => setCollapsed((c) => ({ ...c, details: !c.details }))}
+      >
         <div className="flex flex-col gap-6">
           {/* CATEGORY SELECTOR */}
           <div className="rounded-2xl border border-border bg-surface p-5">
@@ -1316,7 +1318,7 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
                           </span>
                         ) : (
                           <span className="inline-flex items-center gap-1 font-bold text-success">
-                            ✨ Mapel baru (otomatis tersimpan ke DB saat proyek disimpan)
+                            Mapel baru (otomatis tersimpan ke DB saat proyek disimpan)
                           </span>
                         )}
                       </div>
@@ -1336,7 +1338,6 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
                 <div className="rounded-xl border border-accent/40 bg-accent/5 p-3.5">
                   <div className="flex flex-wrap items-center justify-between gap-2 mb-1.5">
                     <span className="flex items-center gap-1.5 text-xs font-bold text-accent">
-                      <span>📌</span>
                       Mapel di Database Kamu ({existingSubjects.length})
                     </span>
                     <span className="text-[11px] text-muted">
@@ -1607,10 +1608,17 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
             </div>
           </div>
         </div>
-      )}
+      </SectionCard>
 
-      {/* TAB 3: MEDIA & GALLERY */}
-      {activeTab === "media" && (
+      {/* SECTION 3: MEDIA & GALLERY */}
+      <SectionCard
+        id="media"
+        title="Media & Gallery"
+        icon={ImageIcon}
+        summary={sectionSummary("media")}
+        collapsed={collapsed.media}
+        onToggle={() => setCollapsed((c) => ({ ...c, media: !c.media }))}
+      >
         <div className="flex flex-col gap-6">
           {/* COVER IMAGE */}
           <div className="rounded-2xl border border-border bg-surface p-5">
@@ -1678,13 +1686,13 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
               onInsertToStory={(item, index) => {
                 const caption = item.caption || `Foto #${index + 1}`;
                 insertMarkdown(`![${caption}](${item.url})\n\n`);
-                setActiveTab("story");
+                jumpToSection("story");
                 toast("success", `Disisipkan Media #${index + 1} ke cerita!`);
               }}
             />
           </div>
         </div>
-      )}
+      </SectionCard>
 
       {/* BOTTOM ACTION BAR */}
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-surface p-4">
