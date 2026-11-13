@@ -80,7 +80,7 @@ export async function POST(request: Request) {
 
   try {
     const resend = new Resend(process.env.RESEND_API_KEY);
-    await resend.emails.send({
+    const { error } = await resend.emails.send({
       from: "Naidrahiqa Contact <onboarding@resend.dev>",
       to: "faqihardiansyah89@gmail.com",
       replyTo: email,
@@ -100,6 +100,10 @@ export async function POST(request: Request) {
         </div>
       `,
     });
+
+    if (error) {
+      return NextResponse.json({ error: "Failed to send email" }, { status: 502 });
+    }
 
     return NextResponse.json({ ok: true });
   } catch {
