@@ -6,15 +6,14 @@ import { cn } from "@/lib/utils";
 
 interface Skill {
   name: string;
-  category: string;
   icon: typeof Network;
 }
 
 const SKILLS: Skill[] = [
-  { name: "Networking", category: "TKJ", icon: Network },
-  { name: "Kernel Dev", category: "C / eBPF", icon: Terminal },
-  { name: "IoT Systems", category: "ESP32", icon: Cpu },
-  { name: "CTF & Pwn", category: "Binary", icon: Flag },
+  { name: "Networking", icon: Network },
+  { name: "Kernel Dev", icon: Terminal },
+  { name: "IoT Systems", icon: Cpu },
+  { name: "CTF & Pwn", icon: Flag },
 ];
 
 export function SkillTags() {
@@ -42,14 +41,6 @@ export function SkillTags() {
           >
             <Icon size={12} className="shrink-0 opacity-60" />
             <span className="font-semibold">{skill.name}</span>
-            <span
-              className={cn(
-                "font-mono text-[9px]",
-                isSelected ? "text-background/60" : "text-muted"
-              )}
-            >
-              {skill.category}
-            </span>
           </button>
         );
       })}

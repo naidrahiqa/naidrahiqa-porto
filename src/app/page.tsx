@@ -182,12 +182,11 @@ export default async function HomePage() {
             </span>
           </div>
 
-          <h1 className="mt-7 font-display text-[clamp(3.4rem,10vw,7.4rem)] font-black uppercase leading-[0.86] tracking-[-0.055em] text-foreground">
+          <h1 className="mt-7 font-display text-[clamp(2.25rem,6vw,3.75rem)] font-black uppercase leading-[0.92] tracking-[-0.04em] text-foreground">
             <span className="block">
-              <TextScramble text="FAQIH" />
+              <TextScramble text="FAQIH" /> ARDIAN
             </span>
-            <span className="block">ARDIAN</span>
-            <span className="block text-foreground/20">SYAH</span>
+            <span className="block">SYAH</span>
           </h1>
 
           <p className="mt-7 max-w-xl text-[15px] leading-relaxed text-muted sm:text-base">
@@ -219,15 +218,12 @@ export default async function HomePage() {
         </div>
 
         <aside className="relative">
-          <div className="rounded-[28px] border border-border bg-surface p-6 sm:p-8">
+          <div className="rounded-2xl border border-border bg-surface p-6 sm:p-8">
             <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted">
               Currently
             </p>
-            <h2 className="mt-3 max-w-[18ch] font-display text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl">
-              Deep in low-level systems.
-            </h2>
 
-            <ul className="mt-6 flex flex-col">
+            <ul className="mt-4 flex flex-col">
               {FOCUS.map((item) => (
                 <li
                   key={item.label}
