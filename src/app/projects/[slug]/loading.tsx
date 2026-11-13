@@ -13,7 +13,7 @@ export default function ProjectDetailLoading() {
         <div className="h-4 w-32 animate-pulse rounded bg-surface-2" />
       </header>
 
-      <div className="aspect-video w-full animate-pulse overflow-hidden rounded-2xl border-2 border-foreground bg-surface-2" />
+      <div className="aspect-video w-full animate-pulse overflow-hidden rounded-2xl border border-border bg-surface-2" />
 
       <div className="flex flex-col gap-3">
         <div className="h-4 w-full animate-pulse rounded bg-surface-2" />

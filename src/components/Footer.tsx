@@ -15,12 +15,9 @@ export default async function Footer() {
           <div className="flex items-center gap-1.5 font-display text-sm font-extrabold uppercase text-foreground">
             <span className="text-accent">✦</span>
             <span>naidrahiqa</span>
-            <span className="rounded-md bg-accent-fill px-1.5 py-0.5 font-mono text-[9px] font-bold text-accent dark:bg-accent/20">
-              VER 2.6
-            </span>
           </div>
           <p className="mt-1 text-xs text-muted">
-            Kernel Developer ✦ IoT Builder ✦ CyberSecurity Enthusiast
+            Kernel developer, IoT builder, security enthusiast
           </p>
         </div>
 

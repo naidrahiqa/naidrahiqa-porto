@@ -11,6 +11,11 @@ export function TextScramble({ text, className }: { text: string; className?: st
     const el = ref.current;
     if (!el) return;
 
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      el.textContent = text;
+      return;
+    }
+
     let frame = 0;
     const queue: { from: string; to: string; start: number; end: number }[] = [];
 

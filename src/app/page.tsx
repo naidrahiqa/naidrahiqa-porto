@@ -7,7 +7,6 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
-import { cn } from "@/lib/utils";
 import { BrandIcon } from "@/components/BrandIcon";
 import { ProjectCard, AchievementBadge } from "@/components/cards";
 import { MarkdownContent } from "@/components/MarkdownContent";
@@ -49,28 +48,25 @@ const TECH = [
 const FOCUS = [
   {
     label: "Phrolova Kernel",
-    meta: "Linux 4.19 · Redmi 10 (selene)",
+    meta: "Linux 4.19, Redmi 10 (selene)",
     href: "/projects/phrolova-kernel-selene",
-    dot: "bg-accent",
   },
   {
     label: "IoT telemetry",
-    meta: "Aqua Safe Monitor · ESP32",
+    meta: "Aqua Safe Monitor, ESP32",
     href: "/projects/aqua-safe-monitor",
-    dot: "bg-emerald-500",
   },
   {
     label: "Offensive security",
     meta: "CTF, exploit dev & tooling",
     href: "/projects/catchido",
-    dot: "bg-violet-500",
   },
 ];
 
 const SPECS = [
   ["Based in", "Jepara, Indonesia"],
-  ["Focus", "Kernel · IoT · Security"],
-  ["Stack", "C · Linux · TypeScript"],
+  ["Focus", "Kernel, IoT, security"],
+  ["Stack", "C, Linux, TypeScript"],
   ["Status", "Open to collaborate"],
 ];
 
@@ -184,10 +180,6 @@ export default async function HomePage() {
             <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted">
               Open for collaboration
             </span>
-            <span className="font-mono text-[10px] text-muted/50">/</span>
-            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted/70">
-              Jepara, ID
-            </span>
           </div>
 
           <h1 className="mt-7 font-display text-[clamp(3.4rem,10vw,7.4rem)] font-black uppercase leading-[0.86] tracking-[-0.055em] text-foreground">
@@ -245,12 +237,6 @@ export default async function HomePage() {
                     href={item.href}
                     className="group flex items-center gap-3 py-3.5"
                   >
-                    <span
-                      className={cn(
-                        "h-2 w-2 shrink-0 rounded-full",
-                        item.dot
-                      )}
-                    />
                     <span className="min-w-0 flex-1">
                       <span className="block text-sm font-semibold text-foreground transition-colors group-hover:text-accent">
                         {item.label}
@@ -305,7 +291,7 @@ export default async function HomePage() {
       {/* ABOUT */}
       {resolvedAboutSections.length > 0 && (
         <section id="about" className="mt-20 sm:mt-24">
-          <SectionHeader index="01" title="About" note="Profile & background" />
+          <SectionHeader title="About" note="Profile & background" />
           <div className="mt-8 grid gap-10 lg:grid-cols-[200px_1fr] lg:gap-16">
             <div className="hidden lg:block">
               <p className="max-w-[16ch] font-display text-lg font-semibold leading-snug tracking-tight text-foreground/70">
@@ -317,7 +303,7 @@ export default async function HomePage() {
                 <ScrollReveal key={s.id} delay={i * 60}>
                   <article className="border-t border-border py-6 first:border-t-0 first:pt-0">
                     <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
-                      {String(i + 1).padStart(2, "0")} / {s.heading}
+                      {s.heading}
                     </p>
                     <div className="mt-2 max-w-2xl">
                       <MarkdownContent content={s.content} />
@@ -333,21 +319,17 @@ export default async function HomePage() {
       {/* TECH STACK */}
       <section className="mt-20 sm:mt-24">
         <SectionHeader
-          index="02"
           title="Stack"
           note={`${TECH.length} technologies`}
         />
         <div className="mt-8 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-3 lg:grid-cols-4">
-          {TECH.map((tech, i) => (
+          {TECH.map((tech) => (
             <div
               key={tech.name}
               className="group bg-background p-4 transition-colors duration-200 hover:bg-surface"
             >
               <div className="flex items-center justify-between">
                 <TechIcon name={tech.name} size={20} />
-                <span className="font-mono text-[9px] text-muted/50">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
               </div>
               <p className="mt-4 font-display text-sm font-bold tracking-tight text-foreground">
                 {tech.name}
@@ -361,7 +343,6 @@ export default async function HomePage() {
       {/* PROJECTS */}
       <section id="projects" className="mt-20 sm:mt-24">
         <SectionHeader
-          index="03"
           title="Selected work"
           note="Featured projects"
           action={
@@ -397,7 +378,6 @@ export default async function HomePage() {
       {/* ACHIEVEMENTS */}
       <section id="achievements" className="mt-20 sm:mt-24">
         <SectionHeader
-          index="04"
           title="Achievements"
           note="Certificates & competitions"
           action={
@@ -517,26 +497,19 @@ export default async function HomePage() {
 }
 
 function SectionHeader({
-  index,
   title,
   note,
   action,
 }: {
-  index: string;
   title: string;
   note?: string;
   action?: ReactNode;
 }) {
   return (
     <div className="flex flex-wrap items-end justify-between gap-4 border-b border-border pb-4">
-      <div className="flex items-baseline gap-3">
-        <span className="font-mono text-[10px] tracking-[0.2em] text-accent">
-          {index}
-        </span>
-        <h2 className="font-display text-2xl font-extrabold uppercase tracking-tight text-foreground sm:text-3xl">
-          {title}
-        </h2>
-      </div>
+      <h2 className="font-display text-2xl font-extrabold uppercase tracking-tight text-foreground sm:text-3xl">
+        {title}
+      </h2>
       <div className="flex items-center gap-5">
         {note && (
           <p className="hidden font-mono text-[10px] uppercase tracking-[0.16em] text-muted sm:block">

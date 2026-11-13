@@ -1,8 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, GitFork, Star } from "lucide-react";
+import { ArrowRight, GitFork, Star, Trophy, GraduationCap, MessageSquare } from "lucide-react";
 import {
-  cn,
   formatRelativeTime,
   isTrustedImageHost,
   languageColor,
@@ -162,7 +161,7 @@ export function RepoCard({ project }: { project: Project }) {
       )}
 
       <div className="mt-auto flex items-center gap-1.5 pt-5 text-[11px] font-semibold text-foreground">
-        Case study
+        View project
         <ArrowRight
           size={12}
           className="transition-transform duration-200 group-hover:translate-x-1"
@@ -255,24 +254,15 @@ export function AchievementBadge({
 }: {
   category: Achievement["category"];
 }) {
-  const styles: Record<Achievement["category"], string> = {
-    competition: "border-accent/30 bg-accent-fill text-accent",
-    training: "border-accent-2/30 bg-accent-2-fill text-accent-2",
-    seminar: "border-accent-3/30 bg-accent-3-fill text-accent-3",
+  const icons: Record<Achievement["category"], typeof Trophy> = {
+    competition: Trophy,
+    training: GraduationCap,
+    seminar: MessageSquare,
   };
-  const icons: Record<Achievement["category"], string> = {
-    competition: "🏆",
-    training: "🎓",
-    seminar: "💬",
-  };
+  const Icon = icons[category] ?? MessageSquare;
   return (
-    <span
-      className={cn(
-        "inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 font-display text-[10px] font-bold uppercase tracking-wider",
-        styles[category]
-      )}
-    >
-      <span>{icons[category]}</span>
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface-2 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-muted">
+      <Icon size={11} />
       <span>{category}</span>
     </span>
   );

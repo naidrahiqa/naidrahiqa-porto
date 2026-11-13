@@ -22,7 +22,7 @@ export default async function ContactPage() {
       <header className="max-w-2xl">
         <div className="flex items-center gap-2.5">
           <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-accent">
-            05 / Contact
+            Contact
           </span>
           <span className="h-px w-8 bg-border" />
           <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted">

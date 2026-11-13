@@ -4,7 +4,6 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, ExternalLink, GitFork, Star } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import {
-  cn,
   formatDate,
   formatRelativeTime,
   languageColor,
@@ -176,14 +175,7 @@ export default async function ProjectDetailPage({
       {/* Header */}
       <header className="flex flex-col gap-4">
         <div className="flex flex-wrap items-center gap-2">
-          <span
-            className={cn(
-              "rounded-full border px-2.5 py-0.5 text-[11px] uppercase tracking-wider",
-              resolvedProject.category === "school"
-                ? "border-accent/30 text-accent"
-                : "border-accent-2/30 text-accent-2"
-            )}
-          >
+          <span className="rounded-full border border-accent/30 px-2.5 py-0.5 text-[11px] uppercase tracking-wider text-accent">
             {resolvedProject.category}
           </span>
           {resolvedProject.category === "school" && resolvedProject.class_level && (

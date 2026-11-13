@@ -61,7 +61,6 @@ export default async function ProjectsPage() {
       {classes.length > 0 && (
         <section className="mt-16">
           <SectionRow
-            index="01"
             title="School"
             note="Per class & subject"
           />
@@ -81,7 +80,6 @@ export default async function ProjectsPage() {
       {personal.length > 0 && (
         <section className="mt-16">
           <SectionRow
-            index="02"
             title="From GitHub"
             note={`${personal.length} public repositories`}
             action={
@@ -121,26 +119,19 @@ export default async function ProjectsPage() {
 }
 
 function SectionRow({
-  index,
   title,
   note,
   action,
 }: {
-  index: string;
   title: string;
   note?: string;
   action?: ReactNode;
 }) {
   return (
     <div className="flex flex-wrap items-end justify-between gap-4 border-b border-border pb-4">
-      <div className="flex items-baseline gap-3">
-        <span className="font-mono text-[10px] tracking-[0.2em] text-accent">
-          {index}
-        </span>
-        <h2 className="font-display text-xl font-extrabold uppercase tracking-tight text-foreground sm:text-2xl">
-          {title}
-        </h2>
-      </div>
+      <h2 className="font-display text-xl font-extrabold uppercase tracking-tight text-foreground sm:text-2xl">
+        {title}
+      </h2>
       <div className="flex items-center gap-5">
         {note && (
           <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted">

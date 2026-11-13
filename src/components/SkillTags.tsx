@@ -8,14 +8,13 @@ interface Skill {
   name: string;
   category: string;
   icon: typeof Network;
-  dotColor: string;
 }
 
 const SKILLS: Skill[] = [
-  { name: "Networking", category: "TKJ", icon: Network, dotColor: "bg-sky-500" },
-  { name: "Kernel Dev", category: "C / eBPF", icon: Terminal, dotColor: "bg-emerald-500" },
-  { name: "IoT Systems", category: "ESP32", icon: Cpu, dotColor: "bg-amber-500" },
-  { name: "CTF & Pwn", category: "Binary", icon: Flag, dotColor: "bg-rose-500" },
+  { name: "Networking", category: "TKJ", icon: Network },
+  { name: "Kernel Dev", category: "C / eBPF", icon: Terminal },
+  { name: "IoT Systems", category: "ESP32", icon: Cpu },
+  { name: "CTF & Pwn", category: "Binary", icon: Flag },
 ];
 
 export function SkillTags() {
@@ -41,12 +40,6 @@ export function SkillTags() {
                 : "border-border bg-surface text-foreground/80 hover:border-foreground/30 hover:text-foreground"
             )}
           >
-            <span
-              className={cn(
-                "h-1.5 w-1.5 shrink-0 rounded-full transition-transform group-hover:scale-125",
-                skill.dotColor
-              )}
-            />
             <Icon size={12} className="shrink-0 opacity-60" />
             <span className="font-semibold">{skill.name}</span>
             <span

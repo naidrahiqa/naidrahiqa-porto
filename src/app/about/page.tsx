@@ -66,7 +66,7 @@ export default async function AboutPage() {
       <header>
         <div className="flex items-center gap-2.5">
           <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-accent">
-            01 / Profile
+            About
           </span>
           <span className="h-px w-8 bg-border" />
           <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted">
@@ -119,7 +119,7 @@ export default async function AboutPage() {
             <ScrollReveal key={section.id} delay={idx * 60}>
               <article className="border-t border-border py-7 first:border-t-0 first:pt-0">
                 <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
-                  {String(idx + 1).padStart(2, "0")} / {section.heading}
+                  {section.heading}
                 </p>
                 <div className="mt-3">
                   <MarkdownContent content={section.content} />
