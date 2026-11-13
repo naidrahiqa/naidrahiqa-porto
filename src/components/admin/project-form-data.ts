@@ -48,6 +48,34 @@ export type StoryTemplate = {
 
 export const storyTemplates: StoryTemplate[] = [
   {
+    id: "universal",
+    name: "Universal (Any Project)",
+    description: "All-purpose structure that fits any project type: overview, features, setup, results, roadmap",
+    template: `## Overview
+What this project is, who it is for, and the problem it solves.
+
+## Key Features
+- **Feature One**: What it does and why it matters.
+- **Feature Two**: What it does and why it matters.
+- **Feature Three**: What it does and why it matters.
+
+## Tech Stack
+- Language / framework / tools used, and why they were chosen.
+
+## How It Works
+Walk through the core flow, architecture, or usage:
+
+\`\`\`bash
+# Example build or run command
+\`\`\`
+
+## Results & Screenshots
+What works today: metrics, benchmarks, or demo output.
+
+## Roadmap
+What is planned next.`,
+  },
+  {
     id: "case-study",
     name: "Case Study (Default)",
     description: "Standard narrative: Overview, Highlights, Tech Stack, Challenges, and Results",
