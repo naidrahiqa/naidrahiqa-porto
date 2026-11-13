@@ -67,14 +67,15 @@ src/
 │   │       ├── about/page.tsx       # About sections editor
 │   │       ├── contacts/page.tsx    # Contacts editor
 │   │       └── profile/page.tsx     # Profile editor
-│   └── api/admin/          # Admin API routes (RLS-protected)
-│   └── api/contact/        # Contact form email API (Resend)
+│   ├── admin/              # Admin API routes (RLS-protected)
+│   │   └── github/sync/    # GitHub repo metadata sync (runs the GitHub fetch)
+│   └── contact/            # Contact form email API (Resend)
 ├── components/
 │   ├── admin/              # Admin UI components
 │   │   ├── ui.tsx          # Button, Card, Input, Label, Select, TextArea, StatusPill
 │   │   ├── AdminSidebar.tsx # Client sidebar with active route highlighting
 │   │   ├── Toast.tsx       # Toast notification system (context provider)
-│   │   ├── ProjectForm.tsx # Sectioned form (Basic Info / Content / Media / Display)
+│   │   ├── ProjectForm.tsx # Sectioned form (section data in project-form-data.ts)
 │   │   ├── MediaGallery.tsx # Media items with preview, reorder, type hints
 │   │   ├── FileUpload.tsx  # Upload or paste URL (Drive/Supabase)
 │   │   ├── VideoFields.tsx # Hero video URL + type selector
@@ -82,24 +83,33 @@ src/
 │   │   ├── FeaturedToggle.tsx # Star toggle for featured projects
 │   │   ├── DeleteButton.tsx # Delete with confirmation (shows item name)
 │   │   └── LogoutButton.tsx
+│   ├── Navbar.tsx, Footer.tsx # Site chrome (wordmark, nav, no decorative glyphs)
+│   ├── cards.tsx           # ProjectCard, RepoCard, AchievementBadge
 │   ├── ProjectLayout.tsx   # Layout renderer (5 layout variants)
 │   ├── ProjectGallery.tsx  # Gallery with lightbox, video embed, LinkCards
 │   ├── ImageLightbox.tsx   # Full-size image modal
 │   ├── BrandIcon.tsx       # Social media icons
-│   ├── SkillTags.tsx       # Interactive scattered skill tags (hero)
 │   ├── ContactForm.tsx     # Contact form with Resend email
-│   └── ScrollReveal.tsx    # Scroll animation wrapper
+│   ├── TextScramble.tsx    # One-shot hero name decode (respects reduced motion)
+│   ├── Counter.tsx         # Count-up stat number (respects reduced motion)
+│   └── ScrollReveal.tsx    # Scroll animation wrapper (respects reduced motion)
 ├── lib/
 │   ├── types.ts            # All TypeScript interfaces
 │   ├── utils.ts            # cn(), slugify(), resolveImageUrl(), detectVideoType()
-│   ├── admin.ts            # requireAdmin() — fail-closed RLS check
+│   ├── github.ts           # GitHub API fetch + slug/topic helpers (unit tested)
+│   ├── github.test.ts      # Vitest tests for github.ts
+│   ├── utils.test.ts       # Vitest tests for utils.ts
+│   ├── admin.ts            # requireAdmin() - fail-closed RLS check
 │   ├── admin-fields.ts     # Field whitelists for PUT validation
 │   ├── api.ts              # dbError() helper
 │   └── supabase/
 │       ├── client.ts       # Browser Supabase client
 │       └── server.ts       # Server Supabase client
 └── supabase/
-    └── migrations/         # 001-009 (run in order in Supabase SQL Editor)
+    └── migrations/         # 001-021 (run in order in Supabase SQL Editor)
+
+Root extras: `vitest.config.mts` (test runner), `design/` (FigCraft reference
+boards: 01 Hero, 02 Projects, 03 Tokens - design source, not code).
 ```
 
 ## Key Patterns
@@ -147,14 +157,28 @@ src/
 ```bash
 npm run dev      # Start dev server
 npm run build    # Production build (verify after changes)
-npm run lint     # ESLint
+npm run lint     # ESLint (expect 6 intentional <img> warnings in admin/markdown)
+npm test         # Vitest unit tests (36 tests in src/lib)
 ```
+
+## GitHub Repo Sync (personal projects)
+
+Personal projects mirror the live repos of github.com/naidrahiqa:
+
+- `src/lib/github.ts` fetches the GitHub API (pagination, topics, language, stars, forks) and builds slugs; unit tests in `github.test.ts`
+- `repo_*` columns on `projects` (added by migration 021) store the synced metadata
+- `POST /api/admin/github/sync` (admin, RLS-protected) runs the sync from the admin dashboard
+- Public pages: `/projects` renders `RepoCard` with language/forks/topics; `/projects/[slug]` shows repo metadata on the detail page
+- After changing sync logic: `npm test`, then trigger **Sync GitHub** in the admin panel (local dev has no env, sync is verified in production)
 
 ## Email (Resend)
 
 - API route: `src/app/api/contact/route.ts`
 - Sends to: `faqihardiansyah89@gmail.com` (reply-to: user's email)
 - Env var: `RESEND_API_KEY` (set in Vercel dashboard)
+- Sender is `onboarding@resend.dev` (Resend test mode: only delivers to the email verified on the Resend account; switch to a verified domain for a real from-address)
+- `resend.emails.send()` returns `{ error }` instead of throwing, so the route checks the returned error and replies 502 on failure (the form surfaces the message)
+- Rate limit: 3 requests/minute/IP; inputs are length-checked and HTML-escaped
 - Free tier: 100 emails/day
 - Contact form: `src/components/ContactForm.tsx`
 - Contact page: `src/app/contact/page.tsx` (form + social links)
@@ -169,6 +193,11 @@ Run in order in Supabase SQL Editor. Never modify a migration after it's been ap
 | 007 | Featured column for projects |
 | 008 | Layout column for projects |
 | 009 | `replace_project_media` RPC (SECURITY INVOKER, atomic media update) |
+| 010 | `sort_order` for projects (reorder in admin) |
+| 011 | `now_playing` table (player was later removed from UI) |
+| 012-014, 016-020 | Content data: GitHub repo seeds, focus/biography updates, school + project enrichment |
+| 015 | `language` column for projects |
+| 021 | `repo_*` metadata columns for GitHub sync (repo_stars, repo_forks, repo_topics, ...) |
 
 ## Conventions
 
@@ -209,7 +238,31 @@ Anti-slop frontend framework installed via `npx skills add Leonxlnx/taste-skill`
 
 Full skill file: `.agents/skills/design-taste-frontend/SKILL.md`
 
+### Public homepage composition (as of 2026-11-13)
+
+Hero is deliberately minimal: name lockup (`FAQIH ARDIAN` / `SYAH`, two lines,
+`clamp(2.25rem,6vw,3.75rem)`, no faded line) + two CTAs + a hairline stat list
+(Repositories / Projects / Certificates, `Counter` with real DB totals). No
+eyebrow, no description paragraph, no skill chips, no side panel, no image.
+
+**User-rejected "AI slop" patterns (do not reintroduce):** section-number
+eyebrows (`01 About`), version badges (`VER 2.6`), `✦` sparkle glyphs, emoji as
+icons, multi-color decorative dots, poetic micro-copy (`Deep in low-level
+systems.`), skill chips/tags, hero paragraphs, `Case study` labels on empty
+repo cards, gradient accent bars, `border-2` brutalist leftovers. Keep one
+accent, hairline borders, real data over filler.
+
 ## Changes Log
+
+### 2026-11-13
+- GitHub sync: `repo_*` metadata columns (migration 021), `src/lib/github.ts` with Vitest tests, admin **Sync GitHub** action; `/projects` shows 23 repos with language/forks/topics
+- Test setup: Vitest 5.1 (`vitest.config.mts`), 36 tests covering `lib/` helpers
+- Fixed zeroed homepage/dashboard counters (count queries returned null; derive from row length)
+- Anti-slop sweep across public UI: removed section numbers, version badge, emoji icons, rainbow dots, locale strip, `Case study` labels, `border-2` leftovers
+- Hero stripped to name + two CTAs + hairline stats; deleted `SkillTags.tsx`, removed "Currently" panel, hero description and `profiles` fetch
+- Removed `✦` glyphs from navbar/footer, eyebrow from hero, footer tagline
+- `Counter`, `TextScramble`, `ScrollReveal` now respect `prefers-reduced-motion`
+- Contact API now reports Resend delivery failures (502 instead of false success)
 
 ### 2026-09-10
 - Removed NowPlaying music player from homepage + admin sidebar
