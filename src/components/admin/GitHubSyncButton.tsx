@@ -12,6 +12,9 @@ interface SyncResult {
   created?: number;
   updated?: number;
   archived?: number;
+  enriched?: number;
+  profile?: boolean;
+  warnings?: string[];
   error?: string;
 }
 
@@ -33,10 +36,17 @@ export function GitHubSyncButton() {
         return;
       }
 
-      toast(
-        "success",
-        `GitHub sync: ${data.created ?? 0} new, ${data.updated ?? 0} updated, ${data.archived ?? 0} archived`
+      const summary = `${data.created ?? 0} new, ${data.updated ?? 0} updated, ${data.archived ?? 0} archived`;
+      const enriched =
+        (data.enriched ?? 0) > 0 ? `, ${data.enriched} enriched` : "";
+
+      toast("success", `GitHub sync: ${summary}${enriched}`);
+
+      const blocking = data.warnings?.find(
+        (warning) =>
+          warning.includes("failed") || warning.includes("skipped")
       );
+      if (blocking) toast("error", blocking);
       router.refresh();
     } catch {
       toast("error", "GitHub sync failed");

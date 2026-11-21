@@ -24,6 +24,7 @@ NEXT_PUBLIC_SUPABASE_URL=https://xxxx.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
 ADMIN_EMAIL=naidrahiqa@naidra.dev
 RESEND_API_KEY=re_xxx            # opsional: form kontak (resend.com)
+GITHUB_TOKEN=ghp_xxx             # opsional: sync repo lebih lengkap (languages, releases, commits)
 ```
 
 ## 5. Verifikasi Lokal
@@ -51,7 +52,7 @@ git push -u origin main
 ## Catatan
 
 - Semua halaman server-rendered (dynamic), jadi konten baru langsung muncul setelah edit di `/admin` - tidak perlu redeploy.
-- Repo GitHub (project personal): klik **Sync GitHub** di dashboard admin untuk menarik metadata terbaru (stars, forks, topics, bahasa) ke database.
+- Repo GitHub (project personal): jalankan migration `022_github_repo_enrichment.sql`, lalu klik **Sync GitHub** di dashboard admin untuk menarik stars, forks, topics, bahasa per-repo, license, releases, commit terakhir, dan statistik profil. Tanpa `GITHUB_TOKEN`, sync tetap jalan tetapi dibatasi rate limit publik GitHub.
 - Form kontak butuh `RESEND_API_KEY` di Vercel; tanpa itu API balas "Email service is not configured".
 - Video: dukung URL YouTube, Google Drive (format `drive.google.com/file/d/<id>` atau `/uc?id=`), dan file di bucket `media`.
 - Upload gambar/video via admin tersimpan di Storage bucket `media` (public, RLS: authenticated write).

@@ -83,8 +83,33 @@ export interface Project {
   repo_pushed_at: string | null;
   repo_homepage: string | null;
   repo_topics: string[];
+  repo_languages: Record<string, number>;
+  repo_license: string | null;
+  repo_open_issues: number;
+  repo_size_kb: number;
+  repo_created_at: string | null;
+  repo_default_branch: string | null;
+  repo_release_tag: string | null;
+  repo_release_url: string | null;
+  repo_release_at: string | null;
+  repo_last_commit: string | null;
+  repo_last_commit_at: string | null;
+  repo_synced_at: string | null;
   created_at: string;
   updated_at: string;
+}
+
+export interface GitHubProfile {
+  id: number;
+  login: string;
+  name: string | null;
+  bio: string | null;
+  avatar_url: string | null;
+  followers: number;
+  following: number;
+  public_repos: number;
+  member_since: string | null;
+  synced_at: string;
 }
 
 export type AchievementCategory = "competition" | "training" | "seminar";

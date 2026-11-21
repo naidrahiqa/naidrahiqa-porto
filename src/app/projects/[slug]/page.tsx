@@ -10,6 +10,8 @@ import {
   slugify,
 } from "@/lib/utils";
 import { ProjectLayout } from "@/components/ProjectLayout";
+import { RepoFacts } from "@/components/RepoFacts";
+import { normalizeHomepage } from "@/lib/github";
 import type { Project, ProjectMedia } from "@/lib/types";
 
 interface SchoolPointImage {
@@ -161,6 +163,8 @@ export default async function ProjectDetailPage({
         : `Kelas ${resolvedProject.class_level.toUpperCase()}`
       : "Projects";
 
+  const repoHomepage = normalizeHomepage(resolvedProject.repo_homepage);
+
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-8 pt-12 sm:pt-16">
       {/* Back */}
@@ -246,6 +250,17 @@ export default async function ProjectDetailPage({
               View repository
             </a>
           )}
+          {repoHomepage && (
+            <a
+              href={repoHomepage}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 font-sans text-sm font-semibold text-accent hover:underline"
+            >
+              <ExternalLink size={13} />
+              Live demo
+            </a>
+          )}
         </div>
         {(resolvedProject.repo_topics?.length ?? 0) > 0 && (
           <div className="flex flex-wrap gap-1.5">
@@ -260,6 +275,10 @@ export default async function ProjectDetailPage({
           </div>
         )}
       </header>
+
+      {resolvedProject.repo_name && (
+        <RepoFacts project={resolvedProject as Project} />
+      )}
 
       {/* Layout content */}
       <ProjectLayout

@@ -85,6 +85,10 @@ src/
 │   │   └── LogoutButton.tsx
 │   ├── Navbar.tsx, Footer.tsx # Site chrome (wordmark, nav, no decorative glyphs)
 │   ├── cards.tsx           # ProjectCard, RepoCard, AchievementBadge
+│   ├── LanguageBar.tsx     # Stacked repo language bar
+│   ├── GitHubOverview.tsx  # GitHub stats + language mix
+│   ├── RepoFacts.tsx       # Repo metadata panel (license, release, commit)
+│   ├── CopyClone.tsx       # Copyable git clone command
 │   ├── ProjectLayout.tsx   # Layout renderer (5 layout variants)
 │   ├── ProjectGallery.tsx  # Gallery with lightbox, video embed, LinkCards
 │   ├── ImageLightbox.tsx   # Full-size image modal
@@ -167,10 +171,12 @@ npm test         # Vitest unit tests (36 tests in src/lib)
 
 Personal projects mirror the live repos of github.com/naidrahiqa:
 
-- `src/lib/github.ts` fetches the GitHub API (pagination, topics, language, stars, forks) and builds slugs; unit tests in `github.test.ts`
-- `repo_*` columns on `projects` (added by migration 021) store the synced metadata
+- `src/lib/github.ts` fetches the GitHub API (pagination, profile, rate limit, per-repo languages, latest release, latest commit) and builds slugs; `src/lib/github-meta.ts` holds the client-safe helpers (language breakdown, size formatting)
+- `repo_*` columns on `projects` (migrations 021 + 022) store the synced metadata, including `repo_languages`, `repo_license`, `repo_open_issues`, `repo_size_kb`, `repo_release_*`, `repo_last_commit*`, and `repo_synced_at`
+- `github_profile` (migration 022) stores the profile snapshot: public repos, followers, member since
 - `POST /api/admin/github/sync` (admin, RLS-protected) runs the sync from the admin dashboard
-- Public pages: `/projects` renders `RepoCard` with language/forks/topics; `/projects/[slug]` shows repo metadata on the detail page
+- Enrichment is budget-aware: languages for every repo first, then releases, then commits. With `GITHUB_TOKEN` (5000 req/h) all three run; without it the public 60 req/h limit still allows a partial sync
+- Public pages: `/projects` renders a GitHub overview (repo count, stars, forks, language mix) and `RepoCard` with stacked language bars, license, release, and issue counts; `/projects/[slug]` shows a `RepoFacts` panel, live demo link, latest release, last commit, and a copyable clone command
 - After changing sync logic: `npm test`, then trigger **Sync GitHub** in the admin panel (local dev has no env, sync is verified in production)
 
 ## Email (Resend)
@@ -200,6 +206,7 @@ Run in order in Supabase SQL Editor. Never modify a migration after it's been ap
 | 012-014, 016-020 | Content data: GitHub repo seeds, focus/biography updates, school + project enrichment |
 | 015 | `language` column for projects |
 | 021 | `repo_*` metadata columns for GitHub sync (repo_stars, repo_forks, repo_topics, ...) |
+| 022 | GitHub enrichment: per-repo languages/license/release/commit columns + `github_profile` table |
 
 ## Conventions
 
@@ -255,6 +262,14 @@ repo cards, gradient accent bars, `border-2` brutalist leftovers. Keep one
 accent, hairline borders, real data over filler.
 
 ## Changes Log
+
+### 2026-11-21
+- GitHub sync enrichment: migration 022 adds `repo_languages`, `repo_license`, `repo_open_issues`, `repo_size_kb`, `repo_created_at`, `repo_default_branch`, `repo_release_*`, `repo_last_commit*`, `repo_synced_at`, plus the `github_profile` table
+- `src/lib/github.ts`: profile + rate-limit fetches, budget-aware per-repo enrichment (languages, latest release, latest commit), `GitHubApiError`, homepage/license normalization, size formatting, clone URLs; pure helpers split into `src/lib/github-meta.ts` so client components stay fetch-free
+- Sync route: fresh `no-store` fetches, rate-limit-aware budget with reserve, partial enrichment preserved on skipped fields, profile upsert, actionable rate-limit errors, sync warnings
+- Public UI: `GitHubOverview` stats + language mix on `/projects`, `LanguageBar` on repo cards, `RepoFacts` panel (license, branch, issues, size, release, last commit, clone copy) and live demo link on repo detail pages
+- Admin: sync toast reports enriched count, projects header shows last GitHub sync time
+- Tests: 56 Vitest tests (20 new) covering language breakdown, normalization, releases, commits, enrichment budgets, and partial failures
 
 ### 2026-11-13
 - Admin form overhaul: replaced the 3 tabs with one page of collapsible sections (sticky headers with live summaries, pill nav jumps to a section, nothing hidden); universal story template + "Struktur Tugas Universal" point preset replace the hardcoded Pancasila/TKJ/Observation presets; global Ctrl+S save; emoji removed from admin UI

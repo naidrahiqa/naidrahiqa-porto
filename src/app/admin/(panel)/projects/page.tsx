@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Plus, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
-import { CLASS_LEVELS, cn } from "@/lib/utils";
+import { CLASS_LEVELS, cn, formatRelativeTime } from "@/lib/utils";
 import { ProjectReorderList } from "./ProjectReorderList";
 import { GitHubSyncButton } from "@/components/admin/GitHubSyncButton";
 
@@ -75,6 +75,14 @@ export default async function AdminProjectsPage({
 
   const { data: projects } = await query;
 
+  const lastSynced = (projects ?? []).reduce<string | null>(
+    (latest, project) => {
+      const value = project.repo_synced_at as string | null | undefined;
+      return value && (!latest || value > latest) ? value : latest;
+    },
+    null
+  );
+
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-wrap items-center justify-between gap-4">
@@ -83,6 +91,9 @@ export default async function AdminProjectsPage({
           <p className="mt-1 text-sm text-muted">
             Drag to reorder - the top items appear first on your site.{" "}
             {projects?.length ?? 0} total
+            {lastSynced
+              ? ` / GitHub synced ${formatRelativeTime(lastSynced)}`
+              : ""}
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">

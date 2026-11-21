@@ -26,6 +26,8 @@ NEXT_PUBLIC_SUPABASE_URL=...
 NEXT_PUBLIC_SUPABASE_ANON_KEY=...
 ADMIN_EMAIL=...              # admin login for RLS
 RESEND_API_KEY=...           # optional: contact form email
+GITHUB_USERNAME=naidrahiqa   # optional: defaults to naidrahiqa
+GITHUB_TOKEN=...             # optional but recommended: richer repo sync
 ```
 
 ## Project Structure
@@ -61,6 +63,17 @@ npm run build    # Production build
 npm run lint     # ESLint
 npm test         # Vitest unit tests (src/lib)
 ```
+
+## GitHub Sync
+
+`POST /api/admin/github/sync` (admin only) pulls every public repository and stores:
+
+- stars, forks, topics, primary language, license, open issues, size, default branch
+- per-language byte breakdown for the stacked language bars
+- latest release and latest commit message
+- profile snapshot (public repo count, followers, member since)
+
+`GITHUB_TOKEN` is optional. Without it the public 60 requests/hour limit still allows a partial sync; with it every repository is enriched on each run. Run migration `022_github_repo_enrichment.sql` before the first sync.
 
 ## Database
 

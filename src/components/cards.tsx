@@ -1,12 +1,23 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, GitFork, Star, Trophy, GraduationCap, MessageSquare } from "lucide-react";
+import {
+  ArrowRight,
+  CircleDot,
+  GitFork,
+  Scale,
+  Star,
+  Tag,
+  Trophy,
+  GraduationCap,
+  MessageSquare,
+} from "lucide-react";
 import {
   formatRelativeTime,
   isTrustedImageHost,
   languageColor,
   resolveImageUrl,
 } from "@/lib/utils";
+import { LanguageBar } from "@/components/LanguageBar";
 import type { Project, Achievement } from "@/lib/types";
 
 function resolveCover(cover: string | null | undefined): string | null {
@@ -126,7 +137,14 @@ export function RepoCard({ project }: { project: Project }) {
         {project.description || "No description provided."}
       </p>
 
-      <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-1.5 font-mono text-[10px] text-muted">
+      <LanguageBar
+        languages={project.repo_languages}
+        fallback={project.language}
+        max={4}
+        className="mt-4"
+      />
+
+      <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1.5 font-mono text-[10px] text-muted">
         {project.language && (
           <span className="inline-flex items-center gap-1.5">
             <span
@@ -144,6 +162,24 @@ export function RepoCard({ project }: { project: Project }) {
           <GitFork size={11} />
           {project.repo_forks ?? 0}
         </span>
+        {(project.repo_open_issues ?? 0) > 0 && (
+          <span className="inline-flex items-center gap-1">
+            <CircleDot size={11} />
+            {project.repo_open_issues}
+          </span>
+        )}
+        {project.repo_license && (
+          <span className="inline-flex items-center gap-1">
+            <Scale size={11} />
+            {project.repo_license}
+          </span>
+        )}
+        {project.repo_release_tag && (
+          <span className="inline-flex items-center gap-1">
+            <Tag size={11} />
+            {project.repo_release_tag}
+          </span>
+        )}
         {pushed && <span>updated {formatRelativeTime(pushed)}</span>}
       </div>
 

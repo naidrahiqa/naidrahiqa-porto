@@ -5,8 +5,9 @@ import { createClient } from "@/lib/supabase/server";
 import { CLASS_LEVELS } from "@/lib/utils";
 import { ClassCard } from "@/components/cards";
 import { ProjectFilter } from "@/components/ProjectFilter";
+import { GitHubOverview } from "@/components/GitHubOverview";
 import { BrandIcon } from "@/components/BrandIcon";
-import type { Project } from "@/lib/types";
+import type { GitHubProfile, Project } from "@/lib/types";
 
 export const metadata: Metadata = {
   title: "Projects",
@@ -17,11 +18,14 @@ export const metadata: Metadata = {
 export default async function ProjectsPage() {
   const supabase = await createClient();
 
-  const { data: projects } = await supabase
-    .from("projects")
-    .select("*")
-    .eq("published", true)
-    .order("sort_order", { ascending: true });
+  const [{ data: projects }, { data: profile }] = await Promise.all([
+    supabase
+      .from("projects")
+      .select("*")
+      .eq("published", true)
+      .order("sort_order", { ascending: true }),
+    supabase.from("github_profile").select("*").eq("id", 1).maybeSingle(),
+  ]);
 
   const all = (projects ?? []) as Project[];
   const school = all.filter((p) => p.category === "school");
@@ -100,9 +104,13 @@ export default async function ProjectsPage() {
           />
           <p className="mt-4 max-w-xl text-[13px] leading-relaxed text-muted">
             Kernels, Android tooling, IoT firmware, and web apps. Metadata is
-            synced from the GitHub API, so languages, stars, and topics stay
-            current.
+            synced from the GitHub API, so languages, releases, stars, and
+            topics stay current.
           </p>
+          <GitHubOverview
+            projects={personal}
+            profile={(profile as GitHubProfile | null) ?? null}
+          />
           <div className="mt-6">
             <ProjectFilter projects={personal} />
           </div>
