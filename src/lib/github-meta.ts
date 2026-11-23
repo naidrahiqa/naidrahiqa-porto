@@ -42,3 +42,30 @@ export function languageBreakdown(
 
   return slices;
 }
+
+export function normalizeHomepage(
+  value: string | null | undefined
+): string | null {
+  const raw = value?.trim();
+  if (!raw) return null;
+  if (/^[a-z][a-z0-9+.-]*:/i.test(raw)) {
+    return /^https?:\/\//i.test(raw) ? raw : null;
+  }
+  return `https://${raw}`;
+}
+
+export function formatRepoSize(kb: number | null | undefined): string {
+  const value = Number(kb);
+  if (!Number.isFinite(value) || value <= 0) return "-";
+
+  const mb = value / 1024;
+  if (mb >= 1024) return `${(mb / 1024).toFixed(1)} GB`;
+  if (mb >= 10) return `${Math.round(mb)} MB`;
+  if (mb >= 1) return `${mb.toFixed(1)} MB`;
+  return `${Math.max(1, Math.round(value))} KB`;
+}
+
+export function repoCloneUrl(htmlUrl: string | null | undefined): string | null {
+  if (!htmlUrl) return null;
+  return htmlUrl.endsWith(".git") ? htmlUrl : `${htmlUrl}.git`;
+}

@@ -15,6 +15,7 @@ import {
   repoNameFromUrl,
   repoSlug,
   repoTimestamp,
+  runPool,
 } from "@/lib/github";
 
 type ExistingProject = {
@@ -162,7 +163,7 @@ export async function POST() {
   let updated = 0;
   const failures: string[] = [];
 
-  for (const [index, repo] of repos.entries()) {
+  const writes = repos.map((repo, index) => {
     const match = byRepo.get(repoKey(repo.name));
     const extra = enrichment.byRepo.get(repo.name);
 
@@ -201,17 +202,7 @@ export async function POST() {
     }
 
     if (match) {
-      const { error } = await supabase
-        .from("projects")
-        .update({
-          ...metadata,
-          description: match.description || repo.description || "",
-        })
-        .eq("id", match.id);
-
-      if (error) failures.push(repo.name);
-      else updated += 1;
-      continue;
+      return { kind: "update" as const, repo, match, metadata };
     }
 
     const baseSlug = repoSlug(repo.name);
@@ -223,20 +214,38 @@ export async function POST() {
     }
     usedSlugs.add(slug);
 
+    return { kind: "insert" as const, repo, slug, metadata };
+  });
+
+  await runPool(writes, 6, async (item) => {
+    if (item.kind === "update") {
+      const { error } = await supabase
+        .from("projects")
+        .update({
+          ...item.metadata,
+          description: item.match.description || item.repo.description || "",
+        })
+        .eq("id", item.match.id);
+
+      if (error) failures.push(item.repo.name);
+      else updated += 1;
+      return;
+    }
+
     const { error } = await supabase.from("projects").insert({
-      title: prettifyRepoName(repo.name),
-      slug,
+      title: prettifyRepoName(item.repo.name),
+      slug: item.slug,
       category: "personal",
-      description: repo.description ?? "",
+      description: item.repo.description ?? "",
       content: "",
       published: true,
       featured: false,
-      ...metadata,
+      ...item.metadata,
     });
 
-    if (error) failures.push(repo.name);
+    if (error) failures.push(item.repo.name);
     else created += 1;
-  }
+  });
 
   const liveRepos = new Set(repos.map((repo) => repoKey(repo.name)));
   const staleIds = current

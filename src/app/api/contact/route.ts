@@ -78,13 +78,16 @@ export async function POST(request: Request) {
   const safeEmail = escapeHtml(email);
   const safeMessage = escapeHtml(message);
 
+  const safeSubjectName = name.replace(/[\r\n]+/g, " ");
+  const safeSubjectPreview = message.slice(0, 50).replace(/[\r\n]+/g, " ");
+
   try {
     const resend = new Resend(process.env.RESEND_API_KEY);
     const { error } = await resend.emails.send({
       from: "Naidrahiqa Contact <onboarding@resend.dev>",
       to: "faqihardiansyah89@gmail.com",
       replyTo: email,
-      subject: `[Portfolio] ${name} - ${message.slice(0, 50)}`,
+      subject: `[Portfolio] ${safeSubjectName} - ${safeSubjectPreview}`,
       html: `
         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #141416;">New message from your portfolio</h2>

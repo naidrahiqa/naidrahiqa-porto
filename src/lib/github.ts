@@ -278,7 +278,7 @@ export function firstLine(value: string, max = 140): string {
   return line.length > max ? `${line.slice(0, max - 3)}...` : line;
 }
 
-async function runPool<T>(
+export async function runPool<T>(
   items: T[],
   limit: number,
   worker: (item: T) => Promise<void>
@@ -381,19 +381,13 @@ export function enrichBudgetFromRateLimit(
   return Math.max(0, rate.remaining - RATE_LIMIT_RESERVE);
 }
 
-export { languageBreakdown } from "@/lib/github-meta";
+export {
+  formatRepoSize,
+  languageBreakdown,
+  normalizeHomepage,
+  repoCloneUrl,
+} from "@/lib/github-meta";
 export type { LanguageSlice } from "@/lib/github-meta";
-
-export function normalizeHomepage(
-  value: string | null | undefined
-): string | null {
-  const raw = value?.trim();
-  if (!raw) return null;
-  if (/^[a-z][a-z0-9+.-]*:/i.test(raw)) {
-    return /^https?:\/\//i.test(raw) ? raw : null;
-  }
-  return `https://${raw}`;
-}
 
 export function normalizeLicense(
   license: GitHubLicense | null | undefined
@@ -401,22 +395,6 @@ export function normalizeLicense(
   const id = license?.spdx_id?.trim();
   if (!id || id.toUpperCase() === "NOASSERTION") return null;
   return id;
-}
-
-export function formatRepoSize(kb: number | null | undefined): string {
-  const value = Number(kb);
-  if (!Number.isFinite(value) || value <= 0) return "-";
-
-  const mb = value / 1024;
-  if (mb >= 1024) return `${(mb / 1024).toFixed(1)} GB`;
-  if (mb >= 10) return `${Math.round(mb)} MB`;
-  if (mb >= 1) return `${mb.toFixed(1)} MB`;
-  return `${Math.max(1, Math.round(value))} KB`;
-}
-
-export function repoCloneUrl(htmlUrl: string | null | undefined): string | null {
-  if (!htmlUrl) return null;
-  return htmlUrl.endsWith(".git") ? htmlUrl : `${htmlUrl}.git`;
 }
 
 export function repoNameFromUrl(url: string | null | undefined): string | null {

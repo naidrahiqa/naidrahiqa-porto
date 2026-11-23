@@ -53,9 +53,35 @@ export async function PUT(
   delete payload.created_at;
   payload.updated_at = new Date().toISOString();
   if (entity === "projects") {
-    if (payload.title) payload.slug = payload.slug ?? slugify(String(payload.title));
-    if (payload.video_url !== undefined)
-      payload.video_type = payload.video_type ?? detectVideoType(String(payload.video_url ?? null));
+    if (payload.slug !== undefined) {
+      const trimmed = String(payload.slug ?? "").trim();
+      payload.slug = trimmed || (payload.title ? slugify(String(payload.title)) : undefined);
+    } else if (payload.title) {
+      payload.slug = slugify(String(payload.title));
+    }
+    if (payload.slug === undefined) delete payload.slug;
+
+    if (payload.slug) {
+      const supabaseCheck = await createClient();
+      const { data: existing } = await supabaseCheck
+        .from("projects")
+        .select("id")
+        .eq("slug", payload.slug)
+        .neq("id", id)
+        .limit(1)
+        .maybeSingle();
+      if (existing) {
+        return NextResponse.json(
+          { error: "A project with this slug already exists" },
+          { status: 409 }
+        );
+      }
+    }
+
+    if (payload.video_url !== undefined) {
+      const videoUrl = typeof payload.video_url === "string" ? payload.video_url : null;
+      payload.video_type = payload.video_type ?? detectVideoType(videoUrl);
+    }
   }
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -65,7 +91,7 @@ export async function PUT(
     .select()
     .single();
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) return NextResponse.json({ error: dbError(error) }, { status: 500 });
   return NextResponse.json(data);
 }
 
@@ -113,6 +139,14 @@ export async function DELETE(
       ...(media?.map((m) => m.url) ?? []),
     ];
     await cleanupStorageFiles(supabase, urls);
+  } else if (entity === "achievements") {
+    const { data: achievement } = await supabase
+      .from("achievements")
+      .select("certificate_url")
+      .eq("id", id)
+      .single();
+
+    await cleanupStorageFiles(supabase, [achievement?.certificate_url ?? null]);
   }
 
   const { error } = await supabase.from(entity).delete().eq("id", id);

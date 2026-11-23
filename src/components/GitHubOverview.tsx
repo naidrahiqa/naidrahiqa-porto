@@ -51,9 +51,11 @@ export function GitHubOverview({
       return value && (!latest || value > latest) ? value : latest;
     }, null) ?? profile?.synced_at ?? null;
 
-  const memberSince = profile?.member_since
+  const parsedYear = profile?.member_since
     ? new Date(profile.member_since).getFullYear()
     : null;
+  const memberSince =
+    parsedYear !== null && Number.isFinite(parsedYear) ? parsedYear : null;
 
   const stats = [
     {

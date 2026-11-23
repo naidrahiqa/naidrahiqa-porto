@@ -11,24 +11,8 @@ import {
 } from "@/lib/utils";
 import { ProjectLayout } from "@/components/ProjectLayout";
 import { RepoFacts } from "@/components/RepoFacts";
-import { normalizeHomepage } from "@/lib/github";
+import { normalizeHomepage } from "@/lib/github-meta";
 import type { Project, ProjectMedia } from "@/lib/types";
-
-interface SchoolPointImage {
-  url?: string;
-  caption?: string;
-}
-
-interface SchoolPoint {
-  id?: string;
-  text?: string;
-  images?: SchoolPointImage[];
-}
-
-interface SchoolProjectContent {
-  points?: SchoolPoint[];
-  [key: string]: unknown;
-}
 
 export async function generateMetadata({
   params,
@@ -42,15 +26,9 @@ export async function generateMetadata({
     .eq("published", true)
     .single();
 
-  const description =
-    data?.description ||
-    (slug === "penerapan-sila-pancasila-pada-kehidupan-sehari-hari"
-      ? "Dokumentasi aksi nyata pengamalan nilai-nilai luhur Pancasila (Sila ke-1 sampai ke-5) dalam kehidupan sehari-hari siswa di lingkungan SMK Negeri 3 Jepara, mulai dari ibadah bersama, kepedulian berbagi makanan, mendukung produk lokal, musyawarah kelompok, hingga distribusi Program Makan Bergizi Gratis (MBG)."
-      : undefined);
-
   return {
     title: data?.title ?? "Project",
-    description,
+    description: data?.description || undefined,
   };
 }
 
@@ -75,80 +53,8 @@ export default async function ProjectDetailPage({
     .eq("project_id", project.id)
     .order("sort_order");
 
-  let resolvedProject: Project = project;
-  if (slug === "penerapan-sila-pancasila-pada-kehidupan-sehari-hari") {
-    let resolvedContent = project.content;
-    if (resolvedContent) {
-      try {
-        const parsed = JSON.parse(resolvedContent) as SchoolProjectContent;
-        if (Array.isArray(parsed.points)) {
-          parsed.points = parsed.points.map((pt) => {
-            if (pt.id === "sila-1") {
-              return {
-                ...pt,
-                text: "* **Simbol**: Bintang emas berlatar perisai hitam.\n* **Makna Nilai**: Mengakui keberadaan Tuhan Yang Maha Esa, menjunjung tinggi toleransi antarumat beragama, dan menjalankan perintah agama dengan ikhlas dan penuh kedisiplinan.\n* **Aksi Nyata di Sekolah**: Mendengarkan khutbah sholat Jumat dengan khusyuk, tenang, dan tertib di mushola sekolah bersama teman-teman, menjaga adab dengan tidak berbicara saat khatib menyampaikan khutbah sebagai wujud ketaatan beribadah kepada Tuhan Yang Maha Esa.",
-                images: pt.images?.map((img) => {
-                  if (img.url?.includes("1_0GQozFV4Xs5FzfgyKYXJbl9427WOi0e")) {
-                    return {
-                      ...img,
-                      caption:
-                        "Penerapan Sila ke-1: Mendengarkan khutbah sholat Jumat dengan khusyuk di mushola sekolah",
-                    };
-                  }
-                  return img;
-                }),
-              };
-            }
-            if (pt.id === "sila-5") {
-              return {
-                ...pt,
-                text: "* **Simbol**: Padi dan Kapas.\n* **Makna Nilai**: Mengembangkan sikap adil terhadap sesama, menjaga keseimbangan antara hak dan kewajiban, serta menghormati hak orang lain demi mewujudkan kesejahteraan dan keadilan sosial yang merata.\n* **Aksi Nyata di Sekolah**: Pembagian dan pendistribusian makanan Program Makan Bergizi Gratis (MBG) secara tertib dan merata kepada seluruh siswa di kelas menggunakan wadah omprengan stainless steel, memastikan setiap teman memperoleh hak porsi makanan sehat dan bergizi yang sama tanpa ada yang terlewatkan.",
-                images: pt.images?.map((img) => {
-                  if (img.url?.includes("17BeH00qmGdqIDDoDR9991rKANoxHBV3I")) {
-                    return {
-                      ...img,
-                      caption:
-                        "Penerapan Sila ke-5: Pembagian makanan Program Makan Bergizi Gratis (MBG) secara adil dan merata di kelas",
-                    };
-                  }
-                  return img;
-                }),
-              };
-            }
-            return pt;
-          });
-          resolvedContent = JSON.stringify(parsed);
-        }
-      } catch {
-        // preserve existing if parse fails
-      }
-    }
-    resolvedProject = {
-      ...project,
-      description:
-        project.description ||
-        "Dokumentasi aksi nyata pengamalan nilai-nilai luhur Pancasila (Sila ke-1 sampai ke-5) dalam kehidupan sehari-hari siswa di lingkungan SMK Negeri 3 Jepara, mulai dari mendengarkan khutbah Jumat, kepedulian berbagi makanan, mendukung produk lokal, musyawarah kelompok, hingga distribusi Program Makan Bergizi Gratis (MBG).",
-      content: resolvedContent,
-    };
-  }
-
-  const resolvedMedia = (media ?? []).map((m) => {
-    if (m.url?.includes("1_0GQozFV4Xs5FzfgyKYXJbl9427WOi0e")) {
-      return {
-        ...m,
-        caption:
-          "Penerapan Sila ke-1: Mendengarkan khutbah sholat Jumat dengan khusyuk di mushola sekolah",
-      };
-    }
-    if (m.url?.includes("17BeH00qmGdqIDDoDR9991rKANoxHBV3I")) {
-      return {
-        ...m,
-        caption:
-          "Penerapan Sila ke-5: Pembagian makanan Program Makan Bergizi Gratis (MBG) secara adil dan merata di kelas",
-      };
-    }
-    return m;
-  });
+  const resolvedProject = project as Project;
+  const resolvedMedia = (media ?? []) as ProjectMedia[];
 
   const backHref =
     resolvedProject.category === "school" && resolvedProject.class_level

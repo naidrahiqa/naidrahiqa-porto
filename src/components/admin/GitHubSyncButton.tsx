@@ -42,11 +42,15 @@ export function GitHubSyncButton() {
 
       toast("success", `GitHub sync: ${summary}${enriched}`);
 
-      const blocking = data.warnings?.find(
+      const blocking = (data.warnings ?? []).filter(
         (warning) =>
-          warning.includes("failed") || warning.includes("skipped")
+          warning.includes("failed") ||
+          warning.includes("skipped") ||
+          warning.includes("could not be refreshed")
       );
-      if (blocking) toast("error", blocking);
+      if (blocking.length > 0) {
+        toast("error", blocking.join(" "));
+      }
       router.refresh();
     } catch {
       toast("error", "GitHub sync failed");

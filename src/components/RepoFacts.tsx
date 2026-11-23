@@ -13,7 +13,7 @@ import {
   formatRepoSize,
   normalizeHomepage,
   repoCloneUrl,
-} from "@/lib/github";
+} from "@/lib/github-meta";
 import { formatDate, formatRelativeTime } from "@/lib/utils";
 import type { Project } from "@/lib/types";
 
