@@ -17,6 +17,7 @@ import {
   repoTimestamp,
   runPool,
 } from "@/lib/github";
+import { repoProvider } from "@/lib/github-meta";
 
 type ExistingProject = {
   id: string;
@@ -147,7 +148,9 @@ export async function POST() {
     );
   }
 
-  const current = (existing ?? []) as ExistingProject[];
+  const current = ((existing ?? []) as ExistingProject[]).filter(
+    (project) => repoProvider(project.link, project.repo_name) === "github"
+  );
   const repoKey = (name: string) => name.toLowerCase();
   const byRepo = new Map<string, ExistingProject>();
   for (const project of current) {

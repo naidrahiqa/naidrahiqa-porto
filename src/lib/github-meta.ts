@@ -69,3 +69,47 @@ export function repoCloneUrl(htmlUrl: string | null | undefined): string | null 
   if (!htmlUrl) return null;
   return htmlUrl.endsWith(".git") ? htmlUrl : `${htmlUrl}.git`;
 }
+
+export type RepoProvider = "github" | "gitlab";
+
+function hostnameOf(url: string | null | undefined): string | null {
+  const raw = url?.trim();
+  if (!raw) return null;
+  try {
+    return new URL(raw).hostname.toLowerCase();
+  } catch {
+    return null;
+  }
+}
+
+export function isGitLabUrl(url: string | null | undefined): boolean {
+  const host = hostnameOf(url);
+  return host === "gitlab.com" || Boolean(host?.endsWith(".gitlab.com"));
+}
+
+export function isGitHubUrl(url: string | null | undefined): boolean {
+  const host = hostnameOf(url);
+  return host === "github.com" || Boolean(host?.endsWith(".github.com"));
+}
+
+export function isTelegramUrl(url: string | null | undefined): boolean {
+  const host = hostnameOf(url);
+  return host === "t.me" || host === "telegram.me";
+}
+
+export function repoProvider(
+  link: string | null | undefined,
+  repoName?: string | null
+): RepoProvider | null {
+  if (isGitLabUrl(link)) return "gitlab";
+  if (isGitHubUrl(link)) return "github";
+  if (repoName) return "github";
+  return null;
+}
+
+export function linkActionLabel(link: string | null | undefined): string {
+  if (isTelegramUrl(link)) return "View on Telegram";
+  if (isGitLabUrl(link)) return "View on GitLab";
+  if (isGitHubUrl(link)) return "View on GitHub";
+  return "Open link";
+}

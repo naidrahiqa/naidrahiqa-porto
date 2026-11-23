@@ -3,10 +3,11 @@ import type { ReactNode } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { CLASS_LEVELS } from "@/lib/utils";
-import { ClassCard } from "@/components/cards";
+import { ClassCard, ProjectCard } from "@/components/cards";
 import { ProjectFilter } from "@/components/ProjectFilter";
 import { GitHubOverview } from "@/components/GitHubOverview";
 import { BrandIcon } from "@/components/BrandIcon";
+import { repoProvider } from "@/lib/github-meta";
 import type { GitHubProfile, Project } from "@/lib/types";
 
 export const metadata: Metadata = {
@@ -30,6 +31,27 @@ export default async function ProjectsPage() {
   const all = (projects ?? []) as Project[];
   const school = all.filter((p) => p.category === "school");
   const personal = all.filter((p) => p.category === "personal");
+  const repos = personal.filter((p) => Boolean(p.repo_name));
+  const localBuilds = personal.filter((p) => !p.repo_name);
+
+  const hasGitHub = repos.some(
+    (p) => repoProvider(p.link, p.repo_name) === "github"
+  );
+  const hasGitLab = repos.some(
+    (p) => repoProvider(p.link, p.repo_name) === "gitlab"
+  );
+  const repoTitle =
+    hasGitHub && hasGitLab
+      ? "Repositories"
+      : hasGitLab
+        ? "From GitLab"
+        : "From GitHub";
+  const repoSourceText =
+    hasGitHub && hasGitLab
+      ? "GitHub and GitLab"
+      : hasGitLab
+        ? "GitLab"
+        : "GitHub";
 
   const classes = CLASS_LEVELS.map((cls) => {
     const items = school.filter((p) => p.class_level === cls);
@@ -81,38 +103,74 @@ export default async function ProjectsPage() {
         </section>
       )}
 
-      {personal.length > 0 && (
+      {localBuilds.length > 0 && (
         <section className="mt-16">
           <SectionRow
-            title="From GitHub"
-            note={`${personal.length} public repositories`}
+            title="Builds &amp; Notes"
+            note={`${localBuilds.length} ${localBuilds.length === 1 ? "project" : "projects"}`}
+          />
+          <p className="mt-4 max-w-xl text-[13px] leading-relaxed text-muted">
+            Local builds, experiments, and writeups shared on Telegram.
+          </p>
+          <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {localBuilds.map((project) => (
+              <ProjectCard key={project.id} project={project} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {repos.length > 0 && (
+        <section className="mt-16">
+          <SectionRow
+            title={repoTitle}
+            note={`${repos.length} public repositories`}
             action={
-              <a
-                href="https://github.com/naidrahiqa"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-muted transition-colors hover:text-foreground"
-              >
-                <BrandIcon platform="github" size={12} />
-                @naidrahiqa
-                <ArrowUpRight
-                  size={12}
-                  className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                />
-              </a>
+              <div className="flex items-center gap-4">
+                {hasGitHub && (
+                  <a
+                    href="https://github.com/naidrahiqa"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-muted transition-colors hover:text-foreground"
+                  >
+                    <BrandIcon platform="github" size={12} />
+                    @naidrahiqa
+                    <ArrowUpRight
+                      size={12}
+                      className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                    />
+                  </a>
+                )}
+                {hasGitLab && (
+                  <a
+                    href="https://gitlab.com/naidrahiqa"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-muted transition-colors hover:text-foreground"
+                  >
+                    <BrandIcon platform="gitlab" size={12} />
+                    @naidrahiqa
+                    <ArrowUpRight
+                      size={12}
+                      className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                    />
+                  </a>
+                )}
+              </div>
             }
           />
           <p className="mt-4 max-w-xl text-[13px] leading-relaxed text-muted">
             Kernels, Android tooling, IoT firmware, and web apps. Metadata is
-            synced from the GitHub API, so languages, releases, stars, and
+            synced from {repoSourceText}, so languages, releases, stars, and
             topics stay current.
           </p>
           <GitHubOverview
-            projects={personal}
+            projects={repos}
             profile={(profile as GitHubProfile | null) ?? null}
           />
           <div className="mt-6">
-            <ProjectFilter projects={personal} />
+            <ProjectFilter projects={repos} />
           </div>
         </section>
       )}

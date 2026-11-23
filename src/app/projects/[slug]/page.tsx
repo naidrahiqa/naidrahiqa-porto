@@ -11,7 +11,7 @@ import {
 } from "@/lib/utils";
 import { ProjectLayout } from "@/components/ProjectLayout";
 import { RepoFacts } from "@/components/RepoFacts";
-import { normalizeHomepage } from "@/lib/github-meta";
+import { linkActionLabel, normalizeHomepage } from "@/lib/github-meta";
 import type { Project, ProjectMedia } from "@/lib/types";
 
 export async function generateMetadata({
@@ -153,7 +153,7 @@ export default async function ProjectDetailPage({
               className="inline-flex items-center gap-1.5 font-sans text-sm font-semibold text-accent hover:underline"
             >
               <ExternalLink size={13} />
-              View repository
+              {linkActionLabel(resolvedProject.link)}
             </a>
           )}
           {repoHomepage && (

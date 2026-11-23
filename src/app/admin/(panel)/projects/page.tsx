@@ -3,7 +3,10 @@ import { Plus, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { CLASS_LEVELS, cn, formatRelativeTime } from "@/lib/utils";
 import { ProjectReorderList } from "./ProjectReorderList";
-import { GitHubSyncButton } from "@/components/admin/GitHubSyncButton";
+import {
+  GitHubSyncButton,
+  GitLabSyncButton,
+} from "@/components/admin/GitHubSyncButton";
 
 export const dynamic = "force-dynamic";
 
@@ -98,6 +101,7 @@ export default async function AdminProjectsPage({
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <GitHubSyncButton />
+          <GitLabSyncButton />
           <Link
             href="/admin/projects/new"
             className="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-on-accent transition-all duration-200 hover:bg-accent-hover hover:-translate-y-0.5"

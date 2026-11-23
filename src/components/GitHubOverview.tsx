@@ -60,7 +60,7 @@ export function GitHubOverview({
   const stats = [
     {
       label: "Repositories",
-      value: profile?.public_repos ?? repoProjects.length,
+      value: Math.max(profile?.public_repos ?? 0, repoProjects.length),
     },
     { label: "Stars", value: totalStars },
     { label: "Forks", value: totalForks },

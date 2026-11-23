@@ -18,6 +18,7 @@ import {
   resolveImageUrl,
 } from "@/lib/utils";
 import { LanguageBar } from "@/components/LanguageBar";
+import { isTelegramUrl, repoProvider } from "@/lib/github-meta";
 import type { Project, Achievement } from "@/lib/types";
 
 function resolveCover(cover: string | null | undefined): string | null {
@@ -56,7 +57,14 @@ function ProjectThumb({ project }: { project: Project }) {
 }
 
 export function ProjectCard({ project }: { project: Project }) {
-  const meta = project.category === "school" ? project.subject : "Personal";
+  const meta =
+    project.category === "school"
+      ? project.subject
+      : isTelegramUrl(project.link)
+        ? "Telegram"
+        : !project.repo_name
+          ? "Local"
+          : "Personal";
 
   return (
     <Link
@@ -113,11 +121,15 @@ export function ProjectCard({ project }: { project: Project }) {
 export function RepoCard({ project }: { project: Project }) {
   const pushed = project.repo_pushed_at ?? project.updated_at;
   const topics = project.repo_topics ?? [];
-  const badge = project.repo_archived
+  const provider = repoProvider(project.link, project.repo_name);
+  const providerLabel =
+    provider === "gitlab" ? "GitLab" : provider === "github" ? "GitHub" : null;
+  const status = project.repo_archived
     ? "Archived"
     : project.repo_is_fork
       ? "Fork"
-      : "Public";
+      : null;
+  const badge = [providerLabel, status].filter(Boolean).join(" / ") || "Public";
 
   return (
     <Link
