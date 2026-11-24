@@ -28,6 +28,7 @@ import {
   FolderGit2,
 } from "lucide-react";
 import { cn, resolveImageUrl } from "@/lib/utils";
+import { isPklProject } from "@/lib/pkl";
 import type { Project } from "@/lib/types";
 import { useToast } from "@/components/admin/Toast";
 import { DeleteButton } from "@/components/admin/DeleteButton";
@@ -129,7 +130,11 @@ function SortableRow({ item, index }: { item: Project; index: number }) {
           </a>
         )}
         <Link
-          href={`/admin/projects/${item.id}`}
+          href={
+            isPklProject(item)
+              ? `/admin/pkl/${item.id}`
+              : `/admin/projects/${item.id}`
+          }
           className="inline-flex items-center gap-1 rounded-md border border-border bg-surface-2 px-2 py-1 text-[11px] font-bold uppercase text-muted transition-colors hover:text-accent"
           title="Edit"
         >

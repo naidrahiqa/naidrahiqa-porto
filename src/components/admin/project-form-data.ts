@@ -1,4 +1,5 @@
 export const standardSubjectCatalog = [
+  { name: "PKL", group: "produktif", hint: "Praktik Kerja Lapangan" },
   { name: "ADMINISTRASI SISTEM JARINGAN", group: "produktif", hint: "ASJ" },
   { name: "ADMINISTRASI INFRASTRUKTUR JARINGAN", group: "produktif", hint: "AIJ" },
   { name: "TEKNOLOGI LAYANAN JARINGAN", group: "produktif", hint: "TLJ" },

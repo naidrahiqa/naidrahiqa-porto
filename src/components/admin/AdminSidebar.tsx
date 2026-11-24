@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   FolderGit2,
+  BookOpen,
   Award,
   LayoutList,
   Users,
@@ -14,6 +15,7 @@ import {
 
 const nav = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
+  { href: "/admin/pkl", label: "PKL / Jurnal", icon: BookOpen, exact: false },
   { href: "/admin/projects", label: "Projects", icon: FolderGit2, exact: false },
   { href: "/admin/achievements", label: "Achievements", icon: Award, exact: false },
   { href: "/admin/about", label: "About", icon: LayoutList, exact: false },

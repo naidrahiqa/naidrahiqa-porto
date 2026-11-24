@@ -47,7 +47,7 @@ function ProjectThumb({ project }: { project: Project }) {
   return (
     <div className="relative flex aspect-[16/10] items-center justify-center overflow-hidden border-b border-border bg-gradient-to-br from-surface-2 to-surface">
       <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted">
-        {project.language || "project"}
+        {project.language ? project.language.split("|")[0].trim() : "project"}
       </span>
       <span className="absolute -right-2 -bottom-6 font-display text-8xl font-black leading-none text-foreground/[0.04]">
         {project.title.charAt(0)}
@@ -65,6 +65,9 @@ export function ProjectCard({ project }: { project: Project }) {
         : !project.repo_name
           ? "Local"
           : "Personal";
+  const subLabel = project.language
+    ? project.language.split("|")[0].trim()
+    : "";
 
   return (
     <Link
@@ -76,10 +79,10 @@ export function ProjectCard({ project }: { project: Project }) {
       <div className="flex flex-1 flex-col p-5">
         <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
           <span>{meta || "Project"}</span>
-          {project.language && (
+          {subLabel && (
             <>
               <span className="h-px w-3 bg-border" />
-              <span>{project.language}</span>
+              <span>{subLabel}</span>
             </>
           )}
         </div>

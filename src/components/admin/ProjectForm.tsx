@@ -417,7 +417,7 @@ export function ProjectForm({ initial }: { initial?: Project | null }) {
       layout,
       class_level: category === "school" ? classLevel : "",
       subject: category === "school" ? subject : "",
-      language: category === "personal" ? language : "",
+      language: category === "personal" ? language : initial?.language ?? "",
       description,
       content,
       cover_image: coverImage,

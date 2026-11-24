@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ArrowRight, BookOpen } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { CLASS_LEVELS, slugify } from "@/lib/utils";
+import { isPklSubjectSlug, PKL_DEFAULT_CLASS } from "@/lib/pkl";
 import { SchoolSubjectFilter } from "@/components/SchoolSubjectFilter";
 import type { Project } from "@/lib/types";
 
@@ -32,7 +33,10 @@ export default async function SchoolClassPage({
     .order("sort_order", { ascending: true });
 
   const items = (data ?? []) as Project[];
-  if (items.length === 0) {
+  const pklItems = items.filter((item) => isPklSubjectSlug(item.subject));
+  const showPklBanner = cls === PKL_DEFAULT_CLASS || pklItems.length > 0;
+
+  if (items.length === 0 && !showPklBanner) {
     return (
       <div className="flex flex-col gap-10 pt-12 sm:pt-16">
         <Link
@@ -118,7 +122,47 @@ export default async function SchoolClassPage({
         </p>
       </header>
 
-      <SchoolSubjectFilter currentClass={cls} groups={subjectGroupList} />
+      {showPklBanner && (
+        <Link
+          href={`/projects/school/${cls}/pkl`}
+          className="group flex flex-col justify-between gap-4 rounded-2xl border border-border bg-surface p-6 transition-colors duration-200 hover:border-foreground/25 sm:flex-row sm:items-center"
+        >
+          <div className="flex items-start gap-4">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-accent/30 bg-accent-fill text-accent">
+              <BookOpen size={18} />
+            </span>
+            <div>
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-accent">
+                  Jurnal Mingguan
+                </span>
+                <span className="h-px w-3 bg-border" />
+                <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
+                  {pklItems.length} catatan
+                </span>
+              </div>
+              <h2 className="mt-1 font-display text-lg font-extrabold uppercase tracking-tight text-foreground transition-colors group-hover:text-accent">
+                Kegiatan PKL (Praktik Kerja Lapangan)
+              </h2>
+              <p className="mt-1 text-xs leading-relaxed text-muted">
+                Timeline blog kegiatan mingguan, dokumentasi pekerjaan, dan
+                pembelajaran lapangan.
+              </p>
+            </div>
+          </div>
+          <span className="inline-flex shrink-0 items-center gap-1.5 text-xs font-semibold text-foreground">
+            Buka Jurnal PKL
+            <ArrowRight
+              size={14}
+              className="transition-transform duration-200 group-hover:translate-x-1"
+            />
+          </span>
+        </Link>
+      )}
+
+      {subjectGroupList.length > 0 && (
+        <SchoolSubjectFilter currentClass={cls} groups={subjectGroupList} />
+      )}
     </div>
   );
 }

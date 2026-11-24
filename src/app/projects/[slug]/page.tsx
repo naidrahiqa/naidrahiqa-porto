@@ -1,7 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ExternalLink, GitFork, Star } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Calendar,
+  Clock,
+  ExternalLink,
+  GitFork,
+  Star,
+} from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import {
   formatDate,
@@ -9,6 +17,12 @@ import {
   languageColor,
   slugify,
 } from "@/lib/utils";
+import {
+  isPklProject,
+  isPklSubjectSlug,
+  parsePklMeta,
+  PKL_DEFAULT_CLASS,
+} from "@/lib/pkl";
 import { ProjectLayout } from "@/components/ProjectLayout";
 import { RepoFacts } from "@/components/RepoFacts";
 import { linkActionLabel, normalizeHomepage } from "@/lib/github-meta";
@@ -55,15 +69,67 @@ export default async function ProjectDetailPage({
 
   const resolvedProject = project as Project;
   const resolvedMedia = (media ?? []) as ProjectMedia[];
+  const isPkl = isPklProject(resolvedProject);
+  const pklMeta = isPkl ? parsePklMeta(resolvedProject) : null;
 
-  const backHref =
-    resolvedProject.category === "school" && resolvedProject.class_level
+  let prevPkl: { project: Project; weekLabel: string } | null = null;
+  let nextPkl: { project: Project; weekLabel: string } | null = null;
+
+  if (isPkl) {
+    const targetClass = resolvedProject.class_level || PKL_DEFAULT_CLASS;
+    const { data: siblingData } = await supabase
+      .from("projects")
+      .select("*")
+      .eq("published", true)
+      .eq("category", "school")
+      .eq("class_level", targetClass)
+      .order("sort_order", { ascending: true });
+
+    const pklSiblings = ((siblingData ?? []) as Project[])
+      .filter((p) => isPklSubjectSlug(p.subject))
+      .map((p) => ({
+        project: p,
+        meta: parsePklMeta(p),
+      }))
+      .sort((a, b) => {
+        if (
+          a.meta.weekNumber !== null &&
+          b.meta.weekNumber !== null &&
+          a.meta.weekNumber !== b.meta.weekNumber
+        ) {
+          return a.meta.weekNumber - b.meta.weekNumber;
+        }
+        const sortDiff = (a.project.sort_order ?? 0) - (b.project.sort_order ?? 0);
+        if (sortDiff !== 0) return sortDiff;
+        return (
+          new Date(a.project.created_at).getTime() -
+          new Date(b.project.created_at).getTime()
+        );
+      });
+
+    const currentIndex = pklSiblings.findIndex(
+      (item) => item.project.id === resolvedProject.id
+    );
+    if (currentIndex > 0) {
+      const prev = pklSiblings[currentIndex - 1];
+      prevPkl = { project: prev.project, weekLabel: prev.meta.weekLabel };
+    }
+    if (currentIndex >= 0 && currentIndex < pklSiblings.length - 1) {
+      const next = pklSiblings[currentIndex + 1];
+      nextPkl = { project: next.project, weekLabel: next.meta.weekLabel };
+    }
+  }
+
+  const backHref = isPkl
+    ? `/projects/school/${resolvedProject.class_level || PKL_DEFAULT_CLASS}/pkl`
+    : resolvedProject.category === "school" && resolvedProject.class_level
       ? resolvedProject.subject
         ? `/projects/school/${resolvedProject.class_level}/${slugify(resolvedProject.subject)}`
         : `/projects/school/${resolvedProject.class_level}`
       : "/projects";
-  const backLabel =
-    resolvedProject.category === "school" && resolvedProject.class_level
+  const backLabel = isPkl
+    ? "Jurnal Kegiatan PKL"
+    : resolvedProject.category === "school" && resolvedProject.class_level
       ? resolvedProject.subject
         ? resolvedProject.subject
         : `Kelas ${resolvedProject.class_level.toUpperCase()}`
@@ -85,27 +151,40 @@ export default async function ProjectDetailPage({
       {/* Header */}
       <header className="flex flex-col gap-4">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="rounded-full border border-accent/30 px-2.5 py-0.5 text-[11px] uppercase tracking-wider text-accent">
-            {resolvedProject.category}
-          </span>
-          {resolvedProject.category === "school" && resolvedProject.class_level && (
-            <span className="rounded-full border border-border bg-surface px-2.5 py-0.5 text-[11px] uppercase text-muted">
-              class {resolvedProject.class_level}
-            </span>
-          )}
-          {resolvedProject.category === "school" && resolvedProject.subject && (
-            <span className="rounded-full border border-border bg-surface px-2.5 py-0.5 text-[11px] text-muted">
-              {resolvedProject.subject}
-            </span>
-          )}
-          {resolvedProject.language && (
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-muted">
-              <span
-                className="h-1.5 w-1.5 rounded-full"
-                style={{ backgroundColor: languageColor(resolvedProject.language) }}
-              />
-              {resolvedProject.language}
-            </span>
+          {isPkl && pklMeta ? (
+            <>
+              <span className="rounded-full border border-accent/30 bg-accent-fill px-2.5 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wider text-accent">
+                {pklMeta.weekLabel}
+              </span>
+              <span className="rounded-full border border-border bg-surface px-2.5 py-0.5 text-[11px] uppercase text-muted">
+                PKL · Kelas {(resolvedProject.class_level || PKL_DEFAULT_CLASS).toUpperCase()}
+              </span>
+            </>
+          ) : (
+            <>
+              <span className="rounded-full border border-accent/30 px-2.5 py-0.5 text-[11px] uppercase tracking-wider text-accent">
+                {resolvedProject.category}
+              </span>
+              {resolvedProject.category === "school" && resolvedProject.class_level && (
+                <span className="rounded-full border border-border bg-surface px-2.5 py-0.5 text-[11px] uppercase text-muted">
+                  class {resolvedProject.class_level}
+                </span>
+              )}
+              {resolvedProject.category === "school" && resolvedProject.subject && (
+                <span className="rounded-full border border-border bg-surface px-2.5 py-0.5 text-[11px] text-muted">
+                  {resolvedProject.subject}
+                </span>
+              )}
+              {resolvedProject.language && (
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-muted">
+                  <span
+                    className="h-1.5 w-1.5 rounded-full"
+                    style={{ backgroundColor: languageColor(resolvedProject.language) }}
+                  />
+                  {resolvedProject.language}
+                </span>
+              )}
+            </>
           )}
           {resolvedProject.repo_is_fork && (
             <span className="rounded-full border border-border bg-surface px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-muted">
@@ -127,7 +206,20 @@ export default async function ProjectDetailPage({
           </p>
         )}
         <div className="flex flex-wrap items-center gap-4 font-mono text-[11px] text-muted">
-          <time>{formatDate(resolvedProject.created_at)}</time>
+          {isPkl && pklMeta ? (
+            <>
+              <span className="inline-flex items-center gap-1.5">
+                <Calendar size={12} />
+                {pklMeta.period ?? formatDate(resolvedProject.created_at)}
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <Clock size={12} />
+                {pklMeta.readingTimeMinutes} menit baca
+              </span>
+            </>
+          ) : (
+            <time>{formatDate(resolvedProject.created_at)}</time>
+          )}
           {resolvedProject.repo_name && (
             <span className="inline-flex items-center gap-1">
               <Star size={12} />
@@ -191,6 +283,52 @@ export default async function ProjectDetailPage({
         project={resolvedProject as Project}
         media={resolvedMedia as ProjectMedia[]}
       />
+
+      {/* PKL Prev/Next Week Navigation */}
+      {isPkl && (prevPkl || nextPkl) && (
+        <nav
+          aria-label="Navigasi jurnal mingguan PKL"
+          className="mt-4 grid gap-4 border-t border-border pt-8 sm:grid-cols-2"
+        >
+          {prevPkl ? (
+            <Link
+              href={`/projects/${prevPkl.project.slug}`}
+              className="group flex flex-col rounded-2xl border border-border bg-surface p-5 transition-colors hover:border-foreground/25"
+            >
+              <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
+                <ArrowLeft
+                  size={12}
+                  className="transition-transform group-hover:-translate-x-0.5"
+                />
+                Sebelumnya · {prevPkl.weekLabel}
+              </span>
+              <span className="mt-2 font-display text-sm font-bold tracking-tight text-foreground transition-colors group-hover:text-accent">
+                {prevPkl.project.title}
+              </span>
+            </Link>
+          ) : (
+            <div className="hidden sm:block" />
+          )}
+
+          {nextPkl && (
+            <Link
+              href={`/projects/${nextPkl.project.slug}`}
+              className="group flex flex-col items-end rounded-2xl border border-border bg-surface p-5 text-right transition-colors hover:border-foreground/25"
+            >
+              <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
+                Selanjutnya · {nextPkl.weekLabel}
+                <ArrowRight
+                  size={12}
+                  className="transition-transform group-hover:translate-x-0.5"
+                />
+              </span>
+              <span className="mt-2 font-display text-sm font-bold tracking-tight text-foreground transition-colors group-hover:text-accent">
+                {nextPkl.project.title}
+              </span>
+            </Link>
+          )}
+        </nav>
+      )}
     </div>
   );
 }

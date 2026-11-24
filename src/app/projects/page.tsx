@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import type { ReactNode } from "react";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowRight, ArrowUpRight, BookOpen } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { CLASS_LEVELS } from "@/lib/utils";
+import { isPklProject, PKL_DEFAULT_CLASS } from "@/lib/pkl";
 import { ClassCard, ProjectCard } from "@/components/cards";
 import { ProjectFilter } from "@/components/ProjectFilter";
 import { GitHubOverview } from "@/components/GitHubOverview";
@@ -13,7 +15,7 @@ import type { GitHubProfile, Project } from "@/lib/types";
 export const metadata: Metadata = {
   title: "Projects",
   description:
-    "School showcases and personal open-source repositories by Faqih Ardian Syah.",
+    "School showcases, weekly PKL journal, and personal open-source repositories by Faqih Ardian Syah.",
 };
 
 export default async function ProjectsPage() {
@@ -30,6 +32,7 @@ export default async function ProjectsPage() {
 
   const all = (projects ?? []) as Project[];
   const school = all.filter((p) => p.category === "school");
+  const pklPosts = school.filter((p) => isPklProject(p));
   const personal = all.filter((p) => p.category === "personal");
   const repos = personal.filter((p) => Boolean(p.repo_name));
   const localBuilds = personal.filter((p) => !p.repo_name);
@@ -56,12 +59,15 @@ export default async function ProjectsPage() {
   const classes = CLASS_LEVELS.map((cls) => {
     const items = school.filter((p) => p.class_level === cls);
     const subjectSet = new Set(items.map((p) => p.subject).filter(Boolean));
+    if (cls === PKL_DEFAULT_CLASS) {
+      subjectSet.add("PKL");
+    }
     return {
       cls,
       items,
       subjects: [...subjectSet].sort(),
     };
-  }).filter((c) => c.items.length > 0);
+  }).filter((c) => c.items.length > 0 || c.cls === PKL_DEFAULT_CLASS);
 
   return (
     <div className="flex flex-col pb-8 pt-12 sm:pt-16">
@@ -79,8 +85,9 @@ export default async function ProjectsPage() {
           Work &amp; repositories
         </h1>
         <p className="mt-5 max-w-xl text-[15px] leading-relaxed text-muted">
-          School showcases organized by class and subject, alongside personal
-          builds in Linux kernels, IoT sensor networks, and CTF utilities.
+          School showcases organized by class and subject, weekly PKL field
+          journal, alongside personal builds in Linux kernels, IoT sensor
+          networks, and CTF utilities.
         </p>
       </header>
 
@@ -88,8 +95,9 @@ export default async function ProjectsPage() {
         <section className="mt-16">
           <SectionRow
             title="School"
-            note="Per class & subject"
+            note="Per class, subject & PKL journal"
           />
+
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {classes.map((c) => (
               <ClassCard
@@ -100,6 +108,42 @@ export default async function ProjectsPage() {
               />
             ))}
           </div>
+
+          <Link
+            href={`/projects/school/${PKL_DEFAULT_CLASS}/pkl`}
+            className="group mt-4 flex flex-col justify-between gap-4 rounded-2xl border border-border bg-surface p-5 transition-colors duration-200 hover:border-foreground/25 sm:flex-row sm:items-center sm:p-6"
+          >
+            <div className="flex items-start gap-4">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-accent/30 bg-accent-fill text-accent">
+                <BookOpen size={18} />
+              </span>
+              <div>
+                <div className="flex flex-wrap items-center gap-2 font-mono text-[10px] uppercase tracking-[0.16em]">
+                  <span className="text-accent">
+                    Kelas {PKL_DEFAULT_CLASS.toUpperCase()} · Jurnal Mingguan
+                  </span>
+                  <span className="h-px w-3 bg-border" />
+                  <span className="text-muted">
+                    {pklPosts.length} catatan
+                  </span>
+                </div>
+                <h3 className="mt-1 font-display text-base font-extrabold uppercase tracking-tight text-foreground transition-colors group-hover:text-accent sm:text-lg">
+                  Jurnal Kegiatan PKL (Praktik Kerja Lapangan)
+                </h3>
+                <p className="mt-1 text-xs leading-relaxed text-muted">
+                  Catatan blog mingguan tentang kegiatan lapangan, instalasi,
+                  dan pembelajaran teknis selama PKL.
+                </p>
+              </div>
+            </div>
+            <span className="inline-flex shrink-0 items-center gap-1.5 text-xs font-semibold text-foreground">
+              Lihat Jurnal PKL
+              <ArrowRight
+                size={14}
+                className="transition-transform duration-200 group-hover:translate-x-1"
+              />
+            </span>
+          </Link>
         </section>
       )}
 

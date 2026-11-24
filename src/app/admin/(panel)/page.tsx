@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {
   FolderGit2,
+  BookOpen,
   Award,
   LayoutList,
   Users,
@@ -8,8 +9,16 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import { isPklProject } from "@/lib/pkl";
+import type { Project } from "@/lib/types";
 
 const cards = [
+  {
+    label: "PKL Logs",
+    href: "/admin/pkl",
+    icon: BookOpen,
+    get: (s: { pkl: number }) => s.pkl,
+  },
   {
     label: "Projects",
     href: "/admin/projects",
@@ -37,6 +46,7 @@ const cards = [
 ];
 
 const quickActions = [
+  { href: "/admin/pkl/new", label: "Tulis Catatan PKL", icon: BookOpen },
   { href: "/admin/projects/new", label: "New Project", icon: FolderGit2 },
   { href: "/admin/achievements/new", label: "New Achievement", icon: Award },
 ];
@@ -45,14 +55,21 @@ export default async function AdminDashboardPage() {
   const supabase = await createClient();
 
   const [projects, achievements, about, contacts] = await Promise.all([
-    supabase.from("projects").select("id"),
+    supabase.from("projects").select("id, category, subject"),
     supabase.from("achievements").select("id"),
     supabase.from("about_sections").select("id"),
     supabase.from("contacts").select("id"),
   ]);
 
+  const projectRows = (projects.data ?? []) as Pick<
+    Project,
+    "id" | "category" | "subject"
+  >[];
+  const pklCount = projectRows.filter((p) => isPklProject(p)).length;
+
   const stats = {
-    projects: projects.data?.length ?? 0,
+    pkl: pklCount,
+    projects: projectRows.length,
     achievements: achievements.data?.length ?? 0,
     about: about.data?.length ?? 0,
     contacts: contacts.data?.length ?? 0,
@@ -72,7 +89,7 @@ export default async function AdminDashboardPage() {
         </p>
       </header>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         {cards.map((c) => (
           <Link
             key={c.href}
@@ -110,10 +127,10 @@ export default async function AdminDashboardPage() {
             </Link>
           ))}
           <Link
-            href="/admin/projects"
+            href="/admin/pkl"
             className="inline-flex items-center gap-1.5 rounded-full bg-foreground px-4 py-2.5 text-sm font-semibold text-background transition-opacity hover:opacity-90"
           >
-            Review projects
+            Kelola Jurnal PKL
             <ArrowUpRight size={14} />
           </Link>
         </div>
