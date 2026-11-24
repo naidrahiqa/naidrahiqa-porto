@@ -11,6 +11,10 @@ import { createClient } from "@/lib/supabase/server";
 import { formatDate, resolveImageUrl } from "@/lib/utils";
 import { isPklProject, parsePklMeta, PKL_DEFAULT_CLASS } from "@/lib/pkl";
 import { DeleteButton } from "@/components/admin/DeleteButton";
+import {
+  FeaturedToggle,
+  PublishToggle,
+} from "@/components/admin/FeaturedToggle";
 import type { Project } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -138,11 +142,19 @@ export default async function AdminPklPage() {
                   </div>
                 </div>
 
-                <div className="flex shrink-0 items-center gap-2">
+                <div className="flex shrink-0 flex-wrap items-center gap-1.5">
+                  <FeaturedToggle
+                    id={project.id}
+                    featured={project.featured}
+                  />
+                  <PublishToggle
+                    id={project.id}
+                    published={project.published}
+                  />
                   <Link
                     href={`/projects/${project.slug}`}
                     target="_blank"
-                    className="inline-flex items-center gap-1 rounded-lg border border-border bg-surface-2 px-2.5 py-1.5 text-xs font-semibold text-muted transition-colors hover:text-foreground"
+                    className="inline-flex items-center gap-1 rounded-lg border border-border bg-surface-2 px-2.5 py-1 text-xs font-semibold text-muted transition-colors hover:text-foreground"
                     title="Lihat postingan"
                   >
                     <ExternalLink size={13} />
@@ -150,7 +162,7 @@ export default async function AdminPklPage() {
                   </Link>
                   <Link
                     href={`/admin/pkl/${project.id}`}
-                    className="inline-flex items-center gap-1 rounded-lg border border-border bg-surface-2 px-3 py-1.5 text-xs font-semibold text-foreground transition-colors hover:border-accent hover:text-accent"
+                    className="inline-flex items-center gap-1 rounded-lg border border-border bg-surface-2 px-3 py-1 text-xs font-semibold text-foreground transition-colors hover:border-accent hover:text-accent"
                   >
                     <Pencil size={13} />
                     Edit

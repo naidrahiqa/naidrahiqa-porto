@@ -9,6 +9,8 @@ import {
   BookOpen,
   Calendar,
   Clock,
+  FileText,
+  Printer,
   Search,
   Video,
   X,
@@ -20,11 +22,13 @@ import {
   resolveImageUrl,
 } from "@/lib/utils";
 import { parsePklMeta } from "@/lib/pkl";
+import { MarkdownContent } from "@/components/MarkdownContent";
 import type { Project } from "@/lib/types";
 
 export function PklTimeline({ items }: { items: Project[] }) {
   const [search, setSearch] = useState("");
   const [order, setOrder] = useState<"chronological" | "newest">("chronological");
+  const [reportMode, setReportMode] = useState(false);
 
   const enriched = useMemo(() => {
     return items.map((project, index) => ({
@@ -85,7 +89,7 @@ export function PklTimeline({ items }: { items: Project[] }) {
   return (
     <div className="flex flex-col gap-8">
       {/* Controls */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 print:hidden">
         <div className="relative w-full sm:w-72">
           <Search
             size={14}
@@ -111,22 +115,107 @@ export function PklTimeline({ items }: { items: Project[] }) {
           )}
         </div>
 
-        <button
-          type="button"
-          onClick={() =>
-            setOrder((prev) =>
-              prev === "chronological" ? "newest" : "chronological"
-            )
-          }
-          className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-2 font-mono text-[10px] uppercase tracking-[0.14em] text-muted transition-colors hover:border-foreground/30 hover:text-foreground active:scale-[0.98]"
-        >
-          <ArrowUpDown size={12} />
-          {order === "chronological" ? "Urut: Minggu Awal" : "Urut: Terbaru"}
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() =>
+              setOrder((prev) =>
+                prev === "chronological" ? "newest" : "chronological"
+              )
+            }
+            className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-2 font-mono text-[10px] uppercase tracking-[0.14em] text-muted transition-colors hover:border-foreground/30 hover:text-foreground active:scale-[0.98]"
+          >
+            <ArrowUpDown size={12} />
+            {order === "chronological" ? "Urut: Minggu Awal" : "Urut: Terbaru"}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setReportMode((prev) => !prev)}
+            className={cn(
+              "inline-flex items-center gap-1.5 rounded-full border px-4 py-2 font-mono text-[10px] uppercase tracking-[0.14em] transition-colors active:scale-[0.98]",
+              reportMode
+                ? "border-foreground bg-foreground text-background"
+                : "border-border bg-surface text-muted hover:border-foreground/30 hover:text-foreground"
+            )}
+          >
+            <FileText size={12} />
+            {reportMode ? "Mode Timeline" : "Mode Rekap Lengkap"}
+          </button>
+
+          {reportMode && (
+            <button
+              type="button"
+              onClick={() => window.print()}
+              className="inline-flex items-center gap-1.5 rounded-full bg-accent px-4 py-2 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-on-accent transition-opacity hover:opacity-90 active:scale-[0.98]"
+            >
+              <Printer size={12} />
+              Cetak / Simpan PDF
+            </button>
+          )}
+        </div>
       </div>
 
-      {/* Timeline feed */}
-      {sortedAndFiltered.length > 0 ? (
+      {/* Full Report Mode (for reading all weeks or printing/exporting PDF) */}
+      {reportMode ? (
+        <div className="flex flex-col gap-8">
+          {sortedAndFiltered.map(({ project, meta }, idx) => {
+            const coverSrc = project.cover_image
+              ? resolveImageUrl(project.cover_image)
+              : null;
+
+            return (
+              <article
+                key={project.id}
+                className="flex flex-col gap-4 rounded-2xl border border-border bg-surface p-6 sm:p-8 print:break-inside-avoid print:border-black/20"
+              >
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-4">
+                  <div className="flex flex-wrap items-center gap-2.5 font-mono text-xs uppercase tracking-wider">
+                    <span className="rounded-full border border-accent/30 bg-accent-fill px-3 py-0.5 font-bold text-accent">
+                      {meta.weekLabel || `Minggu ${idx + 1}`}
+                    </span>
+                    <span className="text-muted">
+                      {meta.period ?? formatDate(project.created_at)}
+                    </span>
+                  </div>
+                  <Link
+                    href={`/projects/${project.slug}`}
+                    className="font-mono text-[10px] uppercase tracking-wider text-accent hover:underline print:hidden"
+                  >
+                    Halaman detail →
+                  </Link>
+                </div>
+
+                <h2 className="font-display text-xl font-bold tracking-tight text-foreground sm:text-2xl">
+                  {project.title}
+                </h2>
+
+                {coverSrc && (
+                  <div className="relative aspect-[16/9] max-h-80 w-full overflow-hidden rounded-xl border border-border bg-surface-2">
+                    <Image
+                      src={coverSrc}
+                      alt={project.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 768px"
+                      unoptimized={!isTrustedImageHost(coverSrc)}
+                      className="object-cover"
+                    />
+                  </div>
+                )}
+
+                {project.content ? (
+                  <div className="mt-1">
+                    <MarkdownContent content={project.content} />
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted">{meta.excerpt}</p>
+                )}
+              </article>
+            );
+          })}
+        </div>
+      ) : sortedAndFiltered.length > 0 ? (
+        /* Timeline feed */
         <ol className="relative ml-3 flex flex-col gap-6 border-l border-border pl-6 sm:ml-4 sm:pl-8">
           {sortedAndFiltered.map(({ project, meta }, idx) => {
             const coverSrc = project.cover_image

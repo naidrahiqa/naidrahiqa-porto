@@ -41,6 +41,16 @@ import { MarkdownContent } from "@/components/MarkdownContent";
 import { useToast } from "@/components/admin/Toast";
 
 const QUICK_WEEKS = Array.from({ length: 12 }, (_, i) => `Minggu ${i + 1}`);
+const DRAFT_STORAGE_KEY = "naidra_pkl_draft_v1";
+
+interface SavedPklDraft {
+  weekLabel: string;
+  period: string;
+  title: string;
+  description: string;
+  content: string;
+  savedAt: string;
+}
 
 export function PklForm({
   initial,
@@ -94,8 +104,47 @@ export function PklForm({
   const [editorMode, setEditorMode] = useState<"write" | "preview">("write");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [recoverableDraft, setRecoverableDraft] =
+    useState<SavedPklDraft | null>(() => {
+      if (isEdit || typeof window === "undefined") return null;
+      try {
+        const raw = window.localStorage.getItem(DRAFT_STORAGE_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw) as SavedPklDraft;
+        if (parsed && (parsed.title || parsed.content)) return parsed;
+      } catch {
+        // ignore storage errors
+      }
+      return null;
+    });
+  const [draftSavedAt, setDraftSavedAt] = useState<string | null>(null);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (isEdit || !isDirty.current) return;
+    const timer = window.setTimeout(() => {
+      try {
+        const now = new Date().toLocaleTimeString("id-ID", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        const draft: SavedPklDraft = {
+          weekLabel,
+          period,
+          title,
+          description,
+          content,
+          savedAt: now,
+        };
+        window.localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(draft));
+        setDraftSavedAt(now);
+      } catch {
+        // ignore storage errors
+      }
+    }, 800);
+    return () => window.clearTimeout(timer);
+  }, [isEdit, weekLabel, period, title, description, content]);
 
   useEffect(() => {
     function handleBeforeUnload(e: BeforeUnloadEvent) {
@@ -267,6 +316,13 @@ export function PklForm({
       }
 
       isDirty.current = false;
+      if (!isEdit) {
+        try {
+          window.localStorage.removeItem(DRAFT_STORAGE_KEY);
+        } catch {
+          // ignore
+        }
+      }
       toast(
         "success",
         isEdit
@@ -309,6 +365,58 @@ export function PklForm({
         <div className="rounded-xl border border-danger/40 bg-danger/10 px-4 py-3 text-sm text-danger">
           {error}
         </div>
+      )}
+
+      {recoverableDraft && (
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-accent/40 bg-accent-fill/40 px-4 py-3 text-xs">
+          <div>
+            <p className="font-display font-bold text-foreground">
+              Draft catatan belum diposting ditemukan ({recoverableDraft.weekLabel}
+              {recoverableDraft.title ? ` - ${recoverableDraft.title}` : ""})
+            </p>
+            <p className="text-muted">
+              Tersimpan otomatis pukul {recoverableDraft.savedAt}. Ingin
+              melanjutkan tulisan tersebut?
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                setWeekLabel(recoverableDraft.weekLabel);
+                setPeriod(recoverableDraft.period);
+                setTitle(recoverableDraft.title);
+                setDescription(recoverableDraft.description);
+                setContent(recoverableDraft.content);
+                setRecoverableDraft(null);
+                toast("success", "Draft berhasil dipulihkan");
+              }}
+              className="rounded-lg bg-accent px-3 py-1.5 font-semibold text-on-accent hover:bg-accent-hover"
+            >
+              Pulihkan Draft
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                try {
+                  window.localStorage.removeItem(DRAFT_STORAGE_KEY);
+                } catch {
+                  // ignore
+                }
+                setRecoverableDraft(null);
+              }}
+              className="rounded-lg border border-border bg-surface px-3 py-1.5 font-semibold text-muted hover:text-foreground"
+            >
+              Buang
+            </button>
+          </div>
+        </div>
+      )}
+
+      {!isEdit && draftSavedAt && (
+        <p className="-mb-4 text-right font-mono text-[10px] uppercase tracking-wider text-muted">
+          Draft lokal tersimpan otomatis pukul {draftSavedAt}
+        </p>
       )}
 
       {/* 1. MINGGU & JUDUL */}
