@@ -9,17 +9,20 @@ import {
 } from "lucide-react";
 import { LanguageBar } from "@/components/LanguageBar";
 import { CopyClone } from "@/components/CopyClone";
+import { RepoExplorer } from "@/components/RepoExplorer";
 import {
   formatRepoSize,
   normalizeHomepage,
   repoCloneUrl,
 } from "@/lib/github-meta";
+import { resolveRepoIdentity } from "@/lib/repo-explorer";
 import { formatDate, formatRelativeTime } from "@/lib/utils";
 import type { Project } from "@/lib/types";
 
 export function RepoFacts({ project }: { project: Project }) {
   const homepage = normalizeHomepage(project.repo_homepage);
   const cloneUrl = repoCloneUrl(project.link);
+  const identity = resolveRepoIdentity(project);
 
   const facts = [
     {
@@ -134,6 +137,8 @@ export function RepoFacts({ project }: { project: Project }) {
       )}
 
       {cloneUrl && <CopyClone url={cloneUrl} />}
+
+      {identity && <RepoExplorer identity={identity} />}
     </section>
   );
 }

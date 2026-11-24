@@ -140,7 +140,7 @@ export function RepoCard({ project }: { project: Project }) {
       className="group flex h-full flex-col rounded-2xl border border-border bg-surface p-5 transition-colors duration-200 hover:border-foreground/25"
     >
       <div className="flex items-start justify-between gap-3">
-        <h3 className="min-w-0 break-all font-display text-[15px] font-bold tracking-tight text-foreground transition-colors group-hover:text-accent">
+        <h3 className="min-w-0 break-words [overflow-wrap:anywhere] font-display text-[15px] font-bold tracking-tight text-foreground transition-colors group-hover:text-accent">
           {project.repo_name ?? project.slug}
         </h3>
         <span className="shrink-0 rounded-full border border-border bg-background px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-muted">

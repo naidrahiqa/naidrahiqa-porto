@@ -136,9 +136,14 @@ export default async function ProjectDetailPage({
       : "Projects";
 
   const repoHomepage = normalizeHomepage(resolvedProject.repo_homepage);
+  const isRepoProject = Boolean(resolvedProject.repo_name);
 
   return (
-    <div className="mx-auto flex max-w-2xl flex-col gap-8 pt-12 sm:pt-16">
+    <div
+      className={`mx-auto flex flex-col gap-8 pt-12 sm:pt-16 ${
+        isRepoProject ? "max-w-4xl" : "max-w-2xl"
+      }`}
+    >
       {/* Back */}
       <Link
         href={backHref}
