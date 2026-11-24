@@ -10,6 +10,7 @@ import {
   gitLabCommitTitle,
   gitlabPathFromUrl,
   gitLabSizeKb,
+  isUsableGitLabProject,
   normalizeGitLabLicense,
   topGitLabLanguage,
   type GitLabProject,
@@ -97,5 +98,31 @@ describe("gitlab helpers", () => {
       })
     ).toBe("feat: add support");
     expect(gitLabCommitTitle(null)).toBeNull();
+  });
+
+  it("filters out empty or deletion-scheduled GitLab projects", () => {
+    expect(
+      isUsableGitLabProject({
+        path_with_namespace: "mt6768-dev/kernel-modules-6.6",
+        path: "kernel-modules-6.6",
+        name: "Kernel Modules 6.6",
+        visibility: "public",
+      })
+    ).toBe(true);
+
+    expect(
+      isUsableGitLabProject({
+        path_with_namespace: "mt6768-dev/kernel-6.6-deletion_scheduled-89243076",
+        path: "kernel-6.6-deletion_scheduled-89243076",
+        marked_for_deletion_on: "2026-11-20",
+      })
+    ).toBe(false);
+
+    expect(
+      isUsableGitLabProject({
+        path_with_namespace: "mt6768-dev/empty",
+        empty_repo: true,
+      })
+    ).toBe(false);
   });
 });

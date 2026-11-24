@@ -12,7 +12,7 @@ import {
 } from "@/components/admin/ui";
 import { useToast } from "@/components/admin/Toast";
 
-const platforms = ["email", "github", "instagram", "linkedin", "telegram", "whatsapp", "discord", "threads"];
+const platforms = ["email", "github", "gitlab", "instagram", "linkedin", "telegram", "whatsapp", "discord", "threads"];
 
 export default function ContactsEditorPage() {
   const { toast } = useToast();

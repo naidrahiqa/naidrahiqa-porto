@@ -19,13 +19,27 @@ export interface GitLabLicense {
   nickname?: string | null;
 }
 
+export interface GitLabNamespace {
+  id?: number;
+  name?: string;
+  path?: string;
+  kind?: string;
+  full_path?: string;
+}
+
 export interface GitLabProject {
   id: number;
   name: string;
+  name_with_namespace?: string;
   path: string;
   path_with_namespace: string;
   description: string | null;
   web_url: string;
+  visibility?: string;
+  empty_repo?: boolean;
+  marked_for_deletion_at?: string | null;
+  marked_for_deletion_on?: string | null;
+  namespace?: GitLabNamespace | null;
   topics?: string[];
   tag_list?: string[];
   star_count: number;
@@ -116,6 +130,20 @@ async function gitlabFetchOptional<T>(path: string): Promise<T | null> {
   }
 }
 
+export function isUsableGitLabProject(
+  project: Partial<GitLabProject> | null | undefined
+): boolean {
+  if (!project || !project.path_with_namespace) return false;
+  if (project.visibility && project.visibility !== "public") return false;
+  if (project.empty_repo) return false;
+  if (project.marked_for_deletion_at || project.marked_for_deletion_on) {
+    return false;
+  }
+  if (project.path?.includes("-deletion_scheduled-")) return false;
+  if (project.name?.includes("-deletion_scheduled-")) return false;
+  return true;
+}
+
 export function gitlabPathFromUrl(
   value: string | null | undefined
 ): string | null {
@@ -156,13 +184,63 @@ export function pinnedGitLabPaths(): string[] {
   return paths;
 }
 
+export function configuredGitLabGroups(): string[] {
+  const raw = process.env.GITLAB_GROUPS ?? "";
+  if (!raw.trim()) return [];
+  return raw
+    .split(",")
+    .map((g) => g.trim().replace(/^\/+|\/+$/g, ""))
+    .filter(Boolean);
+}
+
 export async function fetchGitLabUserProjects(
   username = GITLAB_USERNAME
 ): Promise<GitLabProject[]> {
-  const projects = await gitlabFetchOptional<GitLabProject[]>(
-    `/users/${encodeURIComponent(username)}/projects?visibility=public&per_page=${PER_PAGE}&order_by=last_activity_at`
+  const [owned, contributed] = await Promise.all([
+    gitlabFetchOptional<GitLabProject[]>(
+      `/users/${encodeURIComponent(username)}/projects?visibility=public&per_page=${PER_PAGE}&order_by=last_activity_at`
+    ),
+    gitlabFetchOptional<GitLabProject[]>(
+      `/users/${encodeURIComponent(username)}/contributed_projects?per_page=${PER_PAGE}&order_by=last_activity_at`
+    ),
+  ]);
+
+  const combined = [...(owned ?? []), ...(contributed ?? [])].filter(
+    isUsableGitLabProject
   );
-  return projects ?? [];
+
+  const groupSet = new Set<string>(
+    configuredGitLabGroups().map((g) => g.toLowerCase())
+  );
+  for (const project of combined) {
+    if (
+      project.namespace?.kind === "group" &&
+      project.namespace.full_path
+    ) {
+      groupSet.add(project.namespace.full_path.toLowerCase());
+    }
+  }
+
+  const groupProjects: GitLabProject[] = [];
+  await runPool([...groupSet], ENRICH_CONCURRENCY, async (groupPath) => {
+    const items = await gitlabFetchOptional<GitLabProject[]>(
+      `/groups/${encodeURIComponent(groupPath)}/projects?include_subgroups=true&per_page=${PER_PAGE}&order_by=last_activity_at`
+    );
+    if (items) {
+      for (const item of items) {
+        if (isUsableGitLabProject(item)) {
+          groupProjects.push(item);
+        }
+      }
+    }
+  });
+
+  const byPath = new Map<string, GitLabProject>();
+  for (const project of [...combined, ...groupProjects]) {
+    byPath.set(project.path_with_namespace.toLowerCase(), project);
+  }
+
+  return [...byPath.values()];
 }
 
 export async function fetchGitLabProject(
@@ -180,7 +258,9 @@ export async function collectGitLabProjects(
   const byPath = new Map<string, GitLabProject>();
 
   for (const project of userProjects) {
-    byPath.set(project.path_with_namespace.toLowerCase(), project);
+    if (isUsableGitLabProject(project)) {
+      byPath.set(project.path_with_namespace.toLowerCase(), project);
+    }
   }
 
   const extraPaths = new Set<string>();
@@ -193,7 +273,7 @@ export async function collectGitLabProjects(
   const missing = [...extraPaths].filter((p) => !byPath.has(p.toLowerCase()));
   await runPool(missing, ENRICH_CONCURRENCY, async (path) => {
     const project = await fetchGitLabProject(path);
-    if (project) {
+    if (project && isUsableGitLabProject(project)) {
       byPath.set(project.path_with_namespace.toLowerCase(), project);
     }
   });
@@ -279,7 +359,8 @@ export async function enrichGitLabProjects(
 export function normalizeGitLabLicense(
   license: GitLabLicense | null | undefined
 ): string | null {
-  const raw = license?.nickname?.trim() || license?.name?.trim() || license?.key?.trim();
+  const raw =
+    license?.nickname?.trim() || license?.name?.trim() || license?.key?.trim();
   if (!raw) return null;
   return raw.toUpperCase() === "OTHER" ? null : raw;
 }

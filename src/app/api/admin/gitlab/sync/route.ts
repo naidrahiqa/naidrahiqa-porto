@@ -146,11 +146,12 @@ export async function POST() {
 
   await runPool(writes, 6, async (item) => {
     if (item.kind === "update") {
+      const cleanDesc = (item.repo.description ?? "").trim();
       const { error } = await supabase
         .from("projects")
         .update({
           ...item.metadata,
-          description: item.match.description || item.repo.description || "",
+          description: item.match.description || cleanDesc || "",
         })
         .eq("id", item.match.id);
 
@@ -159,11 +160,12 @@ export async function POST() {
       return;
     }
 
+    const cleanDesc = (item.repo.description ?? "").trim();
     const { error } = await supabase.from("projects").insert({
       title: prettifyRepoName(item.repo.name),
       slug: item.slug,
       category: "personal",
-      description: item.repo.description ?? "",
+      description: cleanDesc,
       content: "",
       language: topGitLabLanguage(
         enrichment.byPath.get(item.repo.path_with_namespace)?.languages

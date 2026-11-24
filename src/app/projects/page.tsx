@@ -171,36 +171,32 @@ export default async function ProjectsPage() {
             note={`${repos.length} public repositories`}
             action={
               <div className="flex items-center gap-4">
-                {hasGitHub && (
-                  <a
-                    href="https://github.com/naidrahiqa"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-muted transition-colors hover:text-foreground"
-                  >
-                    <BrandIcon platform="github" size={12} />
-                    @naidrahiqa
-                    <ArrowUpRight
-                      size={12}
-                      className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                    />
-                  </a>
-                )}
-                {hasGitLab && (
-                  <a
-                    href="https://gitlab.com/naidrahiqa"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-muted transition-colors hover:text-foreground"
-                  >
-                    <BrandIcon platform="gitlab" size={12} />
-                    @naidrahiqa
-                    <ArrowUpRight
-                      size={12}
-                      className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                    />
-                  </a>
-                )}
+                <a
+                  href="https://github.com/naidrahiqa"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-muted transition-colors hover:text-foreground"
+                >
+                  <BrandIcon platform="github" size={12} />
+                  GitHub
+                  <ArrowUpRight
+                    size={12}
+                    className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                  />
+                </a>
+                <a
+                  href="https://gitlab.com/naidrahiqa"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-muted transition-colors hover:text-foreground"
+                >
+                  <BrandIcon platform="gitlab" size={12} />
+                  GitLab
+                  <ArrowUpRight
+                    size={12}
+                    className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                  />
+                </a>
               </div>
             }
           />
